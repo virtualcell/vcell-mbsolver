@@ -1,0 +1,146 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_prefix: linux
+          - os: macos-latest
+            artifact_prefix: macos
+          - os: windows-latest
+            artifact_prefix: windows
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Ubuntu dependencies
+      - name: Install Ubuntu dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake libhdf5-dev python3-dev python3-pip
+          pip3 install pybind11
+
+      # macOS dependencies
+      - name: Install macOS dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew install cmake hdf5 python pybind11
+
+      # Windows dependencies
+      - name: Install Windows dependencies (vcpkg)
+        if: runner.os == 'Windows'
+        run: |
+          vcpkg integrate install
+          vcpkg install hdf5:x64-windows pybind11:x64-windows
+        shell: pwsh
+
+      - name: Install Python packages (Windows)
+        if: runner.os == 'Windows'
+        run: pip install pybind11
+
+      # Configure CMake
+      - name: Configure CMake (Ubuntu/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
+        shell: cmd
+
+      # Build
+      - name: Build (Ubuntu/macOS)
+        if: runner.os != 'Windows'
+        run: cmake --build build --parallel
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        run: cmake --build build --config Release --parallel
+        shell: cmd
+
+      # Run tests
+      - name: Install test dependencies
+        run: pip install pytest
+        shell: bash
+
+      - name: Run tests (Ubuntu/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cd build
+          ctest --output-on-failure -j$(nproc)
+
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          cd build
+          ctest --output-on-failure --parallel %NUMBER_OF_PROCESSORS%
+        shell: cmd
+
+      # Prepare artifacts
+      - name: Prepare artifacts (Ubuntu/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p artifacts
+          cp build/bin/MovingBoundarySolver artifacts/MovingBoundarySolver-${{ matrix.artifact_prefix }}
+          cp build/bin/libMovingBoundaryLib.a artifacts/libMovingBoundaryLib-${{ matrix.artifact_prefix }}.a
+          cp build/bin/vcellmbsolver_py*.so artifacts/ 2>/dev/null || true
+
+      - name: Prepare artifacts (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir artifacts
+          copy build\bin\Release\MovingBoundarySolver.exe artifacts\MovingBoundarySolver-${{ matrix.artifact_prefix }}.exe
+          copy build\bin\Release\MovingBoundaryLib.lib artifacts\MovingBoundaryLib-${{ matrix.artifact_prefix }}.lib
+          copy build\bin\Release\vcellmbsolver_py*.pyd artifacts\ 2>nul || true
+        shell: cmd
+
+      # Upload artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_prefix }}-artifacts
+          path: artifacts/
+          retention-days: 1
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: all-artifacts/**/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Display release info
+        run: |
+          echo "Release created successfully!"
+          find all-artifacts -type f -exec echo "  - {}" \;
