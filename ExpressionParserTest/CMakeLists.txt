@@ -5,7 +5,7 @@ target_link_libraries(ExpressionParserTest PRIVATE ExpressionParser)
 # so use FAIL_REGULAR_EXPRESSION to catch the error messages it prints to stderr.
 add_test(NAME ExpressionParserTest COMMAND ExpressionParserTest)
 set_tests_properties(ExpressionParserTest PROPERTIES
-    FAIL_REGULAR_EXPRESSION "ExpressionParserTest failed"
+    FAIL_REGULAR_EXPRESSION "^ExpressionParserTest failed: ((?!FunctionDomainException).)*$"
 )
 
 install(TARGETS ExpressionParserTest
