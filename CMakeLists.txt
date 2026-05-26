@@ -52,7 +52,10 @@ endif()
 
 # Required packages
 find_package(Threads REQUIRED)
-find_package(HDF5 REQUIRED COMPONENTS C CXX CONFIG)
+find_package(HDF5 REQUIRED COMPONENTS C CXX)
+if(NOT HDF5_FOUND)
+    message(FATAL_ERROR "HDF5 not found. Please ensure libhdf5-dev is installed.")
+endif()
 find_package(Boost REQUIRED)
 
 # Python bindings (always built)
