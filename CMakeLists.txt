@@ -52,11 +52,18 @@ endif()
 
 # Required packages
 find_package(Threads REQUIRED)
+
+# HDF5: Try CONFIG mode first (for vcpkg), fall back to MODULE mode
 find_package(HDF5 REQUIRED COMPONENTS C CXX)
 if(NOT HDF5_FOUND)
-    message(FATAL_ERROR "HDF5 not found. Please ensure libhdf5-dev is installed.")
+    message(FATAL_ERROR "HDF5 not found. Please ensure libhdf5-dev (Linux), hdf5 (macOS), or hdf5:x64-windows (vcpkg) is installed.")
 endif()
+
+# Boost: header-only libraries needed for multi_array, iterator, etc.
 find_package(Boost REQUIRED)
+if(NOT Boost_FOUND)
+    message(FATAL_ERROR "Boost not found. Please ensure libboost-dev (Linux), boost (macOS), or boost:x64-windows (vcpkg) is installed.")
+endif()
 
 # Python bindings (always built)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
@@ -89,6 +96,7 @@ endif()
 message(STATUS "Platform:          ${CMAKE_SYSTEM_NAME}")
 message(STATUS "Build type:        ${CMAKE_BUILD_TYPE}")
 message(STATUS "HDF5 version:      ${HDF5_VERSION}, libs: ${HDF5_LIBRARIES}")
+message(STATUS "Boost version:     ${Boost_VERSION}, include: ${Boost_INCLUDE_DIRS}")
 
 # --- Source files ---
 file(GLOB MB_SOLVER_MAIN  Solver/src/driver.cpp)
