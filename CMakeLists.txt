@@ -52,7 +52,7 @@ endif()
 
 # Required packages
 find_package(Threads REQUIRED)
-find_package(HDF5 REQUIRED COMPONENTS C CXX)
+find_package(HDF5 REQUIRED COMPONENTS C CXX CONFIG)
 
 # Python bindings (always built)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
