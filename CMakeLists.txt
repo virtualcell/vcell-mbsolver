@@ -53,7 +53,7 @@ endif()
 # Required packages
 find_package(Threads REQUIRED)
 find_package(HDF5 REQUIRED COMPONENTS C CXX CONFIG)
-find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED)
 
 # Python bindings (always built)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
@@ -110,7 +110,6 @@ target_link_libraries(MovingBoundaryLib
     PUBLIC
         ${HDF5_LIBRARIES}
         ${HDF5_HL_LIBRARIES}
-        Boost::system
         frontier
         ExpressionParser
         vcommons
