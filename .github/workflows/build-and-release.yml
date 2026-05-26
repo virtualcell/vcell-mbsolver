@@ -46,6 +46,12 @@ jobs:
           vcpkg install hdf5:x64-windows pybind11:x64-windows boost:x64-windows
         shell: pwsh
 
+      - name: Install HDF5 (Windows pre-built)
+        if: runner.os == 'Windows'
+        run: |
+          choco install hdf5
+        shell: pwsh
+
       - name: Install Python packages (Windows)
         if: runner.os == 'Windows'
         run: pip install pybind11
@@ -59,7 +65,7 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DHDF5_ROOT="C:\Program Files\HDF Group\HDF5\1.14.3"
         shell: cmd
 
       # Build
