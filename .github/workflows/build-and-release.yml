@@ -73,8 +73,16 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
-          cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -DHDF5_ROOT="%HDF5_ROOT%"
-        shell: cmd
+          $hdf5_root = $env:HDF5_ROOT
+          if ([string]::IsNullOrEmpty($hdf5_root)) {
+            Write-Error "HDF5_ROOT environment variable not set"
+            exit 1
+          }
+          cmake -S . -B build `
+            -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DHDF5_ROOT="$hdf5_root"
+          shell: pwsh
 
       # Build
       - name: Build (Ubuntu/macOS)
