@@ -39,11 +39,10 @@ jobs:
           brew install cmake hdf5 python pybind11 boost
 
       # Windows dependencies
-      - name: Install Windows dependencies (vcpkg)
+      - name: Install Windows dependencies
         if: runner.os == 'Windows'
         run: |
-          vcpkg integrate install
-          vcpkg install hdf5:x64-windows pybind11:x64-windows boost:x64-windows
+          pip install pybind11 pytest
         shell: pwsh
 
       - name: Install HDF5 (Windows pre-built)
@@ -60,9 +59,17 @@ jobs:
            echo "HDF5_ROOT=$hdf5_root" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
 
-      - name: Install Python packages (Windows)
+      - name: Install Boost (Windows pre-built)
         if: runner.os == 'Windows'
-        run: pip install pybind11
+        run: |
+          $boost_url = "https://boostorg.jfrog.io/artifactory/main/release/1.84.0/binaries/boost_1_84_0-msvc-14.3-64.exe"
+          $boost_exe = "C:\boost_installer.exe"
+    
+          Invoke-WebRequest -Uri $boost_url -OutFile $boost_exe
+            & $boost_exe /S /D=C:\Boost
+    
+          echo "BOOST_ROOT=C:\Boost" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+        shell: pwsh
 
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
@@ -73,17 +80,10 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
-          $hdf5_root = $env:HDF5_ROOT
-          if ([string]::IsNullOrEmpty($hdf5_root)) {
-            Write-Error "HDF5_ROOT environment variable not set"
-            exit 1
-          }
-          # Convert backslashes to forward slashes for CMake compatibility
-          $hdf5_root = $hdf5_root -replace '\\', '/'
           cmake -S . -B build `
-            -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake `
             -DCMAKE_BUILD_TYPE=Release `
-            -DHDF5_ROOT="$hdf5_root"
+            -DHDF5_ROOT="C:\hdf5" `
+            -DBOOST_ROOT="C:\Boost"
         shell: pwsh
 
       # Build
