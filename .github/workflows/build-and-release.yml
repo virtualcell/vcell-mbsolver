@@ -64,9 +64,38 @@ jobs:
         run: |
           $boost_url = "https://boostorg.jfrog.io/artifactory/main/release/1.84.0/binaries/boost_1_84_0-msvc-14.3-64.exe"
           $boost_exe = "C:\boost_installer.exe"
+          $max_retries = 3
+          $retry = 0
     
-          Invoke-WebRequest -Uri $boost_url -OutFile $boost_exe
-            & $boost_exe /S /D="C:\Boost"
+          while ($retry -lt $max_retries) {
+            try {
+              Write-Host "Downloading Boost (attempt $($retry + 1))..."
+              Invoke-WebRequest -Uri $boost_url -OutFile $boost_exe -TimeoutSec 300
+        
+              # Verify file exists and has reasonable size
+              if (Test-Path $boost_exe) {
+                $file_size = (Get-Item $boost_exe).Length
+                if ($file_size -gt 100MB) {
+                  Write-Host "Downloaded Boost installer successfully ($file_size bytes)"
+                  break
+                } else {
+                  Write-Host "File too small ($file_size bytes), retrying..."
+                  Remove-Item $boost_exe
+                }
+              }
+            } catch {
+              Write-Host "Download failed: $_"
+              if (Test-Path $boost_exe) { Remove-Item $boost_exe }
+            }
+            $retry++
+          }
+    
+          if (-not (Test-Path $boost_exe)) {
+            throw "Failed to download Boost installer after $max_retries attempts"
+          }
+    
+          Write-Host "Installing Boost..."
+          & $boost_exe /S /D="C:\Boost"
     
           echo "BOOST_ROOT=C:\Boost" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
