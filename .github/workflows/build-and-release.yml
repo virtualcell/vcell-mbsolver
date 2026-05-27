@@ -78,6 +78,8 @@ jobs:
             Write-Error "HDF5_ROOT environment variable not set"
             exit 1
           }
+          # Convert backslashes to forward slashes for CMake compatibility
+          $hdf5_root = $hdf5_root -replace '\\', '/'
           cmake -S . -B build `
             -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake `
             -DCMAKE_BUILD_TYPE=Release `
