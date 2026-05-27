@@ -82,7 +82,7 @@ jobs:
             -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake `
             -DCMAKE_BUILD_TYPE=Release `
             -DHDF5_ROOT="$hdf5_root"
-          shell: pwsh
+        shell: pwsh
 
       # Build
       - name: Build (Ubuntu/macOS)
