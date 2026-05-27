@@ -66,7 +66,7 @@ jobs:
           $boost_exe = "C:\boost_installer.exe"
     
           Invoke-WebRequest -Uri $boost_url -OutFile $boost_exe
-            & $boost_exe /S /D=C:\Boost
+            & $boost_exe /S /D="C:\Boost"
     
           echo "BOOST_ROOT=C:\Boost" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
         shell: pwsh
