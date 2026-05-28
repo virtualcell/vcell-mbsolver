@@ -51,41 +51,28 @@ jobs:
           $hdf5_url = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.3/bin/windows/hdf5-1.14.3-Std-win10_64-vs17.zip"
           $hdf5_zip = "C:\hdf5.zip"
           $hdf5_extract = "C:\hdf5_extracted"
-    
+          
+          Write-Host "Downloading HDF5..."
           Invoke-WebRequest -Uri $hdf5_url -OutFile $hdf5_zip
+          
+          Write-Host "Extracting HDF5..."
           Expand-Archive -Path $hdf5_zip -DestinationPath $hdf5_extract -Force
-    
+          
+          # List contents to debug
+          Write-Host "Contents of $hdf5_extract :"
+          Get-ChildItem -Path $hdf5_extract -Recurse -Depth 2
+          
           # The extracted directory contains a subdirectory - find and use it
           $hdf5_root = Get-ChildItem -Path $hdf5_extract -Directory | Select-Object -First 1 -ExpandProperty FullName
-    
+          
           if (-not $hdf5_root) {
             throw "HDF5 extraction failed - no subdirectory found"
           }
-    
-          echo "HDF5_ROOT=$hdf5_root" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          Write-Host "HDF5 installed at $hdf5_root"
+          
+          Write-Host "HDF5_ROOT will be set to: $hdf5_root"
+          Add-Content -Path $env:GITHUB_ENV -Value "HDF5_ROOT=$hdf5_root"
         shell: pwsh
 
-      - name: Install Boost (Windows header-only)
-        if: runner.os == 'Windows'
-        run: |
-          $boost_url = "https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz"
-          $boost_tar = "C:\boost.tar.gz"
-          $boost_root = "C:\Boost"
-    
-          Write-Host "Downloading Boost headers..."
-          Invoke-WebRequest -Uri $boost_url -OutFile $boost_tar
-    
-          Write-Host "Extracting Boost..."
-          tar -xzf $boost_tar -C C:\
-    
-          # Rename extracted directory to match expected path
-          Rename-Item -Path "C:\boost-1.84.0" -NewName "Boost"
-    
-          echo "BOOST_ROOT=C:\Boost" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          Write-Host "Boost headers installed at $boost_root"
-        shell: pwsh
-      
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
         if: runner.os != 'Windows'
@@ -95,10 +82,12 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
+          Write-Host "HDF5_ROOT=${{ env.HDF5_ROOT }}"
           cmake -S . -B build `
             -DCMAKE_BUILD_TYPE=Release `
             -DHDF5_ROOT="${{ env.HDF5_ROOT }}" `
-            -DBOOST_ROOT="C:\Boost"
+            -DBOOST_ROOT="C:\Boost" `
+            -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE
         shell: pwsh
       
       # Build
