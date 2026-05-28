@@ -48,15 +48,22 @@ jobs:
       - name: Install HDF5 (Windows pre-built)
         if: runner.os == 'Windows'
         run: |
-           $hdf5_url = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.3/bin/windows/hdf5-1.14.3-Std-win10_64-vs17.zip"
-           $hdf5_zip = "C:\hdf5.zip"
-           $hdf5_root = "C:\hdf5"
-           
-           Invoke-WebRequest -Uri $hdf5_url -OutFile $hdf5_zip
-           Expand-Archive -Path $hdf5_zip -DestinationPath $hdf5_root -Force
-           
-           # Create environment variable for CMake
-           echo "HDF5_ROOT=$hdf5_root" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          $hdf5_url = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.3/bin/windows/hdf5-1.14.3-Std-win10_64-vs17.zip"
+          $hdf5_zip = "C:\hdf5.zip"
+          $hdf5_extract = "C:\hdf5_extracted"
+    
+          Invoke-WebRequest -Uri $hdf5_url -OutFile $hdf5_zip
+          Expand-Archive -Path $hdf5_zip -DestinationPath $hdf5_extract -Force
+    
+          # The extracted directory contains a subdirectory - find and use it
+          $hdf5_root = Get-ChildItem -Path $hdf5_extract -Directory | Select-Object -First 1 -ExpandProperty FullName
+    
+          if (-not $hdf5_root) {
+            throw "HDF5 extraction failed - no subdirectory found"
+          }
+    
+          echo "HDF5_ROOT=$hdf5_root" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "HDF5 installed at $hdf5_root"
         shell: pwsh
 
       - name: Install Boost (Windows header-only)
@@ -90,10 +97,10 @@ jobs:
         run: |
           cmake -S . -B build `
             -DCMAKE_BUILD_TYPE=Release `
-            -DHDF5_ROOT="C:\hdf5" `
+            -DHDF5_ROOT="${{ env.HDF5_ROOT }}" `
             -DBOOST_ROOT="C:\Boost"
         shell: pwsh
-
+      
       # Build
       - name: Build (Ubuntu/macOS)
         if: runner.os != 'Windows'
