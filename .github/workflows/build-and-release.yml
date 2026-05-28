@@ -45,34 +45,33 @@ jobs:
           pip install pybind11 pytest
         shell: pwsh
 
-      - name: Install HDF5 (Windows pre-built)
+      - name: Install HDF5 and Boost (Windows pre-built binaries)
         if: runner.os == 'Windows'
         run: |
-          $hdf5_url = "https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.3/bin/windows/hdf5-1.14.3-Std-win10_64-vs17.zip"
-          $hdf5_zip = "C:\hdf5.zip"
-          $hdf5_extract = "C:\hdf5_extracted"
+          # HDF5 pre-built
+          $hdf5_url = "https://github.com/HDFGroup/HDF5/releases/download/hdf5_1.14.3/hdf5-1.14.3-win-vs2022_cl_x64.zip"
+          $hdf5_zip = "${{ runner.temp }}\hdf5.zip"
+          $hdf5_root = "${{ runner.temp }}\hdf5"
           
           Write-Host "Downloading HDF5..."
-          Invoke-WebRequest -Uri $hdf5_url -OutFile $hdf5_zip
+          Invoke-WebRequest -Uri $hdf5_url -OutFile $hdf5_zip -MaximumRetryCount 3
+          Expand-Archive -Path $hdf5_zip -DestinationPath $hdf5_root -Force
           
-          Write-Host "Extracting HDF5..."
-          Expand-Archive -Path $hdf5_zip -DestinationPath $hdf5_extract -Force
+          # Boost headers only (minimal)
+          $boost_url = "https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz"
+          $boost_tar = "${{ runner.temp }}\boost.tar.gz"
+          $boost_root = "${{ runner.temp }}\boost"
           
-          # List contents to debug
-          Write-Host "Contents of $hdf5_extract :"
-          Get-ChildItem -Path $hdf5_extract -Recurse -Depth 2
+          Write-Host "Downloading Boost headers..."
+          Invoke-WebRequest -Uri $boost_url -OutFile $boost_tar -MaximumRetryCount 3
+          tar -xzf $boost_tar -C "${{ runner.temp }}"
+          Rename-Item -Path "${{ runner.temp }}\boost-1.84.0" -NewName "boost"
           
-          # The extracted directory contains a subdirectory - find and use it
-          $hdf5_root = Get-ChildItem -Path $hdf5_extract -Directory | Select-Object -First 1 -ExpandProperty FullName
-          
-          if (-not $hdf5_root) {
-            throw "HDF5 extraction failed - no subdirectory found"
-          }
-          
-          Write-Host "HDF5_ROOT will be set to: $hdf5_root"
-          Add-Content -Path $env:GITHUB_ENV -Value "HDF5_ROOT=$hdf5_root"
+          # Set environment variables using the proper method
+          Add-Content $env:GITHUB_ENV "HDF5_ROOT=$hdf5_root"
+          Add-Content $env:GITHUB_ENV "BOOST_ROOT=$boost_root"
         shell: pwsh
-
+      
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
         if: runner.os != 'Windows'
@@ -82,14 +81,12 @@ jobs:
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         run: |
-          Write-Host "HDF5_ROOT=${{ env.HDF5_ROOT }}"
           cmake -S . -B build `
             -DCMAKE_BUILD_TYPE=Release `
             -DHDF5_ROOT="${{ env.HDF5_ROOT }}" `
-            -DBOOST_ROOT="C:\Boost" `
-            -DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE
+            -DBOOST_ROOT="${{ env.BOOST_ROOT }}"
         shell: pwsh
-      
+  
       # Build
       - name: Build (Ubuntu/macOS)
         if: runner.os != 'Windows'
