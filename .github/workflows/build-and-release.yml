@@ -50,7 +50,7 @@ jobs:
         run: |
           # HDF5 pre-built
           $hdf5_url = "https://github.com/HDFGroup/hdf5/releases/download/2.1.1/hdf5-2.1.1-win-vs2022_intel.zip"
-          $hdf5_zip = "${{ runner.temp }}\hdf5.zip"
+          $hdf5_zip = "${{ runner.temp }}\HDF5-2.1.1-win64.zip"
           $hdf5_root = "${{ runner.temp }}\hdf5"
           
           Write-Host "Downloading HDF5..."
