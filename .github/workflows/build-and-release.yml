@@ -49,7 +49,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           # HDF5 pre-built
-          $hdf5_url = "https://github.com/HDFGroup/HDF5/releases/download/hdf5_1.14.3/hdf5-1.14.3-win-vs2022_cl_x64.zip"
+          $hdf5_url = "https://github.com/HDFGroup/HDF5/releases/download/hdf5-1_14_3/hdf5-1.14.3-win64_vs2022_dll.zip"
           $hdf5_zip = "${{ runner.temp }}\hdf5.zip"
           $hdf5_root = "${{ runner.temp }}\hdf5"
           
