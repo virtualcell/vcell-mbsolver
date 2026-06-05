@@ -55,15 +55,15 @@ jobs:
           & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
           $vcpkgExe = "$env:RUNNER_TEMP\vcpkg\vcpkg.exe"
           
-          # Install HDF5 with C++ support and Boost
-          & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows
+          # Install HDF5 with C++ support, Boost, and pybind11
+          & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows
           
           if ($LASTEXITCODE -ne 0) { throw "vcpkg install failed" }
           
           Add-Content -Path $env:GITHUB_ENV -Value "HDF5_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
           Add-Content -Path $env:GITHUB_ENV -Value "BOOST_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
           Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_TOOLCHAIN_FILE=$env:RUNNER_TEMP\vcpkg\scripts\buildsystems\vcpkg.cmake"
-      
+    
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
         if: runner.os != 'Windows'
@@ -82,9 +82,10 @@ jobs:
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
             -DVCPKG_TARGET_TRIPLET="x64-windows" `
-            -DCMAKE_PREFIX_PATH="$instPrefix" `
+            -DCMAKE_PREFIX_PATH="$instPrefix;$instPrefix/share/pybind11/cmake" `
             -DHDF5_ROOT="$instPrefix" `
-            -DBOOST_ROOT="$instPrefix"
+            -DBOOST_ROOT="$instPrefix" `
+            -Dpybind11_DIR="$instPrefix/share/pybind11/cmake"
           
           if ($LASTEXITCODE -ne 0) { throw "CMake configuration failed" }
 
