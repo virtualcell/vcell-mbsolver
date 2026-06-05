@@ -47,30 +47,22 @@ jobs:
 
       - name: Install HDF5 and Boost (Windows pre-built binaries)
         if: runner.os == 'Windows'
-        run: |
-          # HDF5 pre-built
-          $hdf5_url = "https://github.com/HDFGroup/hdf5/releases/download/2.1.1/hdf5-2.1.1-win-vs2022_intel.zip"
-          $hdf5_zip = "${{ runner.temp }}\HDF5-2.1.1-win64.zip"
-          $hdf5_root = "${{ runner.temp }}\hdf5"
-          
-          Write-Host "Downloading HDF5..."
-          Invoke-WebRequest -Uri $hdf5_url -OutFile $hdf5_zip -MaximumRetryCount 3
-          Expand-Archive -Path $hdf5_zip -DestinationPath $hdf5_root -Force
-          
-          # Boost headers only (minimal)
-          $boost_url = "https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.gz"
-          $boost_tar = "${{ runner.temp }}\boost.tar.gz"
-          $boost_root = "${{ runner.temp }}\boost"
-          
-          Write-Host "Downloading Boost headers..."
-          Invoke-WebRequest -Uri $boost_url -OutFile $boost_tar -MaximumRetryCount 3
-          tar -xzf $boost_tar -C "${{ runner.temp }}"
-          Rename-Item -Path "${{ runner.temp }}\boost-1.84.0" -NewName "boost"
-          
-          # Set environment variables using the proper method
-          Add-Content $env:GITHUB_ENV "HDF5_ROOT=$hdf5_root"
-          Add-Content $env:GITHUB_ENV "BOOST_ROOT=$boost_root"
         shell: pwsh
+        run: |
+          choco install -y 7zip
+          Write-Host "Cloning vcpkg into $env:RUNNER_TEMP\vcpkg"
+          git clone https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP\vcpkg"
+          & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
+          $vcpkgExe = "$env:RUNNER_TEMP\vcpkg\vcpkg.exe"
+          
+          # Install HDF5 with C++ support and Boost
+          & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows
+          
+          if ($LASTEXITCODE -ne 0) { throw "vcpkg install failed" }
+          
+          Add-Content -Path $env:GITHUB_ENV -Value "HDF5_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
+          Add-Content -Path $env:GITHUB_ENV -Value "BOOST_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
+          Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_TOOLCHAIN_FILE=$env:RUNNER_TEMP\vcpkg\scripts\buildsystems\vcpkg.cmake"
       
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
@@ -80,12 +72,30 @@ jobs:
 
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
-        run: |
-          cmake -S . -B build `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DHDF5_ROOT="${{ env.HDF5_ROOT }}" `
-            -DBOOST_ROOT="${{ env.BOOST_ROOT }}"
         shell: pwsh
+        run: |
+          $vcpkgRoot = $env:RUNNER_TEMP + "\vcpkg"
+          $instPrefix = "$vcpkgRoot\installed\x64-windows" -replace '\\','/'
+          $vcpkgToolchain = "$vcpkgRoot\scripts\buildsystems\vcpkg.cmake" -replace '\\','/'
+          
+          & cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
+            -DVCPKG_TARGET_TRIPLET="x64-windows" `
+            -DCMAKE_PREFIX_PATH="$instPrefix" `
+            -DHDF5_ROOT="$instPrefix" `
+            -DBOOST_ROOT="$instPrefix"
+          
+          if ($LASTEXITCODE -ne 0) { throw "CMake configuration failed" }
+      
+            - name: Configure CMake (Windows)
+              if: runner.os == 'Windows'
+              run: |
+                cmake -S . -B build `
+                  -DCMAKE_BUILD_TYPE=Release `
+                  -DHDF5_ROOT="${{ env.HDF5_ROOT }}" `
+                  -DBOOST_ROOT="${{ env.BOOST_ROOT }}"
+              shell: pwsh
   
       # Build
       - name: Build (Ubuntu/macOS)
