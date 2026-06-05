@@ -9,9 +9,9 @@ namespace matlabBridge {
 	inline std::ostream & writeDateTime(std::ostream & in) {
 		time_t t = time(0);
 		struct tm  now;
-#if defined(MSVC)
+#if defined(_MSC_VER)
 		localtime_s(&now,&t);
-#elif defined(MINGW)
+#elif defined(__MINGW32__) || defined(__MINGW64__)
 		struct tm* now0 = localtime(&t);
 		now = *now0;
 #else
