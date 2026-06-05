@@ -87,16 +87,7 @@ jobs:
             -DBOOST_ROOT="$instPrefix"
           
           if ($LASTEXITCODE -ne 0) { throw "CMake configuration failed" }
-      
-            - name: Configure CMake (Windows)
-              if: runner.os == 'Windows'
-              run: |
-                cmake -S . -B build `
-                  -DCMAKE_BUILD_TYPE=Release `
-                  -DHDF5_ROOT="${{ env.HDF5_ROOT }}" `
-                  -DBOOST_ROOT="${{ env.BOOST_ROOT }}"
-              shell: pwsh
-  
+
       # Build
       - name: Build (Ubuntu/macOS)
         if: runner.os != 'Windows'
