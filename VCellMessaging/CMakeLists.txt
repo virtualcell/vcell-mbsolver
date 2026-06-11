@@ -15,6 +15,7 @@ set(SRC_FILES
 include_directories(include)
 
 add_library(vcellmessaging ${SRC_FILES} ${HEADER_FILES})
+target_link_libraries(vcellmessaging PUBLIC Threads::Threads)
 
 target_include_directories(vcellmessaging INTERFACE 
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
