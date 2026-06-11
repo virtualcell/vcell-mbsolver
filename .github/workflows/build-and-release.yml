@@ -55,7 +55,7 @@ jobs:
           & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
           $vcpkgExe = "$env:RUNNER_TEMP\vcpkg\vcpkg.exe"
           
-          # Install HDF5 with C++ support, Boost, and pybind11
+          # Install HDF5 with C++ support, Boost, pthreads, and pybind11
           & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows
           
           if ($LASTEXITCODE -ne 0) { throw "vcpkg install failed" }
@@ -63,7 +63,7 @@ jobs:
           Add-Content -Path $env:GITHUB_ENV -Value "HDF5_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
           Add-Content -Path $env:GITHUB_ENV -Value "BOOST_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
           Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_TOOLCHAIN_FILE=$env:RUNNER_TEMP\vcpkg\scripts\buildsystems\vcpkg.cmake"
-    
+
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
         if: runner.os != 'Windows'
