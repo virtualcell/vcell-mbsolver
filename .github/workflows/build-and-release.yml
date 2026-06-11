@@ -86,7 +86,9 @@ jobs:
             -DHDF5_ROOT="$instPrefix" `
             -DBOOST_ROOT="$instPrefix" `
             -Dpybind11_DIR="$instPrefix/share/pybind11/cmake" `
-            -DCMAKE_CXX_FLAGS="/D_CRT_SECURE_NO_WARNINGS"
+            -DCMAKE_CXX_FLAGS="/D_CRT_SECURE_NO_WARNINGS /EHsc" `
+            -DTHREADS_PTHREAD_ARG="" `
+            -DTHREADS_PREFER_PTHREAD_FLAG=ON
           
           if ($LASTEXITCODE -ne 0) { throw "CMake configuration failed" }
 
