@@ -56,7 +56,7 @@ jobs:
           $vcpkgExe = "$env:RUNNER_TEMP\vcpkg\vcpkg.exe"
           
           # Install HDF5 with C++ support, Boost, and pybind11
-          & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows
+          & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows
           
           if ($LASTEXITCODE -ne 0) { throw "vcpkg install failed" }
           
