@@ -23,20 +23,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
 
       # Ubuntu dependencies
       - name: Install Ubuntu dependencies
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake libhdf5-dev python3-dev python3-pip pybind11-dev libboost-dev
+          sudo apt-get install -y cmake libhdf5-dev python3-dev python3-pip pybind11-dev libboost-dev libcurl4-openssl-dev
           pip3 install pybind11
 
       # macOS dependencies
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: |
-          brew install cmake hdf5 python pybind11 boost
+          brew install cmake hdf5 python pybind11 boost curl
 
       # Windows dependencies
       - name: Install Windows dependencies
@@ -55,20 +57,21 @@ jobs:
           & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
           $vcpkgExe = "$env:RUNNER_TEMP\vcpkg\vcpkg.exe"
           
-          # Install HDF5 with C++ support, Boost, pthreads, and pybind11
-          & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows
+          # Install HDF5 with C++ support, Boost, pthreads, pybind11, and curl
+          & $vcpkgExe install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows
           
           if ($LASTEXITCODE -ne 0) { throw "vcpkg install failed" }
           
           Add-Content -Path $env:GITHUB_ENV -Value "HDF5_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
           Add-Content -Path $env:GITHUB_ENV -Value "BOOST_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
           Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_TOOLCHAIN_FILE=$env:RUNNER_TEMP\vcpkg\scripts\buildsystems\vcpkg.cmake"
+          Add-Content -Path $env:GITHUB_ENV -Value "CURL_ROOT=$env:RUNNER_TEMP\vcpkg\installed\x64-windows"
 
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
         if: runner.os != 'Windows'
         run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
 
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
@@ -80,11 +83,13 @@ jobs:
           
           & cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
             -DCMAKE_BUILD_TYPE=Release `
+            -DOPTION_TARGET_MESSAGING=ON `
             -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
             -DVCPKG_TARGET_TRIPLET="x64-windows" `
             -DCMAKE_PREFIX_PATH="$instPrefix;$instPrefix/share/pybind11/cmake" `
             -DHDF5_ROOT="$instPrefix" `
             -DBOOST_ROOT="$instPrefix" `
+            -DCURL_ROOT="$instPrefix" `
             -Dpybind11_DIR="$instPrefix/share/pybind11/cmake" `
             -DCMAKE_CXX_FLAGS="/D_CRT_SECURE_NO_WARNINGS /EHsc" `
             -DTHREADS_PTHREAD_ARG="" `
