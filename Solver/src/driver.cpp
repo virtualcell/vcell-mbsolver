@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vcellxml.h>
 #include <vhdf5/file.h>
+#include <sstream>
 #include <Logger.h>
 #include <StateClient.h>
 #include <MBridge/MatlabDebug.h>
@@ -134,12 +135,12 @@ int main(int argc, char *argv[])
 		configPresent = config.isSet( );
 		if (!configPresent && !restore.isSet( ) )
 		{
-			stringstream ss;
+			std::stringstream ss;
 			ss << "error, either -" << config.getName( ) << " or -" << restore.getName( ) << " must be set " << std::endl;
 			executeStatus = ExecuteStatus(4, ss.str());
 		}
 	} catch(tclap::ArgException  &ae) {
-		stringstream ss;
+		std::stringstream ss;
 		ss << "error " << ae.error( ) << " arg " << ae.argId( ) << std::endl;
 		executeStatus = ExecuteStatus(3, ss.str());
 	} catch (tclap::ExitException &ee) {
@@ -164,7 +165,7 @@ int main(int argc, char *argv[])
 			{
 				doc.LoadFile(filename.c_str( ));
 				if (doc.ErrorID( ) != tinyxml2::XML_SUCCESS) {
-					stringstream ss;
+					std::stringstream ss;
 					ss <<  "Error " << doc.ErrorID( ) << " loading " << filename << std::endl;
 					executeStatus = ExecuteStatus(2, ss.str());
 				}
@@ -174,7 +175,7 @@ int main(int argc, char *argv[])
 					const tinyxml2::XMLElement & root = *doc.RootElement( );
 					if (!strcmp(root.Name( ),XML_ROOT_NAME) == 0)
 					{
-						stringstream ss;
+						std::stringstream ss;
 						ss <<  "Invalid XML root identifier " << root.Name( ) << ", " << XML_ROOT_NAME << " expected" << std::endl;
 						executeStatus = ExecuteStatus(3, ss.str());
 					}
@@ -203,7 +204,7 @@ int main(int argc, char *argv[])
 				}
 				catch (std::exception & e)
 				{
-					stringstream ss;
+					std::stringstream ss;
 					ss << argv[0] << " caught exception " << e.what( ) << " reading " << restorename << std::endl;
 					executeStatus = ExecuteStatus(6, ss.str());
 				}
@@ -215,17 +216,17 @@ int main(int argc, char *argv[])
 			}
 		}
 		catch (std::exception & e) {
-			stringstream ss;
+			std::stringstream ss;
 			ss << argv[0] << " caught exception " << e.what( ) << " reading " << filename;
 			executeStatus = ExecuteStatus(4, ss.str());
 		}
 		catch (H5::Exception & e) {
-			stringstream ss;
+			std::stringstream ss;
 			ss << argv[0] << " caught H5 exception" << e.getCDetailMsg( ) << " reading " << filename;
 			executeStatus = ExecuteStatus(7, ss.str());
 		}
 		catch (...) {
-			stringstream ss;
+			std::stringstream ss;
 			ss << argv[0] << " caught unknown exception reading " << filename;
 			executeStatus = ExecuteStatus(5, ss.str());
 		}

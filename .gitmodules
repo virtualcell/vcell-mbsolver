@@ -1,3 +1,3 @@
-[submodule "VCellMessaging"]
-	path = VCellMessaging
+[submodule "vcell-messaging"]
+	path = vcell-messaging
 	url = https://github.com/virtualcell/vcell-messaging.git

@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <cassert>
+#include <stdexcept>
 #include <VolumeSubdomain.h>
 #include <PointSubdomain.h>
 #include <VolumeVariable.h>
@@ -64,6 +65,7 @@ namespace moving_boundary {
 			if (entry != nullptr) {
 				return entry->getIndex( );
 			}
+			throw std::domain_error("invalid symbol name " + name);
 		}
 
 		/**

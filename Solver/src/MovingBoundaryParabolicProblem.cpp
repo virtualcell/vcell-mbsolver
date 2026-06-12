@@ -481,7 +481,7 @@ namespace moving_boundary {
             {
                 for (int offset_j = -layer; offset_j <= layer; ++ offset_j)
                 {
-                    if (max(abs(offset_i), abs(offset_j)) < layer)
+                    if (std::max(std::abs(offset_i), std::abs(offset_j)) < layer)
                     {
                         continue;
                     }

@@ -50,6 +50,11 @@ elseif(UNIX)
     endif()
 endif()
 
+# CURL (required if messaging is enabled)
+if(OPTION_TARGET_MESSAGING)
+    find_package(CURL REQUIRED)
+endif()
+
 # Required packages
 find_package(Threads REQUIRED)
 
@@ -80,8 +85,8 @@ add_subdirectory(ExpressionParser)
 # vcommons (bundled in vcommons/)
 add_subdirectory(vcommons)
 
-# VCellMessaging (bundled in VCellMessaging/)
-add_subdirectory(VCellMessaging)
+# vcell-messaging (bundled in vcell-messaging/)
+add_subdirectory(vcell-messaging)
 
 # SQLite: prefer system, fall back to bundled copy in sqlite/
 find_file(SYSTEM_SQLITE3_H sqlite3.h)
