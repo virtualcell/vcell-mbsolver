@@ -26,13 +26,9 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure SSH for submodule
+      - name: Configure git for private submodule
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.VCELL_MESSAGING_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config --global url."git@github.com:".insteadOf "https://github.com/"
+          git config --global url."https://x-access-token:${{ secrets.SUBMODULE_TOKEN }}@github.com/".insteadOf "https://github.com/"
         shell: bash
 
       - name: Initialize submodules
@@ -58,16 +54,6 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           pip install pybind11 pytest
-        shell: pwsh
-
-      - name: Configure SSH for submodule (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          $sshDir = "$env:USERPROFILE\.ssh"
-          if (!(Test-Path $sshDir)) { mkdir $sshDir }
-          "${{ secrets.VCELL_MESSAGING_DEPLOY_KEY }}" | Out-File -FilePath "$sshDir\id_ed25519" -Encoding ASCII
-          & ssh-keyscan github.com | Out-File -FilePath "$sshDir\known_hosts" -Encoding ASCII -Append
-          git config --global url."git@github.com:".insteadOf "https://github.com/"
         shell: pwsh
 
       - name: Install HDF5 and Boost (Windows pre-built binaries)
