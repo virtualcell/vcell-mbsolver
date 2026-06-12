@@ -25,7 +25,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: 'recursive'
-
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.VCELL_MESSAGING_DEPLOY_KEY }}
+          ssh-known-hosts: github.com
+          
       # Ubuntu dependencies
       - name: Install Ubuntu dependencies
         if: runner.os == 'Linux'
