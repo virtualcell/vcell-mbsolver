@@ -87,35 +87,32 @@ jobs:
         shell: pwsh
         run: |
           $vcpkgRoot = $env:RUNNER_TEMP + "\vcpkg"
-          $instPrefix = "$vcpkgRoot\installed\x64-windows" -replace '\\','/'
-          $vcpkgToolchain = "$vcpkgRoot\scripts\buildsystems\vcpkg.cmake" -replace '\\','/'
-          
-      - name: Configure CMake (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = $env:RUNNER_TEMP + "\vcpkg"
           $instPrefix = "$vcpkgRoot\installed\x64-windows"
           $vcpkgToolchain = "$vcpkgRoot\scripts\buildsystems\vcpkg.cmake"
           
-          cmake -S . -B build `
-            -G "Visual Studio 17 2022" `
-            -A x64 `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DOPTION_TARGET_MESSAGING=ON `
-            -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
-            -DVCPKG_TARGET_TRIPLET=x64-windows `
-            -DCMAKE_PREFIX_PATH="$instPrefix;$instPrefix/share/pybind11/cmake" `
-            -DHDF5_ROOT="$instPrefix" `
-            -DBOOST_ROOT="$instPrefix" `
-            -DCURL_ROOT="$instPrefix" `
-            -Dpybind11_DIR="$instPrefix/share/pybind11/cmake" `
-            -DCMAKE_CXX_FLAGS="/D_CRT_SECURE_NO_WARNINGS /EHsc" `
-            -DTHREADS_PTHREAD_ARG="" `
-            -DTHREADS_PREFER_PTHREAD_FLAG=ON
+          $cmakeArgs = @(
+            "-S", ".",
+            "-B", "build",
+            "-G", "Visual Studio 17 2022",
+            "-A", "x64",
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DOPTION_TARGET_MESSAGING=ON",
+            "-DCMAKE_TOOLCHAIN_FILE=$vcpkgToolchain",
+            "-DVCPKG_TARGET_TRIPLET=x64-windows",
+            "-DCMAKE_PREFIX_PATH=$instPrefix;$instPrefix/share/pybind11/cmake",
+            "-DHDF5_ROOT=$instPrefix",
+            "-DBOOST_ROOT=$instPrefix",
+            "-DCURL_ROOT=$instPrefix",
+            "-Dpybind11_DIR=$instPrefix/share/pybind11/cmake",
+            '-DCMAKE_CXX_FLAGS=/D_CRT_SECURE_NO_WARNINGS /EHsc',
+            "-DTHREADS_PTHREAD_ARG=",
+            "-DTHREADS_PREFER_PTHREAD_FLAG=ON"
+          )
+          
+          & cmake @cmakeArgs
           
           if ($LASTEXITCODE -ne 0) { throw "CMake configuration failed" }
-
+          
       # Build
       - name: Build (Ubuntu/macOS)
         if: runner.os != 'Windows'
