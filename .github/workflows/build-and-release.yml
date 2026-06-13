@@ -90,11 +90,21 @@ jobs:
           $instPrefix = "$vcpkgRoot\installed\x64-windows" -replace '\\','/'
           $vcpkgToolchain = "$vcpkgRoot\scripts\buildsystems\vcpkg.cmake" -replace '\\','/'
           
-          & cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $vcpkgRoot = $env:RUNNER_TEMP + "\vcpkg"
+          $instPrefix = "$vcpkgRoot\installed\x64-windows"
+          $vcpkgToolchain = "$vcpkgRoot\scripts\buildsystems\vcpkg.cmake"
+          
+          cmake -S . -B build `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
             -DCMAKE_BUILD_TYPE=Release `
             -DOPTION_TARGET_MESSAGING=ON `
             -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
-            -DVCPKG_TARGET_TRIPLET="x64-windows" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows `
             -DCMAKE_PREFIX_PATH="$instPrefix;$instPrefix/share/pybind11/cmake" `
             -DHDF5_ROOT="$instPrefix" `
             -DBOOST_ROOT="$instPrefix" `
