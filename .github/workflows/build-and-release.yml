@@ -49,48 +49,24 @@ jobs:
         run: |
           brew install cmake hdf5 python pybind11 boost curl
 
-      # Windows dependencies - simplified approach
-      - name: Install Windows dependencies with vcpkg
+      # Windows dependencies
+      - name: Setup vcpkg and Ninja (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # Install minimal tools
           pip install pybind11 pytest
-          
-          # Setup vcpkg with binary cache to speed up builds
-          Write-Host "Setting up vcpkg..."
+          choco install -y ninja
           git clone --depth 1 https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP\vcpkg"
           & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
-          
-          # Set environment variables for the rest of the workflow
-          $vcpkgRoot = "$env:RUNNER_TEMP\vcpkg"
-          $instPrefix = "$vcpkgRoot\installed\x64-windows"
-          
-          Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_ROOT=$vcpkgRoot"
-          Add-Content -Path $env:GITHUB_ENV -Value "INSTALLED_PREFIX=$instPrefix"
-          Add-Content -Path $env:GITHUB_ENV -Value "CMAKE_TOOLCHAIN_FILE=$vcpkgRoot\scripts\buildsystems\vcpkg.cmake"
+          Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_TOOLCHAIN=$env:RUNNER_TEMP\vcpkg\scripts\buildsystems\vcpkg.cmake"
 
-      - name: Install dependencies via vcpkg (Windows)
+      - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
-          
-          # Use --triplet flag and avoid building everything from scratch
-          Write-Host "Installing HDF5, Boost (header-only), and CURL..."
-          & $vcpkg install `
-            hdf5[core,cpp]:x64-windows `
-            boost:x64-windows `
-            pybind11:x64-windows `
-            pthread:x64-windows `
-            curl:x64-windows `
-            --triplet x64-windows `
-            --clean-after-build
-          
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "vcpkg install failed"
-            exit 1
-          }
+          $vcpkg = "$env:RUNNER_TEMP\vcpkg\vcpkg.exe"
+          & $vcpkg install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows --clean-after-build
+          if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Configure CMake
       - name: Configure CMake (Ubuntu/macOS)
@@ -102,29 +78,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          Write-Host "Configuring CMake for Windows..."
-          $toolchain = $env:CMAKE_TOOLCHAIN_FILE
-          
-          if (-not (Test-Path $toolchain)) {
-            Write-Error "Toolchain file not found: $toolchain"
-            exit 1
-          }
-          
-          Write-Host "Using toolchain: $toolchain"
-          Write-Host "Using installed prefix: $env:INSTALLED_PREFIX"
-          
-          cmake -S . -B build `
-            -G "Visual Studio 17 2022" `
-            -A x64 `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DOPTION_TARGET_MESSAGING=ON `
-            -DCMAKE_TOOLCHAIN_FILE="$toolchain" `
-            -DVCPKG_TARGET_TRIPLET=x64-windows
-          
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "CMake configuration failed"
-            exit 1
-          }
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_TOOLCHAIN"
+          if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Build
       - name: Build (Ubuntu/macOS)
@@ -133,13 +88,8 @@ jobs:
 
       - name: Build (Windows)
         if: runner.os == 'Windows'
+        run: cmake --build build --parallel
         shell: pwsh
-        run: |
-          cmake --build build --config Release --parallel
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "Build failed"
-            exit 1
-          }
 
       # Run tests
       - name: Install test dependencies
@@ -158,10 +108,7 @@ jobs:
         run: |
           cd build
           ctest --output-on-failure --parallel $env:NUMBER_OF_PROCESSORS
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "Tests failed"
-            exit 1
-          }
+          if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Prepare artifacts
       - name: Prepare artifacts (Ubuntu/macOS)
@@ -177,9 +124,9 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path artifacts -Force | Out-Null
-          Copy-Item -Path build\bin\Release\MovingBoundarySolver.exe -Destination artifacts\MovingBoundarySolver-${{ matrix.artifact_prefix }}.exe -Force
-          Copy-Item -Path build\bin\Release\MovingBoundaryLib.lib -Destination artifacts\MovingBoundaryLib-${{ matrix.artifact_prefix }}.lib -Force
-          Get-ChildItem -Path build\bin\Release\vcellmbsolver_py*.pyd -ErrorAction SilentlyContinue | ForEach-Object {
+          Copy-Item -Path build\bin\MovingBoundarySolver.exe -Destination artifacts\MovingBoundarySolver-${{ matrix.artifact_prefix }}.exe -Force
+          Copy-Item -Path build\bin\MovingBoundaryLib.lib -Destination artifacts\MovingBoundaryLib-${{ matrix.artifact_prefix }}.lib -Force
+          Get-ChildItem -Path build\bin\vcellmbsolver_py*.pyd -ErrorAction SilentlyContinue | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination artifacts\ -Force
           }
 
