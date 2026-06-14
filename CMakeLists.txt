@@ -80,12 +80,12 @@ find_package(pybind11 CONFIG REQUIRED)
 add_subdirectory(FronTierLib)
 
 # ExpressionParser (bundled in ExpressionParser/)
-add_subdirectory(ExpressionParser)
+add_subdirectory(vcell-expressionparser)
 
 # vcommons (bundled in vcommons/)
 add_subdirectory(vcommons)
 
-# vcell-messaging (bundled in vcell-messaging/)
+# vcell-messaging (bundled in VCell-Messaging) /)
 add_subdirectory(vcell-messaging)
 
 # SQLite: prefer system, fall back to bundled copy in sqlite/
@@ -127,7 +127,7 @@ target_link_libraries(MovingBoundaryLib
         ${HDF5_LIBRARIES}
         ${HDF5_HL_LIBRARIES}
         frontier
-        ExpressionParser
+        vcellexpressionparser
         vcommons
         vcellmessaging
         Threads::Threads
