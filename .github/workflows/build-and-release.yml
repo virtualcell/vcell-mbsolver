@@ -67,13 +67,14 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      # FIXED: Added the --classic flag to bypass the manifest requirement
+      # FIXED: Added $env:VCPKG_FEATURE_FLAGS = "-manifests" to explicitly disable manifest requirements
       - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          $env:VCPKG_FEATURE_FLAGS = "-manifests"
           $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
-          & $vcpkg install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows --classic --clean-after-build
+          & $vcpkg install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows --clean-after-build
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Configure CMake
