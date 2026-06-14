@@ -67,14 +67,27 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      # FIXED: Added $env:VCPKG_FEATURE_FLAGS = "-manifests" to explicitly disable manifest requirements
+      # FIXED: Generate a temporary manifest file dynamically so vcpkg installs in manifest mode natively
       - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $env:VCPKG_FEATURE_FLAGS = "-manifests"
+          $manifest = @{
+              name = "vcell-mbsolver-deps"
+              version = "0.1.0"
+              dependencies = @(
+                  @{ name = "hdf5"; features = @("core", "cpp") },
+                  "boost",
+                  "pybind11",
+                  "pthread",
+                  "curl"
+              )
+          } | ConvertTo-Json -Depth 5
+          
+          Set-Content -Path "vcpkg.json" -Value $manifest
+          
           $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
-          & $vcpkg install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows --clean-after-build
+          & $vcpkg install --triplet x64-windows --clean-after-build
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Configure CMake
