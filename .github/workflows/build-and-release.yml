@@ -67,7 +67,7 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      # FIXED: Generate a temporary manifest file dynamically so vcpkg installs in manifest mode natively
+      # FIXED: Removed "core" from features list so it matches vcpkg JSON syntax expectations
       - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -76,7 +76,7 @@ jobs:
               name = "vcell-mbsolver-deps"
               version = "0.1.0"
               dependencies = @(
-                  @{ name = "hdf5"; features = @("core", "cpp") },
+                  @{ name = "hdf5"; features = @("cpp") },
                   "boost",
                   "pybind11",
                   "pthread",
