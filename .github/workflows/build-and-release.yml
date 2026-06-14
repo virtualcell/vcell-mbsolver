@@ -63,17 +63,17 @@ jobs:
           $pyExe = & python -c "import sys; print(sys.executable)"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON_EXE=$pyExe"
 
-      # FIX: Force the runner to expose Visual Studio's developer paths to CMake
       - name: Set up MSVC Developer Command Prompt
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
+      # FIXED: Added the --classic flag to bypass the manifest requirement
       - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
-          & $vcpkg install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows --clean-after-build
+          & $vcpkg install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows --classic --clean-after-build
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Configure CMake
