@@ -50,21 +50,25 @@ jobs:
           brew install cmake hdf5 python pybind11 boost curl
 
       # Windows dependencies
-      - name: Setup vcpkg and Ninja (Windows)
+      - name: Setup vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           pip install pybind11 pytest
-          choco install -y ninja
           git clone --depth 1 https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP\vcpkg"
           & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
-          Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_TOOLCHAIN=$env:RUNNER_TEMP\vcpkg\scripts\buildsystems\vcpkg.cmake"
+          Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_ROOT=$env:RUNNER_TEMP\vcpkg"
+          
+          # Export Python Executable Path for CMake
+          $pyExe = & python -c "import sys; print(sys.executable)"
+          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON_EXE=$pyExe"
 
+      # FIXED: Added [core,cpp] to hdf5 so the C++ headers your library relies on are compiled
       - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $vcpkg = "$env:RUNNER_TEMP\vcpkg\vcpkg.exe"
+          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
           & $vcpkg install hdf5[core,cpp]:x64-windows boost:x64-windows pybind11:x64-windows pthread:x64-windows curl:x64-windows --clean-after-build
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
@@ -74,11 +78,30 @@ jobs:
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
 
+      # FIXED: Changed generator to Visual Studio 17 2022 and passed explicit Python inclusion paths
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=OFF -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_TOOLCHAIN"
+          $vcpkgRoot = $env:VCPKG_ROOT
+          $instPrefix = "$vcpkgRoot/installed/x64-windows" -replace '\\','/'
+          $vcpkgToolchain = "$vcpkgRoot/scripts/buildsystems/vcpkg.cmake" -replace '\\','/'
+          
+          $pyRoot = $env:pythonLocation -replace '\\','/'
+          $pyInclude = "$pyRoot/include"
+          $pyLib = "$pyRoot/libs/python310.lib"
+
+          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DOPTION_TARGET_MESSAGING=OFF `
+            -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
+            -DVCPKG_TARGET_TRIPLET="x64-windows" `
+            -DCMAKE_PREFIX_PATH="$instPrefix" `
+            -DHDF5_ROOT="$instPrefix" `
+            -DPYTHON_EXECUTABLE="$($env:PYTHON_EXE -replace '\\','/')" `
+            -DPYTHON_INCLUDE_DIR="$pyInclude" `
+            -DPYTHON_LIBRARY="$pyLib"
+
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Build
@@ -88,7 +111,7 @@ jobs:
 
       - name: Build (Windows)
         if: runner.os == 'Windows'
-        run: cmake --build build --parallel
+        run: cmake --build build --config Release --parallel
         shell: pwsh
 
       # Run tests
@@ -107,7 +130,7 @@ jobs:
         shell: pwsh
         run: |
           cd build
-          ctest --output-on-failure --parallel $env:NUMBER_OF_PROCESSORS
+          ctest --output-on-failure -C Release --parallel $env:NUMBER_OF_PROCESSORS
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Prepare artifacts
@@ -119,14 +142,15 @@ jobs:
           cp build/bin/libMovingBoundaryLib.a artifacts/libMovingBoundaryLib-${{ matrix.artifact_prefix }}.a
           cp build/bin/vcellmbsolver_py*.so artifacts/ 2>/dev/null || true
 
+      # FIXED: Updated build artifact paths to look into build/bin/Release due to multi-config MSVC generator
       - name: Prepare artifacts (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Path artifacts -Force | Out-Null
-          Copy-Item -Path build\bin\MovingBoundarySolver.exe -Destination artifacts\MovingBoundarySolver-${{ matrix.artifact_prefix }}.exe -Force
-          Copy-Item -Path build\bin\MovingBoundaryLib.lib -Destination artifacts\MovingBoundaryLib-${{ matrix.artifact_prefix }}.lib -Force
-          Get-ChildItem -Path build\bin\vcellmbsolver_py*.pyd -ErrorAction SilentlyContinue | ForEach-Object {
+          Copy-Item -Path build\bin\Release\MovingBoundarySolver.exe -Destination artifacts\MovingBoundarySolver-${{ matrix.artifact_prefix }}.exe -Force
+          Copy-Item -Path build\bin\Release\MovingBoundaryLib.lib -Destination artifacts\MovingBoundaryLib-${{ matrix.artifact_prefix }}.lib -Force
+          Get-ChildItem -Path build\bin\Release\vcellmbsolver_py*.pyd -ErrorAction SilentlyContinue | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination artifacts\ -Force
           }
 
