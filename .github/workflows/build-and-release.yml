@@ -49,7 +49,7 @@ jobs:
         run: |
           brew install cmake hdf5 python pybind11 boost curl
 
-      # Windows dependencies
+      # Windows dependencies (Matches vcell-stochastic setup)
       - name: Setup vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -63,7 +63,7 @@ jobs:
           $pyExe = & python -c "import sys; print(sys.executable)"
           Add-Content -Path $env:GITHUB_ENV -Value "PYTHON_EXE=$pyExe"
 
-      # FIXED: Added [core,cpp] to hdf5 so the C++ headers your library relies on are compiled
+      # Fixed HDF5 features to match vcell-stochastic requirements
       - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -78,7 +78,7 @@ jobs:
         run: |
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
 
-      # FIXED: Changed generator to Visual Studio 17 2022 and passed explicit Python inclusion paths
+      # EXACT MATCH: Replicates the vcell-stochastic configuration arguments for MSVC
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -109,6 +109,7 @@ jobs:
         if: runner.os != 'Windows'
         run: cmake --build build --parallel
 
+      # EXACT MATCH: Uses MSVC multi-config syntax (--config Release)
       - name: Build (Windows)
         if: runner.os == 'Windows'
         run: cmake --build build --config Release --parallel
@@ -125,6 +126,7 @@ jobs:
           cd build
           ctest --output-on-failure -j$(nproc)
 
+      # EXACT MATCH: Points ctest to the Release configuration built by MSVC
       - name: Run tests (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -142,7 +144,7 @@ jobs:
           cp build/bin/libMovingBoundaryLib.a artifacts/libMovingBoundaryLib-${{ matrix.artifact_prefix }}.a
           cp build/bin/vcellmbsolver_py*.so artifacts/ 2>/dev/null || true
 
-      # FIXED: Updated build artifact paths to look into build/bin/Release due to multi-config MSVC generator
+      # EXACT MATCH: Collects targets out of build/bin/Release/ where MSVC generates them
       - name: Prepare artifacts (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
