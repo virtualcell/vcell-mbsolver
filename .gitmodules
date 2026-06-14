@@ -3,4 +3,4 @@
 	url = https://github.com/virtualcell/vcell-messaging.git
 [submodule "vcell-expressionparser"]
     path = vcell-expressionparser
-    url = https://github.com/virtualcell/vcell-experssionparser.git
+    url = https://github.com/virtualcell/vcell-expressionparser.git
