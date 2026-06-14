@@ -67,20 +67,15 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
 
-      # FIXED: Dynamic baseline lookup to satisfy modern vcpkg requirements
+      # FIXED: Hardcoded the explicit vcpkg commit baseline provided by the runner
       - name: Install dependencies with vcpkg (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # Get the current commit hash of the cloned vcpkg repo to use as the baseline
-          Push-Location $env:VCPKG_ROOT
-          $vcpkgCommit = git rev-parse HEAD
-          Pop-Location
-          
           $manifest = @{
               name = "vcell-mbsolver-deps"
               version = "0.1.0"
-              "builtin-baseline" = $vcpkgCommit
+              "builtin-baseline" = "d59510da59a2ee8b943509998b63da7b472d93cf"
               dependencies = @(
                   @{ name = "hdf5"; features = @("cpp") },
                   "boost",
