@@ -78,7 +78,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_TOOLCHAIN"
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=OFF -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_TOOLCHAIN"
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
       # Build
