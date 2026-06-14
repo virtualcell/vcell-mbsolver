@@ -3,5 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/build/_deps/googletest-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vcell-expressionparser" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/vcell-messaging" vcs="Git" />
   </component>
 </project>
