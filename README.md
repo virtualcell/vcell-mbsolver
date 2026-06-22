@@ -231,3 +231,61 @@ active Python's `site-packages` and importable directly:
 ```python
 import vcellmbsolver_py
 ```
+
+---
+
+## Python package & wheels
+
+The repository also ships a [PEP 517](https://peps.python.org/pep-0517/) build
+configuration (`pyproject.toml`, using the
+[`scikit-build-core`](https://scikit-build-core.readthedocs.io/) backend) that
+drives the same CMake build to produce an installable Python wheel. The wheel
+contains only the compiled extension (`vcellmbsolver_py`) and the pure-Python
+wrapper (`vcellmbsolver`) — not the C++ library, CLI binary, or headers.
+
+### Install from a downloaded wheel
+
+CI builds redistributable wheels for Linux, macOS, and Windows and uploads them
+as workflow artifacts (see the **Wheels** GitHub Actions workflow). Download the
+wheel for your platform/Python version and:
+
+```bash
+pip install vcellmbsolver-<version>-<tags>.whl
+python -c "import vcellmbsolver_py, vcellmbsolver; print('ok')"
+```
+
+The wheels are self-contained: the shared HDF5 libraries are vendored in by the
+wheel-repair step (`auditwheel` / `delocate` / `delvewheel`), so no system HDF5
+install is required to *use* a wheel.
+
+### Build a wheel locally
+
+Building from source still needs the native toolchain and dependencies from the
+[Prerequisites](#prerequisites) section (CMake, a C++14 compiler, HDF5, Boost):
+
+```bash
+pip install build
+python -m build --wheel          # writes dist/vcellmbsolver-*.whl
+pip install dist/vcellmbsolver-*.whl
+```
+
+`pip install .` works too. Wheel builds set `BUILD_TESTING=OFF` and
+`OPTION_TARGET_MESSAGING=OFF` automatically (see `[tool.scikit-build]` in
+`pyproject.toml`).
+
+### Publishing to PyPI
+
+The **Wheels** workflow has a `publish` job that uploads the built wheels and
+sdist to PyPI via [trusted publishing](https://docs.pypi.org/trusted-publishers/)
+(OIDC — no stored API token). It runs **only on `v*` tag pushes** and stays
+dormant until a one-time setup is done on PyPI:
+
+1. Register the project on PyPI (claim the `vcellmbsolver` name).
+2. Under the project's *Publishing* settings, add a **trusted publisher**:
+   - Owner: `virtualcell`, Repository: `vcell-mbsolver`
+   - Workflow: `wheels.yml`, Environment: `pypi`
+3. Create the `pypi` environment in the repo settings (optionally with
+   reviewers/branch protection).
+
+Once configured, pushing a `vX.Y.Z` tag builds all wheels and publishes them.
+Until then, normal pushes and PRs simply produce downloadable wheel artifacts.

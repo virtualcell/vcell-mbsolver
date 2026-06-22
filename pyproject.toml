@@ -1,0 +1,80 @@
+[build-system]
+requires = ["scikit-build-core>=0.8", "pybind11>=2.10"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "vcellmbsolver"
+description = "Python bindings for the VCell moving-boundary parabolic PDE solver"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dynamic = ["version"]
+classifiers = [
+    "Programming Language :: C++",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+]
+
+[project.urls]
+Homepage = "https://github.com/virtualcell/vcell-mbsolver"
+Repository = "https://github.com/virtualcell/vcell-mbsolver"
+
+# ---------------------------------------------------------------------------
+# scikit-build-core: drive the existing CMake build to produce the wheel.
+#
+# Only the `vcellmbsolver_py` extension and the pure-Python wrapper are placed
+# in the wheel (the "python" install component); the static C++ library, the
+# CLI binary, and the C++ headers are deliberately excluded. Tests and the
+# job-status messaging (CURL) are turned off for wheel builds.
+# ---------------------------------------------------------------------------
+[tool.scikit-build]
+cmake.version = ">=3.13"
+build.targets = ["vcellmbsolver_py"]
+install.components = ["python"]
+wheel.packages = []          # python files are installed by CMake, not auto-copied
+wheel.license-files = ["LICENSE"]
+sdist.include = ["CMakeLists.txt"]
+
+[tool.scikit-build.cmake.define]
+BUILD_TESTING = "OFF"
+OPTION_TARGET_MESSAGING = "OFF"
+
+# Keep the wheel version in lock-step with the CMake project() version.
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "CMakeLists.txt"
+regex = '''project\(VCellMovingBoundary VERSION (?P<value>[0-9]+\.[0-9]+\.[0-9]+)'''
+
+# ---------------------------------------------------------------------------
+# cibuildwheel: build redistributable, repaired wheels across platforms.
+# Native dependencies (HDF5, Boost) are installed per-platform in before-all.
+# Wheel repair (auditwheel/delocate/delvewheel) vendors the shared HDF5 libs
+# into the wheel so it is self-contained.
+# ---------------------------------------------------------------------------
+[tool.cibuildwheel]
+build = "cp38-* cp39-* cp310-* cp311-* cp312-*"
+skip = "*-musllinux_* *_i686 *-win32"
+build-frontend = "build"
+test-command = "python -c \"import vcellmbsolver_py, vcellmbsolver; print('import OK')\""
+
+[tool.cibuildwheel.linux]
+manylinux-x86_64-image = "manylinux_2_28"
+before-all = [
+    "dnf install -y epel-release",
+    "dnf install -y hdf5-devel boost-devel",
+]
+
+[tool.cibuildwheel.macos]
+before-all = "brew install hdf5 boost"
+environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }
+
+[tool.cibuildwheel.windows]
+# On Windows the HDF5/Boost dependencies come from vcpkg, which the wheels
+# workflow installs and points to via the CMAKE_ARGS / CMAKE_GENERATOR
+# environment variables (see .github/workflows/wheels.yml). delvewheel vendors
+# the resulting DLLs into the wheel.
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"

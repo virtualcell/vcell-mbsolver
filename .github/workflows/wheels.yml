@@ -1,0 +1,97 @@
+name: Wheels
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: wheels-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_wheels:
+    name: Wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-13, macos-14, windows-2022]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      # vcell-messaging / vcell-expressionparser may be private; authenticate
+      # the same way the release workflow does.
+      - name: Initialize submodules
+        shell: bash
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.SUBMODULE_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          git submodule update --init --recursive
+
+      # --- Windows: HDF5 + Boost via vcpkg, and point CMake at them. ---
+      - name: Set up vcpkg dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          git clone --depth 1 https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP\vcpkg"
+          & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
+          & "$env:RUNNER_TEMP\vcpkg\vcpkg.exe" install --triplet x64-windows hdf5[cpp] boost
+          $inst = "$env:RUNNER_TEMP/vcpkg/installed/x64-windows" -replace '\\','/'
+          $tc   = "$env:RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" -replace '\\','/'
+          # cibuildwheel reads these env vars; scikit-build-core honors CMAKE_ARGS / CMAKE_GENERATOR.
+          "CIBW_ENVIRONMENT_WINDOWS=CMAKE_GENERATOR=`"Visual Studio 17 2022`" CMAKE_GENERATOR_PLATFORM=x64 CMAKE_ARGS=`"-DCMAKE_TOOLCHAIN_FILE=$tc -DVCPKG_TARGET_TRIPLET=x64-windows -DHDF5_ROOT=$inst -DCMAKE_PREFIX_PATH=$inst`"" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.21
+        env:
+          CIBW_ARCHS: native
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
+          retention-days: 7
+
+  make_sdist:
+    name: Source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Initialize submodules
+        shell: bash
+        run: |
+          git config --global url."https://x-access-token:${{ secrets.SUBMODULE_TOKEN }}@github.com/".insteadOf "https://github.com/"
+          git submodule update --init --recursive
+      - name: Build sdist
+        run: pipx run build --sdist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+          retention-days: 7
+
+  # Publishing is dormant until a v* tag is pushed AND the PyPI project has a
+  # trusted publisher configured for this repo + workflow (see README). Normal
+  # pushes/PRs only produce downloadable wheel artifacts above.
+  publish:
+    name: Publish to PyPI
+    needs: [build_wheels, make_sdist]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    environment: pypi
+    permissions:
+      id-token: write          # OIDC token for trusted publishing
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: pypa/gh-action-pypi-publish@release/v1

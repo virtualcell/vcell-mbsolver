@@ -19,13 +19,24 @@ set_target_properties(vcellmbsolver_py PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
 )
 
+# When building a wheel via scikit-build-core, SKBUILD is defined and the
+# install prefix already points inside the wheel's platlib, so destinations
+# must be relative. For a plain `cmake --install`, install into site-packages.
+if(SKBUILD)
+    set(MB_PY_INSTALL_DEST ".")
+else()
+    set(MB_PY_INSTALL_DEST "${Python3_SITEARCH}")
+endif()
+
 install(TARGETS vcellmbsolver_py
-    LIBRARY DESTINATION ${Python3_SITEARCH}
+    LIBRARY DESTINATION ${MB_PY_INSTALL_DEST}
+    COMPONENT python
 )
 
 # Install the pure-Python wrapper alongside the extension module.
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/vcellmbsolver.py
-    DESTINATION ${Python3_SITEARCH}
+    DESTINATION ${MB_PY_INSTALL_DEST}
+    COMPONENT python
 )
 
 # ---------------------------------------------------------------------------
