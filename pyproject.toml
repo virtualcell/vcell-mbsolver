@@ -3,7 +3,7 @@ requires = ["scikit-build-core>=0.8", "pybind11>=2.10"]
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "vcellmbsolver"
+name = "pyvcell_mbsolver"
 description = "Python bindings for the VCell moving-boundary parabolic PDE solver"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -32,15 +32,21 @@ Repository = "https://github.com/virtualcell/vcell-mbsolver"
 # ---------------------------------------------------------------------------
 [tool.scikit-build]
 cmake.version = ">=3.13"
-build.targets = ["vcellmbsolver_py"]
+build.targets = ["_core"]
 install.components = ["python"]
-wheel.packages = []          # python files are installed by CMake, not auto-copied
+wheel.packages = []          # the pyvcell_mbsolver package is installed by CMake, not auto-copied
 wheel.license-files = ["LICENSE"]
 sdist.include = ["CMakeLists.txt"]
 
 [tool.scikit-build.cmake.define]
 BUILD_TESTING = "OFF"
 OPTION_TARGET_MESSAGING = "OFF"
+
+# importlib import-mode prevents the source tree from shadowing the built/
+# installed pyvcell_mbsolver package when running pytest directly.
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
+testpaths = ["python/tests"]
 
 # Keep the wheel version in lock-step with the CMake project() version.
 [tool.scikit-build.metadata.version]
@@ -58,7 +64,7 @@ regex = '''project\(VCellMovingBoundary VERSION (?P<value>[0-9]+\.[0-9]+\.[0-9]+
 build = "cp38-* cp39-* cp310-* cp311-* cp312-*"
 skip = "*-musllinux_* *_i686 *-win32"
 build-frontend = "build"
-test-command = "python -c \"import vcellmbsolver_py, vcellmbsolver; print('import OK')\""
+test-command = "python -c \"import pyvcell_mbsolver; from pyvcell_mbsolver import _core; print('import OK')\""
 
 [tool.cibuildwheel.linux]
 manylinux-x86_64-image = "manylinux_2_28"

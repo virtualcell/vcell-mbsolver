@@ -2,39 +2,52 @@ cmake_minimum_required(VERSION 3.13)
 
 # Python bindings for VCellMovingBoundary via pybind11.
 # pybind11 and Python3 are found in the parent CMakeLists.txt.
+#
+# The bindings are shipped as the `pyvcell_mbsolver` package: the compiled
+# extension is the private submodule `pyvcell_mbsolver._core`, and the
+# pure-Python wrapper is the package's __init__.py.
 
-pybind11_add_module(vcellmbsolver_py
+set(MB_PY_PACKAGE pyvcell_mbsolver)
+
+pybind11_add_module(_core
     pyvcellmbsolver.cpp
 )
 
-target_link_libraries(vcellmbsolver_py
+target_link_libraries(_core
     PRIVATE
         MovingBoundaryLib
         vcommons        # for tinyxml2
 )
 
-# The .so goes to bin/ alongside the other outputs so it is importable
-# from the build tree without installation.
-set_target_properties(vcellmbsolver_py PROPERTIES
-    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+# Assemble the package in the build tree (bin/pyvcell_mbsolver/) so it is
+# importable as `pyvcell_mbsolver` with PYTHONPATH=bin, without installing.
+set(MB_PY_BUILD_DIR ${CMAKE_BINARY_DIR}/bin/${MB_PY_PACKAGE})
+set_target_properties(_core PROPERTIES
+    LIBRARY_OUTPUT_DIRECTORY ${MB_PY_BUILD_DIR}
+)
+add_custom_command(TARGET _core POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/__init__.py
+            ${MB_PY_BUILD_DIR}/__init__.py
+    COMMENT "Copying pyvcell_mbsolver/__init__.py into the build tree"
 )
 
 # When building a wheel via scikit-build-core, SKBUILD is defined and the
 # install prefix already points inside the wheel's platlib, so destinations
 # must be relative. For a plain `cmake --install`, install into site-packages.
 if(SKBUILD)
-    set(MB_PY_INSTALL_DEST ".")
+    set(MB_PY_INSTALL_DEST "${MB_PY_PACKAGE}")
 else()
-    set(MB_PY_INSTALL_DEST "${Python3_SITEARCH}")
+    set(MB_PY_INSTALL_DEST "${Python3_SITEARCH}/${MB_PY_PACKAGE}")
 endif()
 
-install(TARGETS vcellmbsolver_py
+install(TARGETS _core
     LIBRARY DESTINATION ${MB_PY_INSTALL_DEST}
     COMPONENT python
 )
 
-# Install the pure-Python wrapper alongside the extension module.
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/vcellmbsolver.py
+# Install the pure-Python wrapper (the package __init__.py).
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/__init__.py
     DESTINATION ${MB_PY_INSTALL_DEST}
     COMPONENT python
 )
@@ -79,17 +92,21 @@ if(BUILD_TESTING)
                         "Python tests may not run correctly.")
     endif()
 
+    # --import-mode=importlib keeps pytest from prepending the source tree to
+    # sys.path, which would otherwise shadow the built pyvcell_mbsolver package
+    # (the source dir has the wrapper but not the compiled _core extension).
     add_test(
         NAME PyVcellMbSolver
         COMMAND ${VENV_PYTHON} -m pytest
                 ${CMAKE_CURRENT_SOURCE_DIR}/tests
-                -v --tb=short
+                -v --tb=short --import-mode=importlib
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
-    # PYTHONPATH makes the compiled extension and the wrapper importable
-    # without installing them into the venv.
+    # PYTHONPATH points at bin/, where the assembled `pyvcell_mbsolver` package
+    # (_core extension + __init__.py) lives, so it is importable without
+    # installing into the venv.
     set_tests_properties(PyVcellMbSolver PROPERTIES
         ENVIRONMENT
-            "PYTHONPATH=${CMAKE_BINARY_DIR}/bin:${CMAKE_CURRENT_SOURCE_DIR}"
+            "PYTHONPATH=${CMAKE_BINARY_DIR}/bin"
     )
 endif()

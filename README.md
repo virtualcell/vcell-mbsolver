@@ -217,19 +217,25 @@ Or install the project first and use the installed headers under
 
 ## Using the Python module
 
+The bindings are shipped as the **`pyvcell_mbsolver`** package: the compiled
+extension is the private submodule `pyvcell_mbsolver._core`, and the high-level
+wrapper (`MovingBoundarySolver`, observer base classes) is the package itself.
+
 ```python
 import sys
 sys.path.insert(0, "/path/to/vcell-mbsolver/build/bin")
 
-import vcellmbsolver_py
-# See python/pyvcellmbsolver.cpp for the exposed API
+import pyvcell_mbsolver
+from pyvcell_mbsolver import MovingBoundarySolver   # high-level wrapper
+from pyvcell_mbsolver import _core                  # low-level C++ API
+# See python/pyvcellmbsolver.cpp for the exposed _core API
 ```
 
-After `cmake --install build --prefix /usr/local`, the module is installed to the
-active Python's `site-packages` and importable directly:
+After `cmake --install build --prefix /usr/local`, the package is installed to
+the active Python's `site-packages` and importable directly:
 
 ```python
-import vcellmbsolver_py
+import pyvcell_mbsolver
 ```
 
 ---
@@ -240,8 +246,8 @@ The repository also ships a [PEP 517](https://peps.python.org/pep-0517/) build
 configuration (`pyproject.toml`, using the
 [`scikit-build-core`](https://scikit-build-core.readthedocs.io/) backend) that
 drives the same CMake build to produce an installable Python wheel. The wheel
-contains only the compiled extension (`vcellmbsolver_py`) and the pure-Python
-wrapper (`vcellmbsolver`) — not the C++ library, CLI binary, or headers.
+contains only the `pyvcell_mbsolver` package (the `_core` extension and its
+pure-Python wrapper) — not the C++ library, CLI binary, or headers.
 
 ### Install from a downloaded wheel
 
@@ -250,8 +256,8 @@ as workflow artifacts (see the **Wheels** GitHub Actions workflow). Download the
 wheel for your platform/Python version and:
 
 ```bash
-pip install vcellmbsolver-<version>-<tags>.whl
-python -c "import vcellmbsolver_py, vcellmbsolver; print('ok')"
+pip install pyvcell_mbsolver-<version>-<tags>.whl
+python -c "import pyvcell_mbsolver; from pyvcell_mbsolver import _core; print('ok')"
 ```
 
 The wheels are self-contained: the shared HDF5 libraries are vendored in by the
@@ -280,7 +286,7 @@ sdist to PyPI via [trusted publishing](https://docs.pypi.org/trusted-publishers/
 (OIDC — no stored API token). It runs **only on `v*` tag pushes** and stays
 dormant until a one-time setup is done on PyPI:
 
-1. Register the project on PyPI (claim the `vcellmbsolver` name).
+1. Register the project on PyPI (claim the `pyvcell_mbsolver` name).
 2. Under the project's *Publishing* settings, add a **trusted publisher**:
    - Owner: `virtualcell`, Repository: `vcell-mbsolver`
    - Workflow: `wheels.yml`, Environment: `pypi`
