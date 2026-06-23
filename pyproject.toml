@@ -80,7 +80,10 @@ before-all = [
 
 [tool.cibuildwheel.macos]
 before-all = "brew install hdf5 boost"
-environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }
+# Homebrew bottles target the runner's macOS, so the vendored HDF5 libs require
+# a recent minimum; matching it here keeps delocate's wheel repair happy. (This
+# means the macOS wheels require macOS 15+, as with vcell-fvsolver.)
+environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 
 [tool.cibuildwheel.windows]
 # On Windows the HDF5/Boost dependencies come from vcpkg, which the wheels
