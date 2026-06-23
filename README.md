@@ -301,3 +301,31 @@ dormant until a one-time setup is done on PyPI:
 
 Once configured, pushing a `vX.Y.Z` tag builds all wheels and publishes them.
 Until then, normal pushes and PRs simply produce downloadable wheel artifacts.
+
+#### Dry run on TestPyPI first (recommended)
+
+The workflow also has a `publish-testpypi` job to rehearse the release against
+[TestPyPI](https://test.pypi.org) before touching real PyPI. It runs only when
+the workflow is **manually dispatched** with the `testpypi` flag, and needs its
+own one-time setup mirroring the above:
+
+1. Create a [TestPyPI](https://test.pypi.org) account (separate from PyPI; 2FA
+   required).
+2. At <https://test.pypi.org/manage/account/publishing/>, add a **pending
+   publisher**:
+   - PyPI Project Name: `pyvcell_mbsolver`
+   - Owner: `virtualcell`, Repository: `vcell-mbsolver`
+   - Workflow: `wheels.yml`, Environment: `testpypi`
+3. Create a `testpypi` environment in the repo settings.
+
+Then trigger the dry run (no tag needed):
+
+```bash
+gh workflow run wheels.yml -f testpypi=true
+```
+
+(or **Actions → Wheels → Run workflow**, check the box). It builds all wheels +
+sdist and uploads them to TestPyPI; `skip-existing` keeps repeat runs of the
+same version from failing. Verify at
+<https://test.pypi.org/project/pyvcell-mbsolver/>, then do the real release by
+tagging `vX.Y.Z`.
