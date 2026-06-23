@@ -71,18 +71,12 @@ if(NOT Boost_FOUND)
 endif()
 
 # Python bindings (always built).
-# manylinux images ship no shared libpython, so the full Development component
-# would fail there; Development.Module provides headers/SOABI without linking
-# libpython (the correct policy for Linux/macOS wheels). On Windows, an
-# extension must link the Python import library and Development.Module does not
-# resolve under cibuildwheel's build venv, so we request only the Interpreter
-# (for Python3_EXECUTABLE / Python3_SITEARCH) and let pybind11 locate the
-# Python library itself.
-if(WIN32)
-    find_package(Python3 REQUIRED COMPONENTS Interpreter)
-else()
-    find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
-endif()
+# Use Development.Module (not the full Development component): manylinux images
+# ship no shared libpython, so requesting Python3_LIBRARIES would fail there.
+# Development.Module provides the headers/SOABI (and the python3_add_library
+# command that pybind11's FindPython "new tools" mode needs) without linking
+# libpython — the correct policy for wheels on all platforms.
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
 # --- Bundled / external library dependencies ---
