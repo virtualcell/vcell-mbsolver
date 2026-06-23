@@ -85,10 +85,5 @@ before-all = "brew install hdf5 boost"
 # means the macOS wheels require macOS 15+, as with vcell-fvsolver.)
 environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 
-[tool.cibuildwheel.windows]
-# On Windows the HDF5/Boost dependencies come from vcpkg, which the wheels
-# workflow installs and points to via the CMAKE_ARGS / CMAKE_GENERATOR
-# environment variables (see .github/workflows/wheels.yml). delvewheel vendors
-# the resulting DLLs into the wheel.
-before-build = "pip install delvewheel"
-repair-wheel-command = "delvewheel repair -w {dest_dir} {wheel}"
+# No [tool.cibuildwheel.windows]: Windows wheels are not built because the
+# bundled FronTier library does not compile under MSVC. See the README.

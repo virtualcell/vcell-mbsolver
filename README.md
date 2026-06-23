@@ -251,9 +251,10 @@ pure-Python wrapper) — not the C++ library, CLI binary, or headers.
 
 ### Install from a downloaded wheel
 
-CI builds redistributable wheels for Linux, macOS, and Windows and uploads them
-as workflow artifacts (see the **Wheels** GitHub Actions workflow). Download the
-wheel for your platform/Python version and:
+CI builds redistributable wheels for **Linux** (x86_64 + arm64) and **macOS**
+(x86_64 + arm64, macOS 15+) and uploads them as workflow artifacts (see the
+**Wheels** GitHub Actions workflow). Download the wheel for your
+platform/Python version and:
 
 ```bash
 pip install pyvcell_mbsolver-<version>-<tags>.whl
@@ -261,8 +262,13 @@ python -c "import pyvcell_mbsolver; from pyvcell_mbsolver import _core; print('o
 ```
 
 The wheels are self-contained: the shared HDF5 libraries are vendored in by the
-wheel-repair step (`auditwheel` / `delocate` / `delvewheel`), so no system HDF5
-install is required to *use* a wheel.
+wheel-repair step (`auditwheel` / `delocate`), so no system HDF5 install is
+required to *use* a wheel.
+
+> **Windows is not currently supported.** The bundled FronTier library is
+> Unix/GCC code that does not compile under MSVC (its `POINT`/`boolean` types
+> clash with the Windows SDK and it relies on GCC anonymous-struct extensions).
+> Windows users can build/run under WSL using the Linux wheels.
 
 ### Build a wheel locally
 

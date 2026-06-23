@@ -21,9 +21,11 @@ jobs:
       matrix:
         # macOS : macos-15-intel (x86_64) + macos-15 (arm64)
         # Linux : ubuntu-latest (x86_64) + ubuntu-24.04-arm (arm64)
-        # Windows: windows-2022 — pinned (not windows-latest) so CMake's
-        #          "Visual Studio 17 2022" generator reliably finds VS.
-        os: [macos-15-intel, macos-15, ubuntu-latest, ubuntu-24.04-arm, windows-2022]
+        # Windows is intentionally absent: the bundled FronTier library does not
+        # compile under MSVC (Unix/GCC code — POINT/boolean clash with the
+        # Windows SDK, GCC anonymous-struct tags). Windows users can build from
+        # the sdist under WSL or use the Linux wheels. See the README.
+        os: [macos-15-intel, macos-15, ubuntu-latest, ubuntu-24.04-arm]
 
     steps:
       # vcell-messaging / vcell-expressionparser are PRIVATE submodules, so the
@@ -41,29 +43,6 @@ jobs:
       - name: Initialize submodules
         shell: bash
         run: git submodule update --init --recursive
-
-      # --- Windows: prebuilt HDF5 + Boost from conda-forge (no compilation;
-      #     ~1-2 min). conda lays files out under <env>/Library/{include,lib,bin}
-      #     in a standard layout that CMake's module-mode find_package(HDF5/Boost)
-      #     consumes via HDF5_ROOT/BOOST_ROOT. The Library/bin dir (HDF5 + its
-      #     zlib/aec DLLs) is added to PATH so delvewheel vendors them.
-      #     windows-2022 ships Miniconda at C:\Miniconda.
-      - name: Set up HDF5 + Boost via conda-forge (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $prefix = "$env:RUNNER_TEMP\mbdeps"
-          & "C:\Miniconda\condabin\conda.bat" create -y -p "$prefix" -c conda-forge hdf5 libboost-devel
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-
-          $lib = "$prefix\Library" -replace '\\','/'
-          # Use HDF5_ROOT/BOOST_ROOT (module-mode find_package) rather than
-          # CMAKE_PREFIX_PATH, which would clobber the prefix scikit-build-core
-          # sets to locate pybind11.
-          $cmakeArgs = "-DHDF5_ROOT=$lib -DBOOST_ROOT=$lib"
-          # cibuildwheel reads CIBW_ENVIRONMENT_WINDOWS; scikit-build-core honors
-          # CMAKE_ARGS/CMAKE_GENERATOR. PATH gets the HDF5 DLL dir for delvewheel.
-          "CIBW_ENVIRONMENT_WINDOWS=CMAKE_GENERATOR=`"Visual Studio 17 2022`" CMAKE_GENERATOR_PLATFORM=x64 CMAKE_ARGS=`"$cmakeArgs`" PATH=`"$lib/bin;`$PATH`"" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.0
