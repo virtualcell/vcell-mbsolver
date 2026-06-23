@@ -57,7 +57,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit 1 }
 
           $lib = "$prefix\Library" -replace '\\','/'
-          $cmakeArgs = "-DHDF5_ROOT=$lib -DBOOST_ROOT=$lib -DCMAKE_PREFIX_PATH=$lib"
+          # Use HDF5_ROOT/BOOST_ROOT (module-mode find_package) rather than
+          # CMAKE_PREFIX_PATH, which would clobber the prefix scikit-build-core
+          # sets to locate pybind11.
+          $cmakeArgs = "-DHDF5_ROOT=$lib -DBOOST_ROOT=$lib"
           # cibuildwheel reads CIBW_ENVIRONMENT_WINDOWS; scikit-build-core honors
           # CMAKE_ARGS/CMAKE_GENERATOR. PATH gets the HDF5 DLL dir for delvewheel.
           "CIBW_ENVIRONMENT_WINDOWS=CMAKE_GENERATOR=`"Visual Studio 17 2022`" CMAKE_GENERATOR_PLATFORM=x64 CMAKE_ARGS=`"$cmakeArgs`" PATH=`"$lib/bin;`$PATH`"" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
