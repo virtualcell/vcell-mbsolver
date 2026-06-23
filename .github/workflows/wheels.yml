@@ -42,18 +42,44 @@ jobs:
         shell: bash
         run: git submodule update --init --recursive
 
-      # --- Windows: HDF5 + Boost via vcpkg, and point CMake at them. ---
-      - name: Set up vcpkg dependencies (Windows)
+      # --- Windows: HDF5 + Boost via Conan (prebuilt binaries from Conan
+      #     Center). Boost is header-only here, so nothing is compiled; HDF5
+      #     downloads a prebuilt MSVC binary instead of building from source
+      #     (~minutes vs ~40 min with vcpkg). full_deploy lays the packages out
+      #     in a predictable tree so we can point CMake's module-mode finds at
+      #     them and hand the HDF5 DLL dir to delvewheel for vendoring.
+      - name: Set up Conan dependencies (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          git clone --depth 1 https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP\vcpkg"
-          & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
-          & "$env:RUNNER_TEMP\vcpkg\vcpkg.exe" install --triplet x64-windows hdf5[cpp] boost
-          $inst = "$env:RUNNER_TEMP/vcpkg/installed/x64-windows" -replace '\\','/'
-          $tc   = "$env:RUNNER_TEMP/vcpkg/scripts/buildsystems/vcpkg.cmake" -replace '\\','/'
-          # cibuildwheel reads these env vars; scikit-build-core honors CMAKE_ARGS / CMAKE_GENERATOR.
-          "CIBW_ENVIRONMENT_WINDOWS=CMAKE_GENERATOR=`"Visual Studio 17 2022`" CMAKE_GENERATOR_PLATFORM=x64 CMAKE_ARGS=`"-DCMAKE_TOOLCHAIN_FILE=$tc -DVCPKG_TARGET_TRIPLET=x64-windows -DHDF5_ROOT=$inst -DCMAKE_PREFIX_PATH=$inst`"" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          python -m pip install "conan>=2.2"
+          conan profile detect --force
+
+          $of = "$env:RUNNER_TEMP/conan"
+          conan install `
+            --requires="hdf5/1.14.4" `
+            --requires="boost/1.85.0" `
+            -o "boost/*:header_only=True" `
+            -o "hdf5/*:enable_cxx=True" `
+            -o "hdf5/*:hl=True" `
+            -g CMakeToolchain -g CMakeDeps `
+            --deployer=full_deploy -of "$of" `
+            --build=missing -s build_type=Release
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+          $tc        = (Resolve-Path "$of/conan_toolchain.cmake").Path -replace '\\','/'
+          $h5hdr     = Get-ChildItem -Path "$of/full_deploy" -Recurse -Filter "H5Cpp.h"   | Select-Object -First 1
+          $hdf5root  = (Split-Path (Split-Path $h5hdr.FullName -Parent) -Parent) -replace '\\','/'
+          $boosthdr  = Get-ChildItem -Path "$of/full_deploy" -Recurse -Filter "version.hpp" | Where-Object { $_.FullName -match '[\\/]boost[\\/]' } | Select-Object -First 1
+          $boostroot = (Split-Path (Split-Path (Split-Path $boosthdr.FullName -Parent) -Parent) -Parent) -replace '\\','/'
+          $hdf5dll   = Get-ChildItem -Path "$of/full_deploy" -Recurse -Filter "hdf5*.dll"  | Select-Object -First 1
+          $hdf5bin   = $hdf5dll.DirectoryName -replace '\\','/'
+
+          $cmakeArgs = "-DCMAKE_TOOLCHAIN_FILE=$tc -DHDF5_ROOT=$hdf5root -DBOOST_ROOT=$boostroot"
+          # cibuildwheel reads CIBW_ENVIRONMENT_WINDOWS; scikit-build-core honors
+          # CMAKE_ARGS/CMAKE_GENERATOR. PATH gets the HDF5 DLL dir so delvewheel
+          # can vendor it into the repaired wheel.
+          "CIBW_ENVIRONMENT_WINDOWS=CMAKE_GENERATOR=`"Visual Studio 17 2022`" CMAKE_GENERATOR_PLATFORM=x64 CMAKE_ARGS=`"$cmakeArgs`" PATH=`"$hdf5bin;`$PATH`"" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.0
