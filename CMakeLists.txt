@@ -70,8 +70,13 @@ if(NOT Boost_FOUND)
     message(FATAL_ERROR "Boost not found. Please ensure libboost-dev (Linux), boost (macOS), or boost:x64-windows (vcpkg) is installed.")
 endif()
 
-# Python bindings (always built)
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
+# Python bindings (always built).
+# Use Development.Module (not the full Development component): manylinux images
+# ship no shared libpython, so requesting Python3_LIBRARIES would fail there.
+# Development.Module provides the headers/SOABI (and the python3_add_library
+# command that pybind11's FindPython "new tools" mode needs) without linking
+# libpython — the correct policy for wheels on all platforms.
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
 find_package(pybind11 CONFIG REQUIRED)
 
 # --- Bundled / external library dependencies ---

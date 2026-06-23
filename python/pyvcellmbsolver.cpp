@@ -144,8 +144,8 @@ public:
 // ---------------------------------------------------------------------------
 // Module definition
 // ---------------------------------------------------------------------------
-PYBIND11_MODULE(vcellmbsolver_py, m) {
-    m.doc() = "VCell Moving Boundary Solver — Python bindings";
+PYBIND11_MODULE(_core, m) {
+    m.doc() = "VCell Moving Boundary Solver — Python bindings (pyvcell_mbsolver._core)";
 
     // -----------------------------------------------------------------------
     // Enums

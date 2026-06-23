@@ -1,27 +1,20 @@
-"""Tests for the vcellmbsolver Python wrapper (vcellmbsolver.py).
+"""Tests for the pyvcell_mbsolver Python package.
 
-These tests require the vcellmbsolver_py C extension to be built and on
-sys.path (the build system sets PYTHONPATH when running via ctest).
+These tests require the pyvcell_mbsolver package (the _core C extension plus
+its wrapper) to be importable. The build system sets PYTHONPATH to the build
+tree's bin/ directory when running via ctest; for an installed wheel it is
+importable directly.
 """
 
 import os
-import sys
 import pytest
 
-# ---------------------------------------------------------------------------
-# Make the wrapper importable when tests are run from the source tree
-# (ctest sets PYTHONPATH, but developers may also run pytest directly).
-# ---------------------------------------------------------------------------
 _HERE = os.path.dirname(__file__)
-_PYTHON_DIR = os.path.join(_HERE, "..")
-if _PYTHON_DIR not in sys.path:
-    sys.path.insert(0, _PYTHON_DIR)
-
 _DATA_DIR = os.path.join(_HERE, "data")
 _MINIMAL_XML = os.path.join(_DATA_DIR, "minimal.xml")
 
-import vcellmbsolver_py as _mb
-from vcellmbsolver import (
+from pyvcell_mbsolver import _core as _mb
+from pyvcell_mbsolver import (
     MovingBoundarySolver,
     SimulationObserver,
     TimeStepObserver,

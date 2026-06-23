@@ -73,3 +73,10 @@ Testing/
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Python packaging / wheel build
+dist/
+wheelhouse/
+*.whl
+*.egg-info/
+_skbuild/

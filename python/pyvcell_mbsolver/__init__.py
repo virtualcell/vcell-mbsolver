@@ -1,12 +1,16 @@
 """
-vcellmbsolver — high-level Python wrapper around the vcellmbsolver_py extension.
+pyvcell_mbsolver — high-level Python wrapper around the compiled ``_core``
+moving-boundary solver extension.
 
-The low-level pybind11 bindings (vcellmbsolver_py) expose C++ types directly.
-This module provides friendlier Python classes on top:
+The low-level pybind11 bindings (``pyvcell_mbsolver._core``) expose C++ types
+directly. This package provides friendlier Python classes on top:
 
   MovingBoundarySolver   — facade that owns setup + problem lifetime
   SimulationObserver     — abstract base for per-element callbacks
   TimeStepObserver       — abstract base for per-timestep callbacks
+
+The compiled module remains available as ``pyvcell_mbsolver._core`` for direct
+access to the underlying C++ API.
 """
 
 from __future__ import annotations
@@ -14,13 +18,23 @@ from __future__ import annotations
 import abc
 from typing import List, Tuple, Optional
 
-import vcellmbsolver_py as _mb
+from . import _core as _mb
 
-# Re-export enums and exceptions so callers only need to import this module.
+# Re-export enums and exceptions so callers only need to import this package.
 RedistributionMode    = _mb.RedistributionMode
 RedistributionVersion = _mb.RedistributionVersion
 ExtrapolationMethod   = _mb.ExtrapolationMethod
 TimeStepTooBig        = _mb.TimeStepTooBig
+
+__all__ = [
+    "MovingBoundarySolver",
+    "TimeStepObserver",
+    "SimulationObserver",
+    "RedistributionMode",
+    "RedistributionVersion",
+    "ExtrapolationMethod",
+    "TimeStepTooBig",
+]
 
 
 class TimeStepObserver(abc.ABC):

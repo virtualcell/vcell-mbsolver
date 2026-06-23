@@ -217,17 +217,87 @@ Or install the project first and use the installed headers under
 
 ## Using the Python module
 
+The bindings are shipped as the **`pyvcell_mbsolver`** package: the compiled
+extension is the private submodule `pyvcell_mbsolver._core`, and the high-level
+wrapper (`MovingBoundarySolver`, observer base classes) is the package itself.
+
 ```python
 import sys
 sys.path.insert(0, "/path/to/vcell-mbsolver/build/bin")
 
-import vcellmbsolver_py
-# See python/pyvcellmbsolver.cpp for the exposed API
+import pyvcell_mbsolver
+from pyvcell_mbsolver import MovingBoundarySolver   # high-level wrapper
+from pyvcell_mbsolver import _core                  # low-level C++ API
+# See python/pyvcellmbsolver.cpp for the exposed _core API
 ```
 
-After `cmake --install build --prefix /usr/local`, the module is installed to the
-active Python's `site-packages` and importable directly:
+After `cmake --install build --prefix /usr/local`, the package is installed to
+the active Python's `site-packages` and importable directly:
 
 ```python
-import vcellmbsolver_py
+import pyvcell_mbsolver
 ```
+
+---
+
+## Python package & wheels
+
+The repository also ships a [PEP 517](https://peps.python.org/pep-0517/) build
+configuration (`pyproject.toml`, using the
+[`scikit-build-core`](https://scikit-build-core.readthedocs.io/) backend) that
+drives the same CMake build to produce an installable Python wheel. The wheel
+contains only the `pyvcell_mbsolver` package (the `_core` extension and its
+pure-Python wrapper) — not the C++ library, CLI binary, or headers.
+
+### Install from a downloaded wheel
+
+CI builds redistributable wheels for **Linux** (x86_64 + arm64) and **macOS**
+(x86_64 + arm64, macOS 15+) and uploads them as workflow artifacts (see the
+**Wheels** GitHub Actions workflow). Download the wheel for your
+platform/Python version and:
+
+```bash
+pip install pyvcell_mbsolver-<version>-<tags>.whl
+python -c "import pyvcell_mbsolver; from pyvcell_mbsolver import _core; print('ok')"
+```
+
+The wheels are self-contained: the shared HDF5 libraries are vendored in by the
+wheel-repair step (`auditwheel` / `delocate`), so no system HDF5 install is
+required to *use* a wheel.
+
+> **Windows is not currently supported.** The bundled FronTier library is
+> Unix/GCC code that does not compile under MSVC (its `POINT`/`boolean` types
+> clash with the Windows SDK and it relies on GCC anonymous-struct extensions).
+> Windows users can build/run under WSL using the Linux wheels.
+
+### Build a wheel locally
+
+Building from source still needs the native toolchain and dependencies from the
+[Prerequisites](#prerequisites) section (CMake, a C++14 compiler, HDF5, Boost):
+
+```bash
+pip install build
+python -m build --wheel          # writes dist/vcellmbsolver-*.whl
+pip install dist/vcellmbsolver-*.whl
+```
+
+`pip install .` works too. Wheel builds set `BUILD_TESTING=OFF` and
+`OPTION_TARGET_MESSAGING=OFF` automatically (see `[tool.scikit-build]` in
+`pyproject.toml`).
+
+### Publishing to PyPI
+
+The **Wheels** workflow has a `publish` job that uploads the built wheels and
+sdist to PyPI via [trusted publishing](https://docs.pypi.org/trusted-publishers/)
+(OIDC — no stored API token). It runs **only on `v*` tag pushes** and stays
+dormant until a one-time setup is done on PyPI:
+
+1. Register the project on PyPI (claim the `pyvcell_mbsolver` name).
+2. Under the project's *Publishing* settings, add a **trusted publisher**:
+   - Owner: `virtualcell`, Repository: `vcell-mbsolver`
+   - Workflow: `wheels.yml`, Environment: `pypi`
+3. Create the `pypi` environment in the repo settings (optionally with
+   reviewers/branch protection).
+
+Once configured, pushing a `vX.Y.Z` tag builds all wheels and publishes them.
+Until then, normal pushes and PRs simply produce downloadable wheel artifacts.
