@@ -29,7 +29,10 @@ add_custom_command(TARGET _core POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/__init__.py
             ${MB_PY_BUILD_DIR}/__init__.py
-    COMMENT "Copying pyvcell_mbsolver/__init__.py into the build tree"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/py.typed
+            ${MB_PY_BUILD_DIR}/py.typed
+    COMMENT "Copying pyvcell_mbsolver/{__init__.py,py.typed} into the build tree"
 )
 
 # When building a wheel via scikit-build-core, SKBUILD is defined and the
@@ -46,8 +49,11 @@ install(TARGETS _core
     COMPONENT python
 )
 
-# Install the pure-Python wrapper (the package __init__.py).
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/__init__.py
+# Install the pure-Python wrapper (the package __init__.py) and the PEP 561
+# py.typed marker so type checkers use the package's inline annotations.
+install(FILES
+        ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/__init__.py
+        ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/py.typed
     DESTINATION ${MB_PY_INSTALL_DEST}
     COMPONENT python
 )
