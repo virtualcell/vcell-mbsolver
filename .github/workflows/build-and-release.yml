@@ -1,5 +1,13 @@
 name: Build and Release
 
+# Builds the native standalone MovingBoundarySolver executable (+ static lib)
+# and attaches them to a GitHub Release on each v* tag.
+#
+# Windows is intentionally excluded: the native solver links the bundled
+# FronTier library, which does not compile under MSVC (same blocker as the
+# Windows wheels — see issue #2). Linux + macOS executables are built here;
+# Python wheels are built/published separately by wheels.yml.
+
 on:
   push:
     tags:
@@ -11,31 +19,29 @@ jobs:
     name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-2022]
+        os: [ubuntu-latest, macos-latest]
         include:
           - os: ubuntu-latest
             artifact_prefix: linux
           - os: macos-latest
             artifact_prefix: macos
-          - os: windows-2022
-            artifact_prefix: windows
 
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure git for private submodule
+      - name: Configure git for private submodules
+        shell: bash
         run: |
           git config --global url."https://x-access-token:${{ secrets.SUBMODULE_TOKEN }}@github.com/".insteadOf "https://github.com/"
-        shell: bash
 
       - name: Initialize submodules
-        run: git submodule update --init --recursive
         shell: bash
+        run: git submodule update --init --recursive
 
-      # Ubuntu dependencies
       - name: Install Ubuntu dependencies
         if: runner.os == 'Linux'
         run: |
@@ -43,131 +49,27 @@ jobs:
           sudo apt-get install -y cmake libhdf5-dev python3-dev python3-pip pybind11-dev libboost-dev libcurl4-openssl-dev
           pip3 install pybind11
 
-      # macOS dependencies
       - name: Install macOS dependencies
         if: runner.os == 'macOS'
         run: |
           brew install cmake hdf5 python pybind11 boost curl
 
-      # Windows dependencies
-      - name: Setup vcpkg (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          pip install pybind11 pytest
-          git clone --depth 1 https://github.com/microsoft/vcpkg.git "$env:RUNNER_TEMP\vcpkg"
-          & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat"
-          Add-Content -Path $env:GITHUB_ENV -Value "VCPKG_ROOT=$env:RUNNER_TEMP\vcpkg"
-          
-          # Export Python Executable Path for CMake
-          $pyExe = & python -c "import sys; print(sys.executable)"
-          Add-Content -Path $env:GITHUB_ENV -Value "PYTHON_EXE=$pyExe"
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
 
-      # REMOVED: ilammy/msvc-dev-cmd step to prevent environment variable contamination
-
-      - name: Install dependencies with vcpkg (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $manifest = @{
-              name = "vcell-mbsolver-deps"
-              version = "0.1.0"
-              "builtin-baseline" = "d59510da59a2ee8b943509998b63da7b472d93cf"
-              dependencies = @(
-                  @{ name = "hdf5"; features = @("cpp") },
-                  "boost",
-                  "pybind11",
-                  "pthread",
-                  "curl"
-              )
-          } | ConvertTo-Json -Depth 5
-          
-          Set-Content -Path "vcpkg.json" -Value $manifest
-          
-          $vcpkg = "$env:VCPKG_ROOT\vcpkg.exe"
-          & $vcpkg install --triplet x64-windows --clean-after-build
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-
-      # Configure CMake
-      - name: Configure CMake (Ubuntu/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
-
-      - name: Configure CMake (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $vcpkgRoot = $env:VCPKG_ROOT
-          $instPrefix = "$vcpkgRoot/installed/x64-windows" -replace '\\','/'
-          $vcpkgToolchain = "$vcpkgRoot/scripts/buildsystems/vcpkg.cmake" -replace '\\','/'
-          
-          $pyRoot = $env:pythonLocation -replace '\\','/'
-          $pyInclude = "$pyRoot/include"
-          $pyLib = "$pyRoot/libs/python310.lib"
-
-          cmake -S . -B build -G "Visual Studio 17 2022" -A x64 `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DOPTION_TARGET_MESSAGING=OFF `
-            -DCMAKE_TOOLCHAIN_FILE="$vcpkgToolchain" `
-            -DVCPKG_TARGET_TRIPLET="x64-windows" `
-            -DCMAKE_PREFIX_PATH="$instPrefix" `
-            -DHDF5_ROOT="$instPrefix" `
-            -DPYTHON_EXECUTABLE="$($env:PYTHON_EXE -replace '\\','/')" `
-            -DPYTHON_INCLUDE_DIR="$pyInclude" `
-            -DPYTHON_LIBRARY="$pyLib"
-
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-
-      # Build
-      - name: Build (Ubuntu/macOS)
-        if: runner.os != 'Windows'
+      - name: Build
         run: cmake --build build --parallel
 
-      - name: Build (Windows)
-        if: runner.os == 'Windows'
-        run: cmake --build build --config Release --parallel
-        shell: pwsh
-
-      # Run tests
-      - name: Install test dependencies
-        run: pip install pytest
-        shell: bash
-
-      - name: Run tests (Ubuntu/macOS)
-        if: runner.os != 'Windows'
+      - name: Run tests
         run: |
           cd build
-          ctest --output-on-failure -j$(nproc)
+          ctest --output-on-failure -j"$(getconf _NPROCESSORS_ONLN)"
 
-      - name: Run tests (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          cd build
-          ctest --output-on-failure -C Release --parallel $env:NUMBER_OF_PROCESSORS
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-
-      # Prepare artifacts
-      - name: Prepare artifacts (Ubuntu/macOS)
-        if: runner.os != 'Windows'
+      - name: Prepare artifacts
         run: |
           mkdir -p artifacts
           cp build/bin/MovingBoundarySolver artifacts/MovingBoundarySolver-${{ matrix.artifact_prefix }}
           cp build/bin/libMovingBoundaryLib.a artifacts/libMovingBoundaryLib-${{ matrix.artifact_prefix }}.a
-          cp build/bin/vcellmbsolver_py*.so artifacts/ 2>/dev/null || true
-
-      # RESTORED: Output tracking targets build/bin/Release/ for the native MSVC multi-config compiler
-      - name: Prepare artifacts (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Path artifacts -Force | Out-Null
-          Copy-Item -Path build\bin\Release\MovingBoundarySolver.exe -Destination artifacts\MovingBoundarySolver-${{ matrix.artifact_prefix }}.exe -Force
-          Copy-Item -Path build\bin\Release\MovingBoundaryLib.lib -Destination artifacts\MovingBoundaryLib-${{ matrix.artifact_prefix }}.lib -Force
-          Get-ChildItem -Path build\bin\Release\vcellmbsolver_py*.pyd -ErrorAction SilentlyContinue | ForEach-Object {
-            Copy-Item -Path $_.FullName -Destination artifacts\ -Force
-          }
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
