@@ -58,10 +58,50 @@ endif()
 # Required packages
 find_package(Threads REQUIRED)
 
-# HDF5: Try CONFIG mode first (for vcpkg), fall back to MODULE mode
-find_package(HDF5 REQUIRED COMPONENTS C CXX)
+# HDF5: Try CONFIG mode first (works with vcpkg and modern HDF5 installations),
+# then fall back to MODULE mode (for older system packages on Linux/macOS).
+find_package(HDF5 CONFIG QUIET)
 if(NOT HDF5_FOUND)
-    message(FATAL_ERROR "HDF5 not found. Please ensure libhdf5-dev (Linux), hdf5 (macOS), or hdf5:x64-windows (vcpkg) is installed.")
+    find_package(HDF5 REQUIRED COMPONENTS C CXX)
+endif()
+# CONFIG mode (e.g. vcpkg) provides imported targets but may not set the legacy
+# HDF5_INCLUDE_DIRS / HDF5_LIBRARIES / HDF5_HL_LIBRARIES variables that the
+# target_include_directories / target_link_libraries calls below expect.
+# Populate them from the imported target properties when absent.
+if(NOT HDF5_INCLUDE_DIRS)
+    foreach(_hdf5_tgt
+            hdf5::hdf5-shared hdf5::hdf5_cpp-shared
+            hdf5::hdf5-static hdf5::hdf5_cpp-static)
+        if(TARGET ${_hdf5_tgt})
+            get_target_property(_hdf5_inc ${_hdf5_tgt} INTERFACE_INCLUDE_DIRECTORIES)
+            if(_hdf5_inc)
+                set(HDF5_INCLUDE_DIRS ${_hdf5_inc})
+                break()
+            endif()
+        endif()
+    endforeach()
+endif()
+if(NOT HDF5_LIBRARIES)
+    foreach(_hdf5_tgt hdf5::hdf5-shared hdf5::hdf5-static)
+        if(TARGET ${_hdf5_tgt})
+            list(APPEND HDF5_LIBRARIES ${_hdf5_tgt})
+            break()
+        endif()
+    endforeach()
+    foreach(_hdf5_tgt hdf5::hdf5_cpp-shared hdf5::hdf5_cpp-static)
+        if(TARGET ${_hdf5_tgt})
+            list(APPEND HDF5_LIBRARIES ${_hdf5_tgt})
+            break()
+        endif()
+    endforeach()
+endif()
+if(NOT HDF5_HL_LIBRARIES)
+    foreach(_hdf5_tgt hdf5::hdf5_hl-shared hdf5::hdf5_hl-static)
+        if(TARGET ${_hdf5_tgt})
+            list(APPEND HDF5_HL_LIBRARIES ${_hdf5_tgt})
+            break()
+        endif()
+    endforeach()
 endif()
 
 # Boost: header-only libraries needed for multi_array, iterator, etc.
