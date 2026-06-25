@@ -58,9 +58,13 @@ endif()
 # Required packages
 find_package(Threads REQUIRED)
 
-# HDF5: Try CONFIG mode first (works with vcpkg and modern HDF5 installations),
-# then fall back to MODULE mode (for older system packages on Linux/macOS).
-find_package(HDF5 CONFIG QUIET)
+# HDF5: when vcpkg is active, try CONFIG mode first (vcpkg exposes HDF5 via
+# CONFIG only; the MODULE/wrapper path fails there).  On Linux/macOS with
+# system packages, MODULE mode correctly requests the CXX component and
+# populates the legacy variables, so we skip CONFIG mode on those platforms.
+if(VCPKG_TOOLCHAIN)
+    find_package(HDF5 CONFIG QUIET)
+endif()
 if(NOT HDF5_FOUND)
     find_package(HDF5 REQUIRED COMPONENTS C CXX)
 endif()
