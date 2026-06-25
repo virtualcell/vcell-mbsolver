@@ -3,10 +3,9 @@ name: Build and Release
 # Builds the native standalone MovingBoundarySolver executable (+ static lib)
 # and attaches them to a GitHub Release on each v* tag.
 #
-# Windows is intentionally excluded: the native solver links the bundled
-# FronTier library, which does not compile under MSVC (same blocker as the
-# Windows wheels — see issue #2). Linux + macOS executables are built here;
-# Python wheels are built/published separately by wheels.yml.
+# Native source builds are exercised on Linux, macOS, and Windows here.
+# Python wheels are built/published separately by wheels.yml; Windows wheels
+# remain disabled there even though the source build is covered here.
 
 on:
   push:
@@ -21,12 +20,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
             artifact_prefix: linux
           - os: macos-latest
             artifact_prefix: macos
+          - os: windows-latest
+            artifact_prefix: windows
 
     steps:
       - uses: actions/checkout@v4
@@ -54,24 +55,67 @@ jobs:
         run: |
           brew install cmake hdf5 python pybind11 boost curl
 
-      - name: Configure CMake
+      - name: Install Windows dependencies
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          choco install strawberryperl -y
+          $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT) {
+            $env:VCPKG_INSTALLATION_ROOT
+          } elseif (Test-Path 'C:\vcpkg\vcpkg.exe') {
+            'C:\vcpkg'
+          } else {
+            throw 'vcpkg.exe not found on the runner'
+          }
+          & "$vcpkgRoot\vcpkg.exe" install `
+            hdf5:x64-windows `
+            boost:x64-windows `
+            curl:x64-windows `
+            pybind11:x64-windows
+          "VCPKG_ROOT=$vcpkgRoot" >> $env:GITHUB_ENV
+
+      - name: Configure CMake (Unix)
+        if: runner.os != 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
 
-      - name: Build
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: >
+          cmake -S . -B build -A x64
+          -DOPTION_TARGET_MESSAGING=ON
+          "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
+
+      - name: Build (Unix)
+        if: runner.os != 'Windows'
         run: cmake --build build --parallel
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: cmake --build build --config Release --parallel
 
       - name: Run tests
         shell: bash
         run: |
           cd build
-          ctest --output-on-failure -j"$(getconf _NPROCESSORS_ONLN)"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            ctest -C Release --output-on-failure -j2
+          else
+            ctest --output-on-failure -j"$(getconf _NPROCESSORS_ONLN)"
+          fi
 
       - name: Prepare artifacts
         shell: bash
         run: |
           mkdir -p artifacts
-          cp build/bin/MovingBoundarySolver artifacts/MovingBoundarySolver-${{ matrix.artifact_prefix }}
-          cp build/bin/libMovingBoundaryLib.a artifacts/libMovingBoundaryLib-${{ matrix.artifact_prefix }}.a
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp build/bin/Release/MovingBoundarySolver.exe artifacts/MovingBoundarySolver-${{ matrix.artifact_prefix }}.exe
+            cp build/bin/Release/MovingBoundaryLib.lib artifacts/MovingBoundaryLib-${{ matrix.artifact_prefix }}.lib
+          else
+            cp build/bin/MovingBoundarySolver artifacts/MovingBoundarySolver-${{ matrix.artifact_prefix }}
+            cp build/bin/libMovingBoundaryLib.a artifacts/libMovingBoundaryLib-${{ matrix.artifact_prefix }}.a
+          fi
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

@@ -26,10 +26,9 @@ jobs:
       matrix:
         # macOS : macos-15-intel (x86_64) + macos-15 (arm64)
         # Linux : ubuntu-latest (x86_64) + ubuntu-24.04-arm (arm64)
-        # Windows is intentionally absent: the bundled FronTier library does not
-        # compile under MSVC (Unix/GCC code — POINT/boolean clash with the
-        # Windows SDK, GCC anonymous-struct tags). Windows users can build from
-        # the sdist under WSL or use the Linux wheels. See the README.
+        # Windows wheels are intentionally absent for now. Native Windows source
+        # builds are covered by build-and-release.yml; this workflow still only
+        # publishes macOS and Linux wheels.
         os: [macos-15-intel, macos-15, ubuntu-latest, ubuntu-24.04-arm]
 
     steps:
