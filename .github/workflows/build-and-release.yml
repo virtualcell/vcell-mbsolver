@@ -3,10 +3,9 @@ name: Build and Release
 # Builds the native standalone MovingBoundarySolver executable (+ static lib)
 # and attaches them to a GitHub Release on each v* tag.
 #
-# Windows is intentionally excluded: the native solver links the bundled
-# FronTier library, which does not compile under MSVC (same blocker as the
-# Windows wheels — see issue #2). Linux + macOS executables are built here;
-# Python wheels are built/published separately by wheels.yml.
+# Native source builds are exercised on Linux, macOS, and Windows here.
+# Python wheels are built/published separately by wheels.yml; Windows wheels
+# remain disabled there even though the source build is covered here.
 
 on:
   push:
@@ -28,7 +27,7 @@ jobs:
           - os: macos-latest
             artifact_prefix: macos
           - os: windows-latest
-            artifact_prefix: windows  
+            artifact_prefix: windows
 
     steps:
       - uses: actions/checkout@v4
@@ -60,21 +59,48 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          choco install cmake -y
           choco install strawberryperl -y
-      
-      - name: Configure CMake
+          $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT) {
+            $env:VCPKG_INSTALLATION_ROOT
+          } elseif (Test-Path 'C:\vcpkg\vcpkg.exe') {
+            'C:\vcpkg'
+          } else {
+            throw 'vcpkg.exe not found on the runner'
+          }
+          & "$vcpkgRoot\vcpkg.exe" install `
+            hdf5:x64-windows `
+            boost:x64-windows `
+            curl:x64-windows `
+            pybind11:x64-windows
+          "VCPKG_ROOT=$vcpkgRoot" >> $env:GITHUB_ENV
+
+      - name: Configure CMake (Unix)
+        if: runner.os != 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
 
-      - name: Build
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: >
+          cmake -S . -B build -A x64
+          -DOPTION_TARGET_MESSAGING=ON
+          "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
+
+      - name: Build (Unix)
+        if: runner.os != 'Windows'
         run: cmake --build build --parallel
+
+      - name: Build (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: cmake --build build --config Release --parallel
 
       - name: Run tests
         shell: bash
         run: |
           cd build
           if [ "${{ runner.os }}" = "Windows" ]; then
-            ctest --output-on-failure -j2
+            ctest -C Release --output-on-failure -j2
           else
             ctest --output-on-failure -j"$(getconf _NPROCESSORS_ONLN)"
           fi

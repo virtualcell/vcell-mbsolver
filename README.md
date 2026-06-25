@@ -265,10 +265,9 @@ The wheels are self-contained: the shared HDF5 libraries are vendored in by the
 wheel-repair step (`auditwheel` / `delocate`), so no system HDF5 install is
 required to *use* a wheel.
 
-> **Windows is not currently supported.** The bundled FronTier library is
-> Unix/GCC code that does not compile under MSVC (its `POINT`/`boolean` types
-> clash with the Windows SDK and it relies on GCC anonymous-struct extensions).
-> Windows users can build/run under WSL using the Linux wheels.
+> Native Windows source builds are supported via the Visual Studio/vcpkg flow
+> above, but redistributable Windows wheels are not published yet. Use the
+> source-build steps from the Windows section when building on MSVC.
 
 ### Build a wheel locally
 

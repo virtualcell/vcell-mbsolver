@@ -86,5 +86,5 @@ before-all = "brew install hdf5 boost"
 # means the macOS wheels require macOS 15+, as with vcell-fvsolver.)
 environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 
-# No [tool.cibuildwheel.windows]: Windows wheels are not built because the
-# bundled FronTier library does not compile under MSVC. See the README.
+# No [tool.cibuildwheel.windows]: Windows wheels are not built yet; native
+# Windows source builds are handled separately in build-and-release.yml.
