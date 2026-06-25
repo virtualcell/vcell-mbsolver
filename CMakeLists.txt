@@ -64,9 +64,6 @@ find_package(HDF5 CONFIG QUIET)
 if(NOT HDF5_FOUND)
     find_package(HDF5 REQUIRED COMPONENTS C CXX)
 endif()
-if(NOT HDF5_FOUND)
-    message(FATAL_ERROR "HDF5 not found. Please ensure libhdf5-dev (Linux), hdf5 (macOS), or hdf5:x64-windows (vcpkg) is installed.")
-endif()
 # CONFIG mode (e.g. vcpkg) provides imported targets but may not set the legacy
 # HDF5_INCLUDE_DIRS / HDF5_LIBRARIES / HDF5_HL_LIBRARIES variables that the
 # target_include_directories / target_link_libraries calls below expect.
@@ -78,7 +75,7 @@ if(NOT HDF5_INCLUDE_DIRS)
         if(TARGET ${_hdf5_tgt})
             get_target_property(_hdf5_inc ${_hdf5_tgt} INTERFACE_INCLUDE_DIRECTORIES)
             if(_hdf5_inc)
-                set(HDF5_INCLUDE_DIRS "${_hdf5_inc}")
+                set(HDF5_INCLUDE_DIRS ${_hdf5_inc})
                 break()
             endif()
         endif()
