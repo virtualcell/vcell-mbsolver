@@ -68,10 +68,11 @@ jobs:
             throw 'vcpkg.exe not found on the runner'
           }
           & "$vcpkgRoot\vcpkg.exe" install `
-            hdf5:x64-windows `
-            boost:x64-windows `
-            curl:x64-windows `
-            pybind11:x64-windows
+            --triplet x64-windows `
+            hdf5 `
+            boost `
+            curl `
+            pybind11
           "VCPKG_ROOT=$vcpkgRoot" >> $env:GITHUB_ENV
 
       - name: Configure CMake (Unix)
@@ -84,6 +85,7 @@ jobs:
         run: >
           cmake -S . -B build -A x64
           -DOPTION_TARGET_MESSAGING=ON
+          -DVCPKG_TARGET_TRIPLET=x64-windows
           "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
 
       - name: Build (Unix)
