@@ -67,18 +67,22 @@ jobs:
           } else {
             throw 'vcpkg.exe not found on the runner'
           }
+      
           & "$vcpkgRoot\vcpkg.exe" install `
-          --triplet x64-windows `
-          hdf5 `
-          boost `
-          curl `
-          pybind11
+            --triplet x64-windows `
+            curl `
+            hdf5 `
+            boost `
+            pybind11
+      
           "VCPKG_ROOT=$vcpkgRoot" >> $env:GITHUB_ENV
+          "VCPKG_DEFAULT_TRIPLET=x64-windows" >> $env:GITHUB_ENV
+          "CMAKE_TOOLCHAIN_FILE=$vcpkgRoot\scripts\buildsystems\vcpkg.cmake" >> $env:GITHUB_ENV
+          "CMAKE_PREFIX_PATH=$vcpkgRoot\installed\x64-windows" >> $env:GITHUB_ENV
 
       - name: Configure CMake (Unix)
         if: runner.os != 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
-
 
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
@@ -86,9 +90,14 @@ jobs:
         run: >
           cmake -S . -B build -A x64
           -DOPTION_TARGET_MESSAGING=ON
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE"
           -DVCPKG_TARGET_TRIPLET=x64-windows
           -DVCPKG_HOST_TRIPLET=x64-windows
-          "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake"
+          -DCMAKE_PREFIX_PATH="$env:CMAKE_PREFIX_PATH"
+          -DCURL_ROOT="$env:VCPKG_ROOT\installed\x64-windows"
+          -DCURL_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include"
+          -DCURL_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\libcurl.lib"
     
       - name: Build (Unix)
         if: runner.os != 'Windows'
