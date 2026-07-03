@@ -86,8 +86,8 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Checking expected headers/libs from vcpkg..."
-          if (!(Test-Path "$env:VCPKG_ROOT\installed\x64-windows\include\H5Cpp.h")) {
-            throw "Missing H5Cpp.h"
+          if (!(Test-Path "$env:VCPKG_ROOT\installed\x64-windows\include\hdf5\H5Cpp.h")) {
+            throw "Missing H5Cpp.h at include\hdf5\H5Cpp.h"
           }
           if (!(Test-Path "$env:VCPKG_ROOT\installed\x64-windows\lib\hdf5_cpp.lib")) {
             throw "Missing hdf5_cpp.lib"
@@ -95,7 +95,7 @@ jobs:
           if (!(Test-Path "$env:VCPKG_ROOT\installed\x64-windows\lib\libcurl.lib")) {
             throw "Missing libcurl.lib"
           }
-
+      
       - name: Configure CMake (Unix)
         if: runner.os != 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
@@ -110,11 +110,11 @@ jobs:
           -DVCPKG_TARGET_TRIPLET=x64-windows
           -DVCPKG_HOST_TRIPLET=x64-windows
           -DCMAKE_PREFIX_PATH="$env:VCPKG_ROOT\installed\x64-windows"
-          -DCMAKE_INCLUDE_PATH="$env:VCPKG_ROOT\installed\x64-windows\include"
-          -DCMAKE_LIBRARY_PATH="$env:VCPKG_ROOT\installed\x64-windows\lib"
           -DHDF5_ROOT="$env:VCPKG_ROOT\installed\x64-windows"
-          -DHDF5_DIR="$env:VCPKG_ROOT\installed\x64-windows\share\hdf5"
-          -DHDF5_USE_STATIC_LIBRARIES=OFF
+          -DHDF5_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include\hdf5"
+          -DHDF5_CXX_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include\hdf5"
+          -DHDF5_hdf5_cpp_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\hdf5_cpp.lib"
+          -DHDF5_hdf5_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\hdf5.lib"
           -DCURL_ROOT="$env:VCPKG_ROOT\installed\x64-windows"
           -DCURL_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include"
           -DCURL_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\libcurl.lib"
