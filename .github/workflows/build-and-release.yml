@@ -89,15 +89,13 @@ jobs:
         shell: pwsh
         run: >
           cmake -S . -B build -A x64
-          -DOPTION_TARGET_MESSAGING=ON
+          -DOPTION_TARGET_MESSAGING=OFF
+          -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_BUILD_TYPE=Release
           -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE"
           -DVCPKG_TARGET_TRIPLET=x64-windows
           -DVCPKG_HOST_TRIPLET=x64-windows
           -DCMAKE_PREFIX_PATH="$env:CMAKE_PREFIX_PATH"
-          -DCURL_ROOT="$env:VCPKG_ROOT\installed\x64-windows"
-          -DCURL_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include"
-          -DCURL_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\libcurl.lib"
     
       - name: Build (Unix)
         if: runner.os != 'Windows'
