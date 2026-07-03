@@ -72,7 +72,7 @@ jobs:
           & "$vcpkgRoot\vcpkg.exe" install `
             --triplet x64-windows `
             curl `
-            hdf5 `
+            hdf5[cpp] `
             boost `
             pybind11
 
