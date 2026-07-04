@@ -135,8 +135,12 @@ jobs:
             $lines = Get-Content $f.FullName
             for ($i = 0; $i -lt $lines.Count; $i++) {
               $line = $lines[$i]
+              # Skip intentional lowercase sleep aliases (e.g. #define sleep(x) FT_Sleep(x))
+              if ($line -cmatch '^\s*#\s*define\s+sleep\b' -or $line -cmatch '^\s*.*\bsleep\b\s*\(') {
+                continue
+              }
               foreach ($p in $collisionPatterns) {
-                if ($line -match $p) {
+                if ($line -cmatch $p) {
                   $rel = Resolve-Path -Relative $f.FullName
                   $collisionHits.Add("${rel}:$($i+1): $line")
                   break
