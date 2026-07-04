@@ -34,6 +34,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      
       - name: Configure git for private submodules
         shell: bash
         run: |
@@ -95,6 +99,100 @@ jobs:
           if (!(Test-Path "$env:VCPKG_ROOT\installed\x64-windows\lib\libcurl.lib")) {
             throw "Missing libcurl.lib"
           }
+      
+      - name: Windows preflight (collision + header pollution)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+      
+          # ---------- scan roots / file sets ----------
+          $roots = @("Solver", "FronTierLib")
+          $codeExt = @("*.h","*.hpp","*.hh","*.hxx","*.c","*.cc","*.cpp","*.cxx")
+          $headerExt = @("*.h","*.hpp","*.hh","*.hxx")
+      
+          $codeFiles = foreach ($r in $roots) {
+            if (Test-Path $r) { Get-ChildItem $r -Recurse -File -Include $codeExt }
+          }
+          $headerFiles = foreach ($r in $roots) {
+            if (Test-Path $r) { Get-ChildItem $r -Recurse -File -Include $headerExt }
+          }
+      
+          # ---------- check 1: macro/type/function collision names ----------
+          $collisionPatterns = @(
+            '#\s*define\s+POINT\b',
+            'typedef\s+.*\bPOINT\b',
+            'using\s+POINT\s*=',
+            '#\s*define\s+FIXED\b',
+            'typedef\s+.*\bFIXED\b',
+            'using\s+FIXED\s*=',
+            '#\s*define\s+Sleep\b',
+            '^\s*void\s+Sleep\s*\('
+          )
+      
+          $collisionHits = New-Object System.Collections.Generic.List[string]
+          foreach ($f in $codeFiles) {
+            $lines = Get-Content $f.FullName
+            for ($i = 0; $i -lt $lines.Count; $i++) {
+              $line = $lines[$i]
+              foreach ($p in $collisionPatterns) {
+                if ($line -match $p) {
+                  $rel = Resolve-Path -Relative $f.FullName
+                  $collisionHits.Add("${rel}:$($i+1): $line")
+                  break
+                }
+              }
+            }
+          }
+      
+          # ---------- check 2: windows header pollution in project headers ----------
+          $winHeaderPatterns = @(
+            '^\s*#\s*include\s*<windows\.h>',
+            '^\s*#\s*include\s*<winsock2\.h>',
+            '^\s*#\s*include\s*<windef\.h>',
+            '^\s*#\s*include\s*<wingdi\.h>',
+            '^\s*#\s*include\s*<winnt\.h>',
+            '^\s*#\s*include\s*<synchapi\.h>'
+          )
+      
+          $headerPollutionHits = New-Object System.Collections.Generic.List[string]
+          foreach ($h in $headerFiles) {
+            $lines = Get-Content $h.FullName
+            for ($i = 0; $i -lt $lines.Count; $i++) {
+              $line = $lines[$i]
+              foreach ($p in $winHeaderPatterns) {
+                if ($line -match $p) {
+                  $rel = Resolve-Path -Relative $h.FullName
+                  $headerPollutionHits.Add("${rel}:$($i+1): $line")
+                  break
+                }
+              }
+            }
+          }
+      
+          # ---------- report both, fail once ----------
+          $hasCollision = $collisionHits.Count -gt 0
+          $hasPollution = $headerPollutionHits.Count -gt 0
+      
+          if ($hasCollision) {
+            Write-Host "=== Potential Windows symbol/macro collisions ==="
+            $collisionHits | Sort-Object -Unique | ForEach-Object { Write-Host $_ }
+          } else {
+            Write-Host "No symbol/macro collision patterns found."
+          }
+      
+          if ($hasPollution) {
+            Write-Host "=== Windows headers included from project headers ==="
+            $headerPollutionHits | Sort-Object -Unique | ForEach-Object { Write-Host $_ }
+          } else {
+            Write-Host "No Windows header pollution found in project headers."
+          }
+      
+          if ($hasCollision -or $hasPollution) {
+            throw "Windows preflight failed. Resolve reported issues before build."
+          }
+      
+          Write-Host "Windows preflight passed."
       
       - name: Configure CMake (Unix)
         if: runner.os != 'Windows'
