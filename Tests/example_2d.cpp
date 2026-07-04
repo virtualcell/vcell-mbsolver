@@ -66,7 +66,7 @@ static double example2d_init_surface_func(
 static int example2d_vel_func(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -95,7 +95,7 @@ static void printPoints(Front* front) {
 	if (front->interf->curves != NULL) {
 		int  dim = front->rect_grid->dim;
 		CURVE* curve = front->interf->curves[0];
-		POINT		*p;
+		FT_POINT		*p;
 		for (BOND* bond = curve->first; bond != NULL; bond = bond->next)
 		{
 			p = bond->start;

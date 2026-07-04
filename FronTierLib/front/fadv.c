@@ -393,7 +393,7 @@ LOCAL int advance_front1d(
 	Front		**newfront,
 	POINTER		wave)
 {
-	POINT              *oldp, *newp;
+	FT_POINT              *oldp, *newp;
 	HYPER_SURF_ELEMENT *oldhse, *newhse;
 	HYPER_SURF         *oldhs, *newhs;
 	INTERFACE          *intfc_old, *intfc_new;
@@ -2214,7 +2214,7 @@ EXPORT void   init_intfc_curvature3d(
 {
        HYPER_SURF              *hs;
        HYPER_SURF_ELEMENT      *hse;
-       POINT                   *p;
+       FT_POINT                   *p;
      
       
        	(void) next_point(intfc,NULL,NULL,NULL);
@@ -2257,7 +2257,7 @@ LOCAL void   init_intfc_curvature3d2(
 {
        HYPER_SURF              *hs;
        HYPER_SURF_ELEMENT      *hse;
-       POINT                   *p;
+       FT_POINT                   *p;
        int                     i;
 
        (void) next_point(intfc,NULL,NULL,NULL);
@@ -2470,9 +2470,9 @@ LOCAL int propagate_points_tangentially(
 *
 */
 
-LOCAL	void unfold_interface_section(
-	POINT   *tmpp,
-	POINT   *newp,
+LOCAL void unfold_interface_section(
+	FT_POINT   *tmpp,
+	FT_POINT   *newp,
 	TRI     *tri_tmp,
 	TRI     *tri_new,
 	SURFACE *s_tmp,
@@ -2910,7 +2910,7 @@ LOCAL void propagate_surface_points(
         INTERFACE               *intfc_new = newfront->interf;
         HYPER_SURF              *oldhs, *newhs;
         HYPER_SURF_ELEMENT      *oldhse, *newhse;
-        POINT                   *oldp, *newp;
+        FT_POINT                   *oldp, *newp;
         DEBUG_ENTER(propagate_surface_points)
 
         start_clock("propagate_surface_points");

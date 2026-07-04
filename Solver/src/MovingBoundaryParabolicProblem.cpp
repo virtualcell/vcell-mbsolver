@@ -689,7 +689,7 @@ namespace moving_boundary {
 			}
 		}
 
-		virtual int velocity(Front* front, POINT* fpoint, HYPER_SURF_ELEMENT* hse, HYPER_SURF* hs, double* out) const {
+		virtual int velocity(Front* front, FT_POINT* fpoint, HYPER_SURF_ELEMENT* hse, HYPER_SURF* hs, double* out) const {
 			CoordVect coord(fpoint->_coords[cX],fpoint->_coords[cY]);
 			double nor[MAXD];
 			GetFrontNormal(fpoint, hse, hs, nor,front);

@@ -508,8 +508,8 @@ namespace spatial {
 	* returns single polygon intersection of a and b
 	* returns empty vector if there are 0 or > 1 polygons from by intersection
 	*/
-	template <class POINT,class POINTA, class POINTB>
-	std::vector<POINT> intersection(const POINT & insidePoint, const std::vector<POINTA> &a,const std::vector<POINTB> &b); 
+	template <class FT_POINT,class POINTA, class POINTB>
+	std::vector<FT_POINT> intersection(const FT_POINT & insidePoint, const std::vector<POINTA> &a,const std::vector<POINTB> &b);
 
 
 	/**

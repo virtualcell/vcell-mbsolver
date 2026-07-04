@@ -57,8 +57,8 @@ LOCAL	INTERFACE*	f_user_2d_copy_interface(INTERFACE*,INTERFACE*);
 LOCAL	REDISTRIBUTION_DIRECTION read_redistribution_direction_from_string(
 	    const char *rd);
 LOCAL	boolean	f_user_2d_join_curves(CURVE*,CURVE*,CURVE*);
-LOCAL	boolean	f_user_2d_split_curve(int,POINT*,BOND*,CURVE*,CURVE**);
-LOCAL	boolean	f_user_2d_insert_point_in_bond(POINT*,BOND*,CURVE*);
+LOCAL	boolean	f_user_2d_split_curve(int,FT_POINT*,BOND*,CURVE*,CURVE**);
+LOCAL	boolean	f_user_2d_insert_point_in_bond(FT_POINT*,BOND*,CURVE*);
 LOCAL	int	f_user_2d_delete_curve(CURVE*);
 LOCAL	void	f_user_2d_reconstruct_curve_pointers(CURVE*,INTERFACE*,
 						     INTERFACE*,POINTER*,
@@ -644,10 +644,10 @@ EXPORT  INTERFACE *f_receive_interface(
         return i_receive_interface(src_id);
 }       /* end f_receive_interface */
 
-EXPORT	POINT *f_Point(
+EXPORT	FT_POINT *f_Point(
 	double		*coords)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	INTERFACE	*intfc = current_interface();
 	size_t		sizest;
 
@@ -670,10 +670,10 @@ EXPORT	POINT *f_Point(
 
 
 
-EXPORT	POINT *f_Static_point(
+EXPORT	FT_POINT *f_Static_point(
 	INTERFACE	*intfc)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	size_t		sizest;
 
 	p = i_Static_point(intfc);
@@ -687,10 +687,10 @@ EXPORT	POINT *f_Static_point(
 	return p;
 }		/*end f_Static_point*/
 
-EXPORT	POINT *f_copy_point(
-	POINT		*p)
+EXPORT	FT_POINT *f_copy_point(
+	FT_POINT		*p)
 {
-	POINT		*newp = i_copy_point(p);
+	FT_POINT		*newp = i_copy_point(p);
 	size_t		sizest;
 	INTERFACE	*intfc = current_interface();
 	int i,dim = intfc->dim;
@@ -735,7 +735,7 @@ EXPORT	void f_reconstruct_interface_pointers(
 
 /*ARGSUSED*/
 EXPORT	void f_reconstruct_point_pointers(
-	POINT		*p,
+	FT_POINT		*p,
 	INTERFACE	*nintfc,
 	INTERFACE	*ointfc,
 	POINTER		*ocad,
@@ -1294,7 +1294,7 @@ EXPORT	void f_reconstruct_bond_pointers(
 }		/*end f_reconstruct_bond_pointers*/
 
 EXPORT	boolean f_insert_point_in_bond(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c)
 {
@@ -1547,7 +1547,7 @@ EXPORT boolean interpolate_states_at_split_curve_node(void)
 /*ARGSUSED*/
 EXPORT	boolean f_user_split_curve(
 	int		is_a_node,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*bond,
 	CURVE		*curve,
 	CURVE		**curves)
@@ -1795,7 +1795,7 @@ EXPORT	int	f_delete_curve(
 }		/*end f_delete_curve*/
 
 EXPORT	NODE	*f_make_node(
-	POINT		*posn)
+	FT_POINT		*posn)
 {
 	NODE		*newnod;
 	int		i, dim;
@@ -1876,12 +1876,12 @@ EXPORT	boolean	f_delete_node(
 	return status;
 }		/*end f_delete_node*/
 
-EXPORT	POINT *f_make_point(
+EXPORT	FT_POINT *f_make_point(
 	double		*coords,
 	COMPONENT	left_c,
 	COMPONENT	right_c)
 {
-	POINT		*p;
+	FT_POINT		*p;
 
 	if ((p = i_make_point(coords,left_c,right_c)) == NULL)
 	    return NULL;
@@ -1963,7 +1963,7 @@ LOCAL	int	f_user_2d_delete_curve(
 /*ARGSUSED*/
 LOCAL	boolean f_user_2d_split_curve(
 	int		is_a_node,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*bond,
 	CURVE		*curve,
 	CURVE		**curves)
@@ -2054,7 +2054,7 @@ LOCAL	void f_user_2d_reconstruct_curve_pointers(
 
 /*ARGSUSED*/
 LOCAL	boolean f_user_2d_insert_point_in_bond(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c)
 {
@@ -2389,7 +2389,7 @@ LOCAL	boolean f_user_3d_insert_point_in_bond(
 }		/*end f_user_3d_insert_point_in_bond */
 
 EXPORT	boolean	f_insert_point_in_tri(
-	POINT	*p,
+	FT_POINT	*p,
 	TRI	*tri,
 	SURFACE	*s)
 {
@@ -2447,7 +2447,7 @@ EXPORT	boolean	f_insert_point_in_tri(
 }		/*end f_insert_point_in_tri*/
 
 EXPORT	boolean	f_insert_point_in_tri_side(
-	POINT	*p,
+	FT_POINT	*p,
 	int	side,
 	TRI	*tri,
 	SURFACE	*s)
@@ -2458,7 +2458,7 @@ EXPORT	boolean	f_insert_point_in_tri_side(
 	    (size_of_state(intfc) != 0))
 	{
 	    Locstate sl0, sr0, sl1, sr1;
-	    POINT    *p0, *p1;
+	    FT_POINT    *p0, *p1;
 	    double    x0, x1;
 	    p0 = Point_of_tri(tri)[side];
 	    x0 = separation(p,p0,intfc->dim)/length_of_tri_side(tri,side);
@@ -2487,7 +2487,7 @@ LOCAL	void	interpolation_coefs_in_tri(
 	double	*f,
 	TRI	*tri)
 {
-	POINT **tp;
+	FT_POINT **tp;
 	double dp0[3], dp1[3], dp2[3];
 	const double *n = Tri_normal(tri);
 	double D = Dot3d(n,n);
@@ -2565,7 +2565,7 @@ EXPORT	SURFACE	*f_join_surfaces(
 	if (interpolate_intfc_states(intfc) && (sizest != 0))
 	{
 	    Locstate sln, srn, slp, srp;
-	    POINT    *p;
+	    FT_POINT    *p;
 	    b = c->first;
 	    if (!tris_on_side_of_bond_for_join(b,&ntri,&nside,&ptri,&pside))
 	    {
@@ -2622,8 +2622,8 @@ EXPORT	SURFACE	*f_join_surfaces(
 
 EXPORT	C_BOND *f_CBond(
 	C_BOND *cb,
-	POINT  *start,
-	POINT  *end,
+	FT_POINT  *start,
+	FT_POINT  *end,
 	TRI    *t1,
 	TRI    *t2)
 {

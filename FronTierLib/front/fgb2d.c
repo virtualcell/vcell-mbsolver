@@ -56,7 +56,7 @@ LOCAL double ONEMTOL = 1.0 - _TOL_;
 LOCAL double ONEMNTOL = 1.0 - _NTOL_;
 
 LOCAL int   n_new_intfc_points = 0; 
-LOCAL POINT *new_intfc_points[50];	/*POTENTIAL BUG, static array size*/
+LOCAL FT_POINT *new_intfc_points[50];	/*POTENTIAL BUG, static array size*/
 
 /*
 *               make_emb_grid_intfc():
@@ -1839,7 +1839,7 @@ LOCAL   void init_blk_edges(
             {
                 int       comp_crd[2][2];
                 double     **coords;
-                POINT     *p;
+                FT_POINT     *p;
 
 		bi_array(&coords,2,2,sizeof(double));
 
@@ -2417,7 +2417,7 @@ LOCAL   void set_comp_at_crossings2d1(
 }	/* end set_comp_at_crossings2d1 */
 
 LOCAL   int     point_on_bond2d1(
-        POINT            *pt,
+        FT_POINT            *pt,
         BOND             *b)
 {
         if(b->start == pt)    return YES;

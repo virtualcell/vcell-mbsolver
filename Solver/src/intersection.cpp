@@ -137,7 +137,7 @@ namespace {
 	*/
 	template <class CT, class VT>
 	void transformClipperResults(Volume<CT,VT,2> &result, ClipperLib::Paths & results, double inverseScale) { 
-		typedef TPoint<CT,2> POINT;
+		typedef TPoint<CT,2> MB_POINT;
 		switch (results.size( )){
 		case 0:
 			{
@@ -155,12 +155,12 @@ namespace {
 			}
 
 		default:
-			std::vector<std::vector<POINT> > data;
+			std::vector<std::vector<MB_POINT> > data;
 			CtoVScaler<CT> inverseScaler(inverseScale);
 			for (ClipperLib::Paths::iterator iter = results.begin( ); iter != results.end( );++iter) {
 				ClipperLib::Path interSect = *iter;
 				result.nextSection( );
-				std::vector<POINT> chunk;
+				std::vector<MB_POINT> chunk;
 				size_t expected = interSect.size( );
 				std::transform(interSect.begin( ),interSect.end( ),result.fillingIterator(expected),inverseScaler);
 				result.close( );
@@ -174,7 +174,7 @@ namespace {
 	*/
 	template <class CT, class VT>
 	void transformClipperResults(Volume<CT,VT,2> &result, ClipperLib::Paths & results) { 
-		typedef TPoint<CT,2> POINT;
+		typedef TPoint<CT,2> MB_POINT;
 		switch (results.size( )){
 		case 0:
 			{
@@ -193,12 +193,12 @@ namespace {
 
 		default:
 			{
-				std::vector<std::vector<POINT> > data;
+				std::vector<std::vector<MB_POINT> > data;
 				CtoVBridge<CT> bridge;
 				for (ClipperLib::Paths::iterator iter = results.begin( ); iter != results.end( );++iter) {
 					ClipperLib::Path interSect = *iter;
 					result.nextSection( );
-					std::vector<POINT> chunk;
+					std::vector<MB_POINT> chunk;
 					size_t expected = interSect.size( );
 					std::transform(interSect.begin( ),interSect.end( ),result.fillingIterator(expected),bridge);
 					result.close( );

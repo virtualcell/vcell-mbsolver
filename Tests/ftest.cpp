@@ -45,7 +45,7 @@ namespace {
 		double v = dx*dx + dy*dy - 1; 
 		return v;
 	}
-	int evalVelocityFunction(POINTER userdata,Front* f,POINT* p,HYPER_SURF_ELEMENT*hse, HYPER_SURF*hs,double *in) {
+	int evalVelocityFunction(POINTER userdata,Front* f,FT_POINT* p,HYPER_SURF_ELEMENT*hse, HYPER_SURF*hs,double *in) {
 		double inputX = p->_coords[0];
 		double inputY = p->_coords[1];
 		double R = sqrt(inputX*inputX+inputY*inputY);
@@ -155,7 +155,7 @@ namespace {
 		return 0;
 	}
 
-	int velFunction(POINTER userdata,Front* f,POINT* p,HYPER_SURF_ELEMENT*hse, HYPER_SURF*hs,double *in) {
+	int velFunction(POINTER userdata,Front* f,FT_POINT* p,HYPER_SURF_ELEMENT*hse, HYPER_SURF*hs,double *in) {
 		in[0] = 1;
 		in[1] = 2;
 		return 0; 
@@ -173,7 +173,7 @@ namespace {
 	};
 
 	struct myvel: public spatial::FronTierVelocity {
-		int velocity(Front*,POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double *) const {
+		int velocity(Front*,FT_POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double *) const {
 			return 1;
 		}
 	};

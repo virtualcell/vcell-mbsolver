@@ -126,8 +126,8 @@ EXPORT int crossing_of_two_propagated_curves(
 	int		cr_stat = NO_CROSS;
 	int		status;
 	int		i, dim = gr->dim;
-	static	POINT   *p1 = NULL, *p2 = NULL, *p1_opp = NULL, *p2_opp = NULL;
-	static	POINT	*oldp = NULL;
+	static	FT_POINT   *p1 = NULL, *p2 = NULL, *p1_opp = NULL, *p2_opp = NULL;
+	static	FT_POINT	*oldp = NULL;
 	int		on_b1,on_b2;
 	int		count_b1,count_b2;
 
@@ -395,8 +395,8 @@ LOCAL	int found_crossing_of_two_propagated_curves(
 	O_CURVE *oldc2,
 	O_CURVE *newc1,
 	O_CURVE *newc2,
-	POINT   *oldp,
-	POINT   *pc,
+	FT_POINT   *oldp,
+	FT_POINT   *pc,
 	double   s1,
 	double   s2,
 	double   *v1,
@@ -405,7 +405,7 @@ LOCAL	int found_crossing_of_two_propagated_curves(
 	double   *dt_frac,
 	Front   *fr)
 {
-	POINT *oldp1, *oldp2;
+	FT_POINT *oldp1, *oldp2;
 	int   i, dim = fr->rect_grid->dim;
 	int   status;
 
@@ -488,8 +488,8 @@ EXPORT int crossing_of_a_propagated_curve_and_circle(
 	O_CURVE		*oldc,
 	O_CURVE		*newc,
 	double		radius,	    /* radius of the circle centered at oldn */
-	POINT		*pcenter,   /* Center of the circle */
-	POINT		*pc,	    /* crossing point */
+	FT_POINT	*pcenter,   /* Center of the circle */
+	FT_POINT	*pc,	    /* crossing point */
 	BOND		**newbcr,   /* the crossing bond on newc */
 	double		*s,	    /* fract dist on bond to cross */
 	Front		*fr,
@@ -625,9 +625,9 @@ LOCAL	void	no_cross_of_propagated_curve_and_circle(
 	O_CURVE  *oldc,
 	O_CURVE  *newc,
 	BOND     *bvirtual,
-	POINT    *p,
-	POINT    *p_opp,
-	POINT    *pc,
+	FT_POINT  *p,
+	FT_POINT  *p_opp,
+	FT_POINT  *pc,
 	double    radius,
 	double    dt,
 	double    *dt_frac,
@@ -690,8 +690,8 @@ LOCAL void set_vel_of_circle_crossing_node(
 	double		dt,
 	int		dim)
 {
-	POINT P;
-	POINT *oldp,*newp;
+	FT_POINT P;
+	FT_POINT *oldp,*newp;
 	double t;
 	const double eps = MACH_EPS;/*TOLERANCE*/
 	int   i;
@@ -718,7 +718,7 @@ LOCAL	int	found_crossing_of_a_propagated_curve_and_circle(
 	BOND    *newb,
 	BOND    *bvirtual,
 	O_CURVE *newc,
-	POINT   *pc,
+	FT_POINT   *pc,
 	double   s,
 	Front   *fr)
 {

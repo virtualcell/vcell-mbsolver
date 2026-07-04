@@ -17,14 +17,14 @@ namespace spatial {
 	typedef double (*FronTierLevelFunction)(POINTER, double *); 
 
 	typedef int (*FronTierVelocityFunction)(POINTER,
-		Front*,POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double*);
+		Front*,FT_POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double*);
 
 	struct FronTierLevel {
 		virtual double level(double *) const=0;
 	};
 
 	struct FronTierVelocity {
-		virtual int velocity(Front*,POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double*) const = 0;
+		virtual int velocity(Front*,FT_POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double*) const = 0;
 	};
 
 	template <typename T>
@@ -120,7 +120,7 @@ namespace spatial {
 
 		Front* const c_ptr( ) { return front; }
 
-		void getPointNormal(POINT* p, double* nor);
+		void getPointNormal(FT_POINT* p, double* nor);
 
 	private:
 		typedef spatial::TPoint<FCT,2> VCFPointType; 
@@ -135,7 +135,7 @@ namespace spatial {
 		std::array<GeoLimit, 2> domainLimits;
 		static double levelAdapter(POINTER, double *); 
 
-		static int velocityAdapter(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double*);
+		static int velocityAdapter(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*, HYPER_SURF*,double*);
 	};
 }
 #endif

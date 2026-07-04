@@ -268,7 +268,7 @@ typedef struct {
 
 typedef struct {
 	HYPER_SURF *hs;
-	POINT      *p;
+	FT_POINT      *p;
 	double      *nor;
 	double      tan[3]; 
 	double      plane[4]; 

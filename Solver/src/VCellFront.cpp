@@ -150,7 +150,7 @@ void VCellFront<FCT>::init(std::vector<GeoLimit> &worldExtents, const moving_bou
 }
 
 template<int numDim>
-void movePoint(boost::multi_array<double,numDim> & array, int location, const POINT &point) {
+void movePoint(boost::multi_array<double,numDim> & array, int location, const FT_POINT &point) {
 	for (int d = 0; d < numDim; d++) {
 		array[location][d] = point._coords[d];
 	}
@@ -158,14 +158,14 @@ void movePoint(boost::multi_array<double,numDim> & array, int location, const PO
 
 /*
 template<class P> UNKJUNK
-void movePoint(const POINT &point) {
+void movePoint(const FT_POINT &point) {
 for (int d = 0; d < P.numDim( ); d++) {
 array[location][d] = point._coords[d];
 }
 */
 
 
-static void retrievePoints_2d(Front* front, std::vector<POINT*>& points) 
+static void retrievePoints_2d(Front* front, std::vector<FT_POINT*>& points)
 {
 	CURVE** curves = front->interf->curves;
 	if (curves == NULL) 
@@ -183,7 +183,7 @@ static void retrievePoints_2d(Front* front, std::vector<POINT*>& points)
 		}
 		for (BOND* bond = curve->first; bond != NULL; bond = bond->next)
 		{
-			POINT* p = bond->start;
+			FT_POINT* p = bond->start;
 			if (p != NULL)
 			{
 				points.push_back(p);
@@ -192,7 +192,7 @@ static void retrievePoints_2d(Front* front, std::vector<POINT*>& points)
 
 		if (!curve->last && !curve->last->end)
 		{
-			POINT* p = curve->last->end;
+			FT_POINT* p = curve->last->end;
 			points.push_back(p);
 		}
 		++ numCurves;
@@ -243,7 +243,7 @@ double VCellFront<FCT>::levelAdapter(POINTER us, double *in) {
 }
 
 template <typename FCT>
-int VCellFront<FCT>::velocityAdapter(POINTER us,Front *ft,POINT *pt,
+int VCellFront<FCT>::velocityAdapter(POINTER us,Front *ft,FT_POINT *pt,
 								HYPER_SURF_ELEMENT *hsf, HYPER_SURF *hs, double *in) {
 									assert(us != 0);
 									VCellFront * vcf = static_cast<VCellFront *>(us); 
@@ -298,7 +298,7 @@ std::vector<spatial::TPoint<FCT,2> > VCellFront<FCT>::retrieveSurf( ) {
 			continue;
 		}
 		for (BOND* bond = curve->first; bond != NULL; bond = bond->next) {
-			POINT* p = bond->start;
+			FT_POINT* p = bond->start;
 			if (p != NULL) {
 				++ numPoints;
 			}
@@ -306,7 +306,7 @@ std::vector<spatial::TPoint<FCT,2> > VCellFront<FCT>::retrieveSurf( ) {
 
 		if (curve->last != nullptr && curve->last->end != nullptr)
 		{
-			POINT* p = curve->last->end;
+			FT_POINT* p = curve->last->end;
 			++ numPoints;
 		}
 	}
@@ -320,7 +320,7 @@ std::vector<spatial::TPoint<FCT,2> > VCellFront<FCT>::retrieveSurf( ) {
 			continue;
 		}
 		for (BOND* bond = curve->first; bond != NULL; bond = bond->next) {
-			POINT* p = bond->start;
+			FT_POINT* p = bond->start;
 			if (p != NULL) {
 				getPointNormal(p, nor);
 				VCFPointType vcPoint(convertFrontier<FCT>(p->_coords, nor));
@@ -330,7 +330,7 @@ std::vector<spatial::TPoint<FCT,2> > VCellFront<FCT>::retrieveSurf( ) {
 
 		if (curve->last != nullptr && curve->last->end != nullptr)
 		{
-			POINT* fPoint = curve->last->end;
+			FT_POINT* fPoint = curve->last->end;
 			getPointNormal(fPoint, nor);
 			VCFPointType vcPoint(convertFrontier<FCT>(fPoint->_coords, nor));
 			rval.push_back(vcPoint);
@@ -375,7 +375,7 @@ std::vector<std::vector<spatial::TPoint<FCT,2> > > VCellFront<FCT>::retrieveCurv
 		}
 		std::vector<VCFPointType> cv;
 		for (BOND* bond = curve->first; bond != NULL; bond = bond->next) {
-			POINT* p = bond->start;
+			FT_POINT* p = bond->start;
 			if (p != NULL) {
 				getPointNormal(p, nor);
 				VCFPointType vcPoint(convertFrontier<FCT>(p->_coords, nor));
@@ -385,7 +385,7 @@ std::vector<std::vector<spatial::TPoint<FCT,2> > > VCellFront<FCT>::retrieveCurv
 
 		if (curve->last != nullptr && curve->last->end != nullptr)
 		{
-			POINT* fPoint = curve->last->end;
+			FT_POINT* fPoint = curve->last->end;
 			getPointNormal(fPoint, nor);
 			VCFPointType vcPoint(convertFrontier<FCT>(fPoint->_coords, nor));
 			cv.push_back(vcPoint);
@@ -400,7 +400,7 @@ std::vector<std::vector<spatial::TPoint<FCT,2> > > VCellFront<FCT>::retrieveCurv
 }
 
 template <typename FCT>
-void VCellFront<FCT>::getPointNormal(POINT* p, double* nor)
+void VCellFront<FCT>::getPointNormal(FT_POINT* p, double* nor)
 {
 	HYPER_SURF_ELEMENT *hse = p->hse;
 	HYPER_SURF *hs = p->hs;

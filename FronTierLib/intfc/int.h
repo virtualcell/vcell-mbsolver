@@ -89,7 +89,7 @@ struct _POINT
 	boolean		crx;
 	int		indx;
 };
-typedef struct _POINT POINT;
+typedef struct _POINT FT_POINT;
 
  /* Macros of accessing private fields of points */
 #define Private_data(p)	   (p)->private_data
