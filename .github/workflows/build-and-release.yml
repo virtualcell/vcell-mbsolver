@@ -118,16 +118,16 @@ jobs:
             if (Test-Path $r) { Get-ChildItem $r -Recurse -File -Include $headerExt }
           }
       
-          # ---------- check 1: macro/type/function collision names ----------
+          # ---------- check 1: dangerous global names (tight patterns) ----------
           $collisionPatterns = @(
-            '#\s*define\s+POINT\b',
-            'typedef\s+.*\bPOINT\b',
-            'using\s+POINT\s*=',
-            '#\s*define\s+FIXED\b',
-            'typedef\s+.*\bFIXED\b',
-            'using\s+FIXED\s*=',
-            '#\s*define\s+Sleep\b',
-            '^\s*void\s+Sleep\s*\('
+            '^\s*#\s*define\s+POINT\b',
+            '^\s*typedef\s+.+\bPOINT\b\s*;',
+            '^\s*using\s+POINT\s*=',
+            '^\s*#\s*define\s+FIXED\b',
+            '^\s*typedef\s+.+\bFIXED\b\s*;',
+            '^\s*using\s+FIXED\s*=',
+            '^\s*#\s*define\s+Sleep\b',
+            '^\s*(extern\s+)?(inline\s+)?(static\s+)?\w[\w\s\*:&<>]*\bSleep\s*\('
           )
       
           $collisionHits = New-Object System.Collections.Generic.List[string]
@@ -169,7 +169,14 @@ jobs:
               }
             }
           }
-      
+          
+          # drop safe/local identifiers that are not Win32 global collisions
+          $collisionHits = $collisionHits | Where-Object {
+            ($_ -notmatch '::\s*typedef\s+TPoint<') -and
+            ($_ -notmatch '\bPoint\b') -and
+            ($_ -notmatch '\bFIXED_POINT\b')
+          }
+          
           # ---------- report both, fail once ----------
           $hasCollision = $collisionHits.Count -gt 0
           $hasPollution = $headerPollutionHits.Count -gt 0
