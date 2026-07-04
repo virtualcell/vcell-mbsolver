@@ -6,10 +6,26 @@
 #include <MBridge/Figure.h>
 #include <stdint.h>
 #include <cassert>
-#ifdef WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+
+#ifdef _WIN32
+	#ifndef WIN32_LEAN_AND_MEAN
+		#define WIN32_LEAN_AND_MEAN
+	#endif
+	#ifndef NOMINMAX
+		#define NOMINMAX
+	#e	ndif
+	#ifndef NOGDI
+		#define NOGDI
+	#endif
+	#include <windows.h>
+	#ifdef POINT
+		#undef POINT
+	#endif
+	#ifdef FIXED
+		#undef FIXED
+	#endif
 #endif
+
 typedef matlabLink::MData<int64_t> iArray;
 
 void fillClipper(const iArray & xa, const iArray &ya, ClipperLib::Path &dest) {

@@ -1,19 +1,27 @@
-#if defined(_WIN32)
-  #ifndef NOMINMAX
-    #define NOMINMAX
-  #endif
-  #ifndef WIN32_LEAN_AND_MEAN
-    #define WIN32_LEAN_AND_MEAN
-  #endif
-  #include <windows.h>
-
-  // Defensive cleanup for common macro collisions from legacy/project headers
-  #ifdef Source
-    #undef Source
-  #endif
-  #ifdef Destination
-    #undef Destination
-  #endif
+#ifdef _WIN32
+	#ifndef WIN32_LEAN_AND_MEAN
+	  #define WIN32_LEAN_AND_MEAN
+	#endif
+	#ifndef NOMINMAX
+	  #define NOMINMAX
+	#endif
+	#ifndef NOGDI
+	  #define NOGDI
+	#endif
+	#include <windows.h>
+	// Defensive cleanup for common macro collisions from legacy/project headers
+	#ifdef Source
+		#undef Source
+	#endif
+	#ifdef Destination
+		#undef Destination
+	#endif
+	#ifdef POINT
+		#undef POINT
+	#endif
+	#ifdef FIXED
+		#undef FIXED
+	#endif
 #endif
 
 #include <MPoint.h>

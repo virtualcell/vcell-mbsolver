@@ -17,9 +17,27 @@
 #include "clipper.hpp"
 //#define TIMEIT 
 #ifdef TIMEIT 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef max
+#ifdef _WIN32
+  #ifndef WIN32_LEAN_AND_MEAN
+	#define WIN32_LEAN_AND_MEAN
+  #endif
+  #ifndef NOMINMAX
+	#define NOMINMAX
+  #endif
+  #ifndef NOGDI
+	#define NOGDI
+  #endif
+  #include <windows.h>
+	#ifdef POINT
+		#undef POINT
+	#endif
+	#ifdef FIXED
+		#undef FIXED
+	#endif
+	#endif
+	#ifdef max
+		#undef max
+	#endif
 #endif
 //temp for debugging
 namespace ClipperLib {
