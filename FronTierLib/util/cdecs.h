@@ -183,7 +183,7 @@ typedef unsigned char byte;	/* Generic object of size 1, sizeof(byte) = 1 */
 #else  defined(__cplusplus) */
 #ifdef WIN32
 //#include <Windows.h>
-#define sleep(x) Sleep(x)
+#define sleep(x) FT_Sleep(x)
 void __stdcall FT_Sleep(unsigned long);
 #endif
 enum _boolean { FALSE              = 0,
