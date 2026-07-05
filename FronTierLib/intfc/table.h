@@ -117,7 +117,7 @@ struct Table {
 	/* ONED */
 	COMPONENT       *compon1d;        /* COMPONENT in each Grid Block */
 	int             *num_of_points; /* Number POINTS in each Grid zone */
-	POINT           ***pts_in_zone; /* points in each zone */
+	FT_POINT           ***pts_in_zone; /* points in each zone */
 	/* TWOD */
 	COMPONENT	**compon2d;	/* COMPONENT in each Grid Block */
 	int		**num_of_bonds;	/* Number BONDS in each Grid Block */
@@ -143,7 +143,7 @@ struct Table {
 	SURFACE		**surfacestore;	/* Storage for SURFACE Lists */
 
 			/* Quantities used by next_point(): */
-	POINT		**cur_point;
+	FT_POINT		**cur_point;
 	NODE		**cur_node;	/* Current NODE for next_point() */
 	CURVE		**cur_curve;	/* Current CURVE for next_point() */
 	BOND		*cur_bond;	/* Current BOND for next_point() */

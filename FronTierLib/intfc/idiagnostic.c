@@ -37,7 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <intfc/iloc.h>
 #include <intfc/ilocprotos.h>
 
-LOCAL 	void 	data_of_point(POINT*,int);
+LOCAL 	void 	data_of_point(FT_POINT*,int);
 	
 EXPORT 	int 	index_of_pointer(
 	POINTER	*array,
@@ -63,7 +63,7 @@ EXPORT  int 	points_on_surface(
 {
   	int		i, num_points;
 	TRI		*tri;
-	POINT		*p;
+	FT_POINT		*p;
 
 	for (tri = first_tri(s); !at_end_of_tri_list(tri,s); tri = tri->next)
 	{
@@ -89,7 +89,7 @@ EXPORT  int 	points_on_surface(
 *
 *			points_of_interface()
 *
-*	Diagnostic function, prints POINT information for all points
+*	Diagnostic function, prints FT_POINT information for all points
 *	in interface, in tabular form.
 *
 */
@@ -97,7 +97,7 @@ EXPORT  int 	points_on_surface(
 EXPORT 	void 	points_of_interface(
 	INTERFACE	*intfc)
 {
-  	POINT *p;
+  	FT_POINT *p;
 	HYPER_SURF_ELEMENT *hse;
 	HYPER_SURF *hs;
 	int i = 0;
@@ -129,7 +129,7 @@ EXPORT 	void 	points_of_interface(
 }		/*end points_of_interface*/
 
 LOCAL 	void 	data_of_point(
-	POINT	 		*p,	
+	FT_POINT	 		*p,
 	int			i)
 {
 	(void) printf("%6d %llu %3d %g %g %g %5d %5s    \n",
@@ -318,7 +318,7 @@ LOCAL boolean check_pt(double *p1,
 
 EXPORT boolean the_side(TRI  *tri)
 {
-	POINT	**p = Point_of_tri(tri);
+	FT_POINT	**p = Point_of_tri(tri);
 	int	i;
 	double	p1[3] = { 0.021,     0.019911,  0.163  };
 	double	p2[3] = { 0.0215992, 0.0189758, 0.161933 };
@@ -339,7 +339,7 @@ EXPORT boolean the_side(TRI  *tri)
 
 EXPORT void print_tri_coords(TRI* tri)
 {
-	POINT *p;
+	FT_POINT *p;
 	int i,j;
 	for (i = 0; i < 3; i++)
 	{
@@ -434,7 +434,7 @@ EXPORT boolean the_bond(BOND *b)
 *	for the point. 
 *
 */
-LOCAL boolean the_point_one(POINT *pt, double *p)
+LOCAL boolean the_point_one(FT_POINT *pt, double *p)
 {
 	int i;
 	double tol = 0.01;	/* vertices coords must have at least */
@@ -449,7 +449,7 @@ LOCAL boolean the_point_one(POINT *pt, double *p)
 	return YES;
 }
 
-EXPORT boolean the_point(POINT *pt)
+EXPORT boolean the_point(FT_POINT *pt)
 {
 	double	p1[3] = {0.025000, 0.050025, 0.0};
 	double	p2[3] = {7.116667, 11.783334, 17.999809};

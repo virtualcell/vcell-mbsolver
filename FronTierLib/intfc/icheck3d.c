@@ -230,7 +230,7 @@ LOCAL	boolean i_consistent_interface3d(
 	HYPER_SURF         *hs;
 	CURVE              **c;
 	NODE               **n;
-	POINT              *p;
+	FT_POINT              *p;
 	SURFACE	           **ss, *s;
 	TRI	           *tri;
 	boolean               status = YES;
@@ -496,7 +496,7 @@ LIB_LOCAL void check_tri_and_bond(
 	const char *str,
 	INTERFACE  *intfc)
 {
-	POINT		*ps,*pe,*p;
+	FT_POINT		*ps,*pe,*p;
 	int		i, j = 0;
 	char		s1[256],s2[256],s3[256];
 
@@ -917,7 +917,7 @@ LOCAL	boolean	check_tri(
 	TRI	  *tri,
 	INTERFACE *intfc)
 {
-	POINT **p;
+	FT_POINT **p;
 	boolean  status = YES;
 	int   side;
 
@@ -957,8 +957,8 @@ LOCAL	boolean tri_side_consistent(
 	INTERFACE    *intfc)
 {
 	TRI	*side_tri;
-	POINT	*ps = Point_of_tri(tri)[side];
-	POINT	*pe = Point_of_tri(tri)[Next_m3(side)];
+	FT_POINT	*ps = Point_of_tri(tri)[side];
+	FT_POINT	*pe = Point_of_tri(tri)[Next_m3(side)];
 	boolean status = YES;
 	int	i, bd;
 
@@ -1115,7 +1115,7 @@ LOCAL	boolean tri_side_consistent(
 	      {
 	        if (Tri_on_side(side_tri,i) == tri)
 	        {
-	          POINT *p0, *p1;
+	          FT_POINT *p0, *p1;
 	          p0 = Point_of_tri(side_tri)[i];
 	          p1 = Point_of_tri(side_tri)[Next_m3(i)];
 	          if (p0 != pe || p1 != ps)   
@@ -1176,7 +1176,7 @@ EXPORT	void check_double_cone_point(
 	SURFACE **s;
 	TRI *tri,*ptris[30],**tris;
 	int i,j,num_ptris,num_tris;
-	POINT *p; 
+	FT_POINT *p;
 	HYPER_SURF *hs;
 	HYPER_SURF_ELEMENT *hse;
 	boolean ptri_in_tri_list;

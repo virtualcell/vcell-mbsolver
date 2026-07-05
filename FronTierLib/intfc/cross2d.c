@@ -42,11 +42,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <intfc/iloc.h>
 
 	/* LOCAL Function Declarations */
-LOCAL	double	distance_between_points_on_curve(POINT*,BOND*,POINT*,BOND*,
+LOCAL	double	distance_between_points_on_curve(FT_POINT*,BOND*,FT_POINT*,BOND*,
 						 CURVE*,ORIENTATION);
 LOCAL	int	num_physical_sectors(CROSS*);
 LOCAL	int	same_curves_cross(CROSS*,CROSS*);
-LOCAL	void	reset_cross(POINT*,BOND**,CURVE**,POINT*,BOND*,
+LOCAL	void	reset_cross(FT_POINT*,BOND**,CURVE**,FT_POINT*,BOND*,
 			    CURVE*,CURVE*,CURVE*);
 
 /*
@@ -61,7 +61,7 @@ EXPORT	void add_to_cross_list(
 	BOND		*b1,
 	CURVE		*c2,
 	BOND		*b2,
-	POINT		*p)
+	FT_POINT		*p)
 {
 	CROSS		*cr = *cross;
 
@@ -101,7 +101,7 @@ EXPORT void insert_in_cross_list(
 
 EXPORT void rcl_after_split(
 	CROSS		*cr,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	CURVE		**csplit)
@@ -293,7 +293,7 @@ EXPORT void rcl_after_join(
 
 EXPORT void rcl_after_insert_point(
 	CROSS		*cr,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b)
 {
 	CROSS		*later_cr,*prev_cr;
@@ -338,12 +338,12 @@ EXPORT void rcl_after_insert_point(
 
 EXPORT void rcl_after_delete_bond_fragment_at_node(
 	CROSS		*cr,
-	POINT		*p,
+	FT_POINT		*p,
 	CURVE		*c,
 	ORIENTATION	orient)
 {
 	CROSS		*later_cr,*prev_cr;
-	POINT		*node_pos;
+	FT_POINT		*node_pos;
 	BOND		*cr_b;
 
 	cr_b = Bond_at_node(c,orient);
@@ -379,10 +379,10 @@ EXPORT void rcl_after_delete_bond_fragment_at_node(
 
 
 LOCAL void reset_cross(
-	POINT		*later_pt,
+	FT_POINT		*later_pt,
 	BOND		**later_bond,
 	CURVE		**later_curve,
-	POINT		*old_pt,
+	FT_POINT		*old_pt,
 	BOND		*old_bond,
 	CURVE		*old_curve,
 	CURVE		*new_c0,
@@ -895,14 +895,14 @@ EXPORT int find_companion_cross(
 }		/*end find_companion_cross*/
 
 LOCAL	double distance_between_points_on_curve(
-	POINT		*ps,
+	FT_POINT		*ps,
 	BOND		*bs,
-	POINT		*pe,
+	FT_POINT		*pe,
 	BOND		*be,
 	CURVE		*c,
 	ORIENTATION	orient)
 {
-	POINT		*p0, *p1;
+	FT_POINT		*p0, *p1;
 	BOND		*bb;
 	double		dist = HUGE_VAL;
 

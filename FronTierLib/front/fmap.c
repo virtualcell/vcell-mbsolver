@@ -38,8 +38,8 @@ LOCAL 	void collect_cell_ptst(INTRP_CELL*,int*,COMPONENT,Front*,double*,
 LOCAL	boolean test_point_in_seg(double*,double**);
 LOCAL	boolean test_point_in_tri(double*,double**);
 LOCAL 	boolean test_point_in_tetra(double*,double**);
-LOCAL	Tan_stencil **FrontGetTanStencils2d(Front*,POINT*,int);
-LOCAL	Tan_stencil **FrontGetTanStencils3d(Front*,POINT*,int);
+LOCAL	Tan_stencil **FrontGetTanStencils2d(Front*,FT_POINT*,int);
+LOCAL	Tan_stencil **FrontGetTanStencils3d(Front*,FT_POINT*,int);
 LOCAL 	void FrontPreAdvance2d(Front*);
 LOCAL 	void FrontPreAdvance3d(Front*);
 LOCAL   boolean new_vtx_is_closer(double,double,double*,double*,int);
@@ -487,7 +487,7 @@ EXPORT	boolean FT_NormalAtGridCrossing(
 	INTERFACE *grid_intfc = front->grid_intfc;
 	static CRXING *crxs[MAX_NUM_CRX];
 	int i,nc,dim = grid_intfc->dim;
-	POINT *p;
+	FT_POINT *p;
 	BOND *b;
 	TRI *t;
 	double len;
@@ -1527,7 +1527,7 @@ EXPORT HYPER_SURF *FT_RectBoundaryHypSurf(
 {
 	RECT_GRID *grid = computational_grid(intfc);
 	int i,dim = grid->dim;
-	POINT **p,*pt;
+	FT_POINT **p,*pt;
 	CURVE **c;
 	BOND *b;
 	SURFACE **s;
@@ -1600,7 +1600,7 @@ EXPORT HYPER_SURF **FT_InteriorHypSurfs(
 	int *num_hs)
 {
 	int dim = intfc->dim;
-	POINT **p;
+	FT_POINT **p;
 	CURVE **c;
 	SURFACE **s;
 	static HYPER_SURF **hyp_surfs;
@@ -1667,7 +1667,7 @@ EXPORT HYPER_SURF **FT_InteriorHypSurfs(
 
 EXPORT	Tan_stencil **FrontGetTanStencils(
 	Front		*fr,
-	POINT		*p,
+	FT_POINT		*p,
 	int nrad)
 {
 	switch (fr->rect_grid->dim)
@@ -1683,7 +1683,7 @@ EXPORT	Tan_stencil **FrontGetTanStencils(
 
 LOCAL	Tan_stencil **FrontGetTanStencils3d(
 	Front		*fr,
-	POINT		*p,
+	FT_POINT		*p,
 	int nrad)
 {
 	RECT_GRID *gr = fr->rect_grid;
@@ -1720,7 +1720,7 @@ LOCAL	Tan_stencil **FrontGetTanStencils3d(
 
 LOCAL	Tan_stencil **FrontGetTanStencils2d(
 	Front		*fr,
-	POINT		*p,
+	FT_POINT		*p,
 	int nrad)
 {
 	RECT_GRID *gr = fr->rect_grid;
@@ -1773,7 +1773,7 @@ LOCAL	Tan_stencil **FrontGetTanStencils2d(
 */
 
 EXPORT  void    FT_CurvatureAtPoint(
-        POINT   *p,
+        FT_POINT   *p,
 	Front	*fr,
         double   *curvature)
 {
@@ -1803,7 +1803,7 @@ EXPORT  void    FT_CurvatureAtPoint(
 */
 
 EXPORT	void	FT_NormalAtPoint(
-	POINT   *p,
+	FT_POINT   *p,
         Front   *fr,
         double   *nor,
 	COMPONENT comp)
@@ -1850,7 +1850,7 @@ EXPORT 	double	FT_GridSizeInDir(
 
 EXPORT	Nor_stencil *FT_CreateNormalStencil(
 	Front	*fr,
-	POINT	*p,
+	FT_POINT	*p,
 	COMPONENT comp,
 	int 	npts)
 {
@@ -1896,8 +1896,8 @@ EXPORT	Nor_stencil *FT_CreateNormalStencil(
 **************************************************************************/
 
 EXPORT	boolean FrontGetPointChain(
-	POINT *pc,		/* center of the chain */
-	POINT **pts,		/* memory already allocated */
+	FT_POINT *pc,		/* center of the chain */
+	FT_POINT **pts,		/* memory already allocated */
 	int num_pts)
 {
 	CURVE *c = Curve_of_hs(pc->hs);
@@ -2429,7 +2429,7 @@ EXPORT void FT_ParallelExchCellIndex(
 }	/* end FT_ParallelExchCellIndex */
 
 EXPORT	void FT_GetStatesAtPoint(
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	POINTER *sl,
@@ -2742,7 +2742,7 @@ static boolean is_rect_side_surface(
 	int nb)
 {
 	TRI *tri;
-	POINT *p;
+	FT_POINT *p;
 	double bline = (nb == 0) ? rgr->L[idir] : rgr->U[idir];
 	int i;
 
@@ -2998,7 +2998,7 @@ EXPORT void FT_ArrayOfNodeCurves(
 
 EXPORT void FT_ArrayOfCurvePoints(
 	CURVE *curve,
-	POINT **pts)
+	FT_POINT **pts)
 {
 	int n,dim = curve->interface->dim;
 	BOND *b;
@@ -3041,7 +3041,7 @@ EXPORT void FT_ArrayOfCurveBonds(
 
 EXPORT CURVE *FT_CurveOfPoint(
 	INTERFACE *intfc,
-	POINT *point)
+	FT_POINT *point)
 {
 	CURVE **c,*curve;
 	BOND *b;
@@ -3060,7 +3060,7 @@ EXPORT CURVE *FT_CurveOfPoint(
 
 EXPORT NODE *FT_NodeOfPoint(
 	INTERFACE *intfc,
-	POINT *point)
+	FT_POINT *point)
 {
 	NODE **n,*node;
 	for (n = intfc->nodes; n && *n; n++)
@@ -3074,9 +3074,9 @@ EXPORT NODE *FT_NodeOfPoint(
 
 EXPORT void FT_ArrayOfSurfPoints(
 	SURFACE *surf,
-	POINT **pts)
+	FT_POINT **pts)
 {
-	POINT *p;
+	FT_POINT *p;
 	TRI *tri;
 	int i,n;
 
@@ -3122,7 +3122,7 @@ EXPORT 	int FT_NumOfCurvePoints(CURVE *c)
  ***********************************************************************/
 EXPORT	int FT_NumOfSurfPoints(SURFACE *surf)
 {
-	POINT *p;
+	FT_POINT *p;
 	TRI *tri;
 	int i,n;
 
@@ -3162,7 +3162,7 @@ EXPORT	int FT_NumOfSurfPoints(SURFACE *surf)
 EXPORT  int FT_NumOfIntfcPoints(INTERFACE *intfc)
 {
 	int i, n, dim = intfc->dim;
-	POINT	*p;
+	FT_POINT	*p;
 	HYPER_SURF_ELEMENT *phse;
 	HYPER_SURF	   *phs;
 	
@@ -3270,7 +3270,7 @@ EXPORT	int FT_NumOfIntfcTris(INTERFACE *intfc)
 }	/* end FT_NumOfIntfcTris */
 
 EXPORT int FT_FirstRingTrisAroundPoint(
-	POINT *p,
+	FT_POINT *p,
 	TRI *tri,
 	TRI ***tris)	/* tris in first ring around the point p */
 {

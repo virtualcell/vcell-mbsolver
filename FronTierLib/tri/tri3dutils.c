@@ -310,7 +310,7 @@ LIB_LOCAL int count_num_pcs3d(
 	int		ix, iy, iz, k, l, j;
 	int		nt,***num_tris;
 	TRI		*****tris,**blk_tris,*t;
-	POINT		*p;
+	FT_POINT		*p;
 	BOND		*b;
 	BOND_TRI	**btris;
 	struct Table	*T;
@@ -433,7 +433,7 @@ LIB_LOCAL	void copy_tg_pts_from_regular_grid(
 LIB_LOCAL int  max_num_3d_lin_els(
 	INTERFACE	*intfc)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	TRI		**blk_tris;
 	TRI		*****tz, ****tzy, ***tzyx;
 	int		***ntz, **ntzy, *ntzyx;
@@ -444,11 +444,11 @@ LIB_LOCAL int  max_num_3d_lin_els(
 	int		num_lin_els;
 	int		xmax, ymax, zmax;
 	struct Table	*T;
-	static POINT	**p_list = NULL;
+	static FT_POINT	**p_list = NULL;
 
 	T = table_of_interface(intfc);
 	if (p_list == NULL)
-		uni_array(&p_list,MAX_BLK_ELS,sizeof(POINT *));
+		uni_array(&p_list,MAX_BLK_ELS,sizeof(FT_POINT *));
 
 	xmax = topological_grid(intfc).gmax[0];
 	ymax = topological_grid(intfc).gmax[1];
@@ -582,7 +582,7 @@ LOCAL void add_tg_pt_from_tri(
 	int		i,num_els;
 	TG_PT		*pt;
 	TG_PT		**el_list;
-	POINT		*point;
+	FT_POINT		*point;
 	Locstate	sl,sr;
 
 	num_els = blk_bin->num_els;

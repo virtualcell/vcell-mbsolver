@@ -90,7 +90,7 @@ LOCAL   void    add_to_crx_list(int*,int,INTERFACE*,TRI*,SURFACE*,CRXING*,
 LOCAL   void    insert_block_crossings(INTERFACE*,RECT_GRID*,CRXING*,int**,
                                 int*,TRI**,SURFACE**,int,int*,int*);
 LOCAL   void    linear_interp_coefs_3d_tri(double*,double*,TRI*);
-LOCAL   boolean    set_comp_at_vertex(CRXING*,POINT*,TRI*,SURFACE*,int);
+LOCAL   boolean    set_comp_at_vertex(CRXING*,FT_POINT*,TRI*,SURFACE*,int);
 
 /*grid based reconstruction */
 LOCAL	void	 fill_block_crx(int,int,int,BLK_CRX*,int*,
@@ -917,7 +917,7 @@ LOCAL   void     install_curve_points_state(
         CURVE       **c;
         BOND        *b;
         BOND_TRI    **btri;
-        POINT       *p;
+        FT_POINT       *p;
         int         k;
         size_t      sizest = size_of_state(intfc);
                   
@@ -2293,7 +2293,7 @@ LOCAL int fill_missing_crx(
 	HYPER_SURF 	*hs;
 	SURFACE		*surf;
 	Locstate 	sl, su;
-	POINT 		*p;
+	FT_POINT 		*p;
 	RECT_GRID 	*expanded_dual_grid = &topological_grid(intfc);
 	double 		coords[MAXD];
 	int             *gmax = expanded_dual_grid->gmax;
@@ -4717,7 +4717,7 @@ LOCAL	void add_to_crx_list(
 	int iv,
 	int ie)
 {
-	POINT	**p;
+	FT_POINT	**p;
 	int	i;
 	
 	p = Point_of_tri(tri);
@@ -4727,7 +4727,7 @@ LOCAL	void add_to_crx_list(
 	    {
 	    	for (i = 0; i < *nc; ++i)
 		{
-		    POINT *ptmp = crx_list[i].pt;
+		    FT_POINT *ptmp = crx_list[i].pt;
 		    if (crx_tmp_store[i].vertex == p[iv])
 			return;
 		    if (crds_crx[(ic+1)%3] == Coords(ptmp)[(ic+1)%3] &&
@@ -4855,13 +4855,13 @@ LOCAL	void add_to_crx_list(
 
 EXPORT  void interpolate_crx_pt_states_on_tri(
 	INTERFACE	*intfc,
-	POINT		*pt,
+	FT_POINT		*pt,
 	TRI		*tri,
 	SURFACE		*surf)
 {
 	double		f[MAXD];
 	double		*coords = Coords(pt);
-	POINT		*p;
+	FT_POINT		*p;
 	int		i;
 	Locstate	lstate[3], rstate[3];
 
@@ -4944,14 +4944,14 @@ EXPORT void linear_interp_coefs_three_pts(
 
 EXPORT void interpolate_crx_pt_states_on_edge(
 	INTERFACE	*intfc,
-	POINT		*pt,
+	FT_POINT		*pt,
 	TRI		*tri,
 	SURFACE		*surf,
 	int 		ie)
 {
 	double		alpha;
 	double		*coords = Coords(pt);
-	POINT		*p1,*p2;
+	FT_POINT		*p1,*p2;
 	int		i;
 	Locstate	lstate[2], rstate[2];
 	static  double	crx_tol;
@@ -4988,7 +4988,7 @@ EXPORT void interpolate_crx_pt_states_on_edge(
 
 LOCAL boolean set_comp_at_vertex(
 	CRXING  *crx,
-	POINT   *p,
+	FT_POINT   *p,
 	TRI     *tri,
 	SURFACE *surf,
 	int     dir)

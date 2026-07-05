@@ -40,7 +40,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 LOCAL	ORIENTATION	find_bond_and_orient_at_crx(CRXING*,int,BOND**);
 LOCAL	boolean	crxl_in_blk_crx_list(BLK_CRX_LIST*,BLK_CRX_LIST*);
 LOCAL	int	is_proper_elN1(INTERFACE*,BOND***);
-LOCAL	int	point_in_crx_list(POINT*,BOND*,CRXING**,CRXING**);
+LOCAL	int	point_in_crx_list(FT_POINT*,BOND*,CRXING**,CRXING**);
 LOCAL	boolean	triangulate_elN1(TRI_GRID*,int*,int,int*,int,int,int*,int,int,
 				 int*,int,int,int*,int,int,NODE**,TG_PT**,
 				 LINEAR_ELEMENT**,BILINEAR_ELEMENT**,
@@ -1001,8 +1001,8 @@ LOCAL	void make_blk_crx_lists(
 	for (crxl = Crxlst.next; crxl; crxl = crxl->next)
 	{
 	    BOND Btmp;
-	    POINT Ptmp, Pc;
-	    POINT *nd_posn = blk_node[0]->posn;
+	    FT_POINT Ptmp, Pc;
+	    FT_POINT *nd_posn = blk_node[0]->posn;
 	    BOND **bb;
 
 	    if (crxl->opp_node)
@@ -1298,7 +1298,7 @@ LOCAL int is_proper_elN1(
 {
 	BOND		*b, **b1, **b2;
 	CURVE		**c;
-	POINT		Pc;
+	FT_POINT		Pc;
 
 #if defined(DEBUG_TRI_GRID)
 
@@ -1545,7 +1545,7 @@ LOCAL	void insert_cur_seg(
 {
 	BOND		*b_out;
 	NODE		*node_out, *opp_node;
-	POINT		*pob;
+	FT_POINT		*pob;
 	CRXING		*crx;
 	int		side;
 	ORIENTATION	opp_or = Opposite_orient(orient);
@@ -1618,7 +1618,7 @@ LOCAL	void	install_blk_curve(
 {
 	BOND		*b_first, *b_last, *b, *bnew;
 	CURVE		*newc;
-	POINT		*ps, *pe;
+	FT_POINT		*ps, *pe;
 	RECT_GRID	*gr = computational_grid(blk_intfc);
 	double		tol = 0.5*IG_NTOL*(gr->h[0] + gr->h[1]);/*TOLERANCE*/
 
@@ -1669,7 +1669,7 @@ LOCAL	void	install_blk_curve(
 
 
 LOCAL int point_in_crx_list(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CRXING		**crxings,
 	CRXING		**crx)

@@ -68,9 +68,9 @@ LOCAL   SURFACE *prompt_make_NWGrid_surface(INTERFACE*);
 /*----------------------End by Eric-----------------------*/
 /*TMP*/
 LOCAL void    no_continuation_along_curve(int,ORIENTATION,int,CURVE*,double*,
-                                POINT**,BOND**,Front*);
-LOCAL void    point_at_distance_along_curve(POINT*,ORIENTATION,double,int,
-				POINT**,BOND**,double*,Front*);
+                                FT_POINT**,BOND**,Front*);
+LOCAL void    point_at_distance_along_curve(FT_POINT*,ORIENTATION,double,int,
+				FT_POINT**,BOND**,double*,Front*);
 
 
 /*
@@ -84,7 +84,7 @@ LOCAL void    point_at_distance_along_curve(POINT*,ORIENTATION,double,int,
 
 /*ARGSUSED*/
 EXPORT	void	f_principal_tangent(
-	POINT			*p,
+	FT_POINT			*p,
 	HYPER_SURF_ELEMENT	*hse,
 	HYPER_SURF		*hs,
 	double			*nor,
@@ -584,9 +584,9 @@ EXPORT	Tan_stencil *alloc_tan_stencil(
 	    (size/sizeof(HYPER_SURF_ELEMENT*) + 1)*sizeof(HYPER_SURF_ELEMENT*) :
 	    size;
 	size = hse_offset + npts*sizeof(HYPER_SURF_ELEMENT*);
-	p_offset = (size%sizeof(POINT*) != 0) ?
-	    (size/sizeof(POINT*) + 1)*sizeof(POINT*) : size;
-	size = p_offset + npts*sizeof(POINT*);
+	p_offset = (size%sizeof(FT_POINT*) != 0) ?
+	    (size/sizeof(FT_POINT*) + 1)*sizeof(FT_POINT*) : size;
+	size = p_offset + npts*sizeof(FT_POINT*);
 	t_offset = (size%sizeof(double) != 0) ?
 	    (size/sizeof(double) + 1)*sizeof(double) : size;
 	size = t_offset + npts*sizeof(double);
@@ -599,7 +599,7 @@ EXPORT	Tan_stencil *alloc_tan_stencil(
 	sten = (Tan_stencil*)store;
 	sten->hsstore = (HYPER_SURF**)(store + hs_offset);
 	sten->hsestore = (HYPER_SURF_ELEMENT**)(store + hse_offset);
-	sten->pstore = (POINT**)(store + p_offset);
+	sten->pstore = (FT_POINT**)(store + p_offset);
 	sten->tstore = (double*)(store + t_offset);
 	sten->leftststore = (Locstate*)(store + ls_offset);
 	sten->rightststore = (Locstate*)(store + rs_offset);
@@ -759,19 +759,19 @@ EXPORT  void   set_full_average(boolean y_or_n)
 *	averaged points.
 */
 
-EXPORT	POINT *f_average_points(
+EXPORT	FT_POINT *f_average_points(
 	boolean               newpoint,
-	POINT		   *p1,
+	FT_POINT		   *p1,
 	HYPER_SURF_ELEMENT *hse1,
 	HYPER_SURF	   *hs1,
-	POINT		   *p2,
+	FT_POINT		   *p2,
 	HYPER_SURF_ELEMENT *hse2,
 	HYPER_SURF	   *hs2)
 {
 	INTERFACE *intfc = hs1->interface;
 	Locstate  sl1, sl2, sr1, sr2;
 	Locstate  sl, sr;
-	POINT     *pmid;
+	FT_POINT     *pmid;
 	double	  crds1[3];
 	double	  crds2[3];
 	size_t	  sizest = size_of_state(intfc);
@@ -921,7 +921,7 @@ EXPORT	void	delete_passive_boundaries(
 	{
 	case 1:
 	    {
-	        POINT **p;
+	        FT_POINT **p;
 	        for (p = intfc->points; p && *p; ++p)
 	        {
 		    if (is_passive_boundary(Hyper_surf(*p)))
@@ -1112,7 +1112,7 @@ LOCAL	double compute_curvature2d(
 
 /*ARGSUSED*/
 EXPORT	double	f_mean_curvature_at_point2d(
-	POINT		*p,
+	FT_POINT		*p,
 	HYPER_SURF_ELEMENT	*hse,
 	HYPER_SURF		*hs,
 	Front		*front)
@@ -1121,11 +1121,11 @@ EXPORT	double	f_mean_curvature_at_point2d(
 	double           curvaturep = 0.0, curvaturen = 0.0;
 	CURVE		*c = Curve_of_hs(hs);
 	BOND		*bnext,*b = Bond_of_hse(hse);
-	POINT           *pprev,*pnext;
+	FT_POINT           *pprev,*pnext;
 	int		i, dim = c->interface->dim;
 	double		v[MAXD],vn[MAXD], vp[MAXD];
 	double           max_curvature;
-	static POINT	*p_prev,*p_next;
+	static FT_POINT	*p_prev,*p_next;
 	static BOND	*b_prev,*b_next;
 	static double 	ds,t[20];
 
@@ -1275,7 +1275,7 @@ EXPORT	double	f_mean_curvature_at_point2d(
 
 
 EXPORT	double	f_mean_curvature_at_point3d( 
-        POINT		   *p,
+        FT_POINT		   *p,
         HYPER_SURF_ELEMENT *hse, 
         HYPER_SURF	   *hs, 
         Front		   *fr)
@@ -1290,10 +1290,10 @@ EXPORT	double	f_mean_curvature_at_point3d(
 	static double    *unit_vec=NULL,*limit=NULL,*height = NULL;
 	static double    **rotation=NULL,**tmp2 = NULL,*tmp1 = NULL;
 	static double    **tmp_matrix = NULL,**least = NULL;
-        static POINT    **p_list,**p_listold;
+        static FT_POINT    **p_list,**p_listold;
 	static double	max_curvature;
        
-	POINT    *pn;
+	FT_POINT    *pn;
 	TRI	 *t; 
 	TRI      **tris; 
 
@@ -1317,8 +1317,8 @@ EXPORT	double	f_mean_curvature_at_point3d(
 	    uni_array(&tmp1,48,FLOAT);
 	    uni_array(&unit_vec,48,FLOAT);
 	    uni_array(&height,48,FLOAT);
-	    uni_array(&p_listold,48,sizeof(POINT*));
-	    uni_array(&p_list,48,sizeof(POINT*));
+	    uni_array(&p_listold,48,sizeof(FT_POINT*));
+	    uni_array(&p_list,48,sizeof(FT_POINT*));
 	
 	    for(i = 0; i < 48; ++i)
 	    {
@@ -1563,7 +1563,7 @@ EXPORT	void	test1d(
 	Front *front)
 {
 	INTERFACE  *intfc, *new_intfc;
-	POINT *p;
+	FT_POINT *p;
 	double x;
 	COMPONENT left, right;
 	
@@ -1820,7 +1820,7 @@ LOCAL 	SURFACE *prompt_make_NWGrid_surface(
 	INTERFACE *intfc)
 {
 	FILE *ifile;
-	POINT **pts,*pv[MAXD];
+	FT_POINT **pts,*pv[MAXD];
 	TRI **tris,*tri;
 	SURFACE *surf;
 	double coords[MAXD],vel[MAXD];
@@ -1848,7 +1848,7 @@ LOCAL 	SURFACE *prompt_make_NWGrid_surface(
 	    clean_up(ERROR);
 	}
 	fscanf(ifile,"%d %d",&num_points,&num_tris);
-	uni_array(&pts,num_points,sizeof(POINT*));
+	uni_array(&pts,num_points,sizeof(FT_POINT*));
 	uni_array(&tris,num_tris,sizeof(TRI*));
 
 	if (!fgetstring(ifile,"X,Y,Z-Coordinates, U,V,W-Velocity"))
@@ -1924,11 +1924,11 @@ LOCAL 	SURFACE *prompt_make_NWGrid_surface(
  	|| (orient == NEGATIVE_ORIENTATION && p == b->end))
 
 LOCAL void point_at_distance_along_curve(
-	POINT		*p,
+	FT_POINT		*p,
 	ORIENTATION	orient, /* direction along curve for state evaluation */
 	double		ds,	/* distance along curve for state evaluation  */
 	int		npts,	/* number of points on curve to load          */
-	POINT		**posn,
+	FT_POINT		**posn,
 	BOND		**bvp,
 	double		*t,
 	Front		*fr)
@@ -2022,11 +2022,11 @@ LOCAL	void	no_continuation_along_curve(
 	int		npts,
 	CURVE		*cc,
 	double		*t,
-	POINT		**posn,
+	FT_POINT		**posn,
 	BOND		**bvp,
 	Front		*fr)
 {
-	POINT		*curr_posn;
+	FT_POINT		*curr_posn;
 	int		i, j, dim = fr->rect_grid->dim;
 	int		isgn = (orient == NEGATIVE_ORIENTATION) ? -1 : 1;
 	size_t		sizest = fr->sizest;

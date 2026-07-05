@@ -343,7 +343,7 @@ EXPORT void init_vortex_params(
 EXPORT int sine_motion_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -364,7 +364,7 @@ EXPORT int sine_motion_vel(
 EXPORT int translation_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -382,7 +382,7 @@ EXPORT int translation_vel(
 EXPORT int radial_motion_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -407,7 +407,7 @@ EXPORT int radial_motion_vel(
 EXPORT int burgers_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -424,7 +424,7 @@ EXPORT int burgers_vel(
 EXPORT int shear_motion_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -451,7 +451,7 @@ EXPORT int shear_motion_vel(
 EXPORT int circular_rotation_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -506,7 +506,7 @@ EXPORT int circular_rotation_vel(
 EXPORT int normal_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -530,7 +530,7 @@ EXPORT int normal_vel(
 EXPORT int curvature_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -556,7 +556,7 @@ EXPORT int curvature_vel(
 EXPORT int flame_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -614,7 +614,7 @@ EXPORT int flame_vel(
 EXPORT int bipolar_vel(
 	POINTER params,
 	Front *front,
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	double *vel)
@@ -653,7 +653,7 @@ EXPORT int bipolar_vel(
 EXPORT int vortex_vel(
         POINTER params,
         Front *front,
-        POINT *p,
+        FT_POINT *p,
         HYPER_SURF_ELEMENT *hse,
         HYPER_SURF *hs,
         double *vel)
@@ -731,7 +731,7 @@ EXPORT int vortex_vel(
 EXPORT int double_vortex_vel(
         POINTER params,
         Front *front,
-        POINT *p,
+        FT_POINT *p,
         HYPER_SURF_ELEMENT *hse,
         HYPER_SURF *hs,
         double *vel)

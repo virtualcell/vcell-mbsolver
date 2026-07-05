@@ -144,7 +144,7 @@ LOCAL	void xgraph_curve_within_range(
 	double *center,
 	double radius)
 {
-	POINT *p;
+	FT_POINT *p;
 	BOND *b;
 	boolean prev_p_within_range = NO;
         p = c->start->posn;
@@ -442,7 +442,7 @@ LOCAL  	void 	xgraph_curve_file(
 	const COORDINATE_PLANE proj)
 {
   	BOND 	*b;
-	POINT	*start,*end;
+	FT_POINT	*start,*end;
   	FILE	*xgraph;
 	int	j;
 	char	path[256];
@@ -493,7 +493,7 @@ EXPORT 	void 	xgraph_curve(
 	const COORDINATE_PLANE proj)
 {
   	BOND 	*b;
-	POINT	*start,*end;
+	FT_POINT	*start,*end;
 	int	j;
 
 
@@ -618,7 +618,7 @@ LOCAL  	void 	xgraph_grid(
 }		/*end xgraph_grid*/
 
 EXPORT	boolean point_within_range(
-	POINT *p,
+	FT_POINT *p,
 	double *center,
 	double radius,
 	int dim)

@@ -374,7 +374,7 @@ LOCAL	void copy_tris(
 	TRI		*oldtri, *newtri;
 	CURVE		**oldc, **newc;
 	BOND		*bond, *nbond;
-	POINT		*p, *pt[3];
+	FT_POINT		*p, *pt[3];
 	int		i, j;
 	int		h_size;
 	P_LINK		*hash_table;
@@ -403,7 +403,7 @@ LOCAL	void copy_tris(
 	    for (j = 0; j < 3; ++j)
 	    {
 	    	p = Point_of_tri(oldtri)[j];
-	    	pt[j] = (POINT*)find_from_hash_table((POINTER)p,
+	    	pt[j] = (FT_POINT*)find_from_hash_table((POINTER)p,
 						     hash_table,h_size);
 	    	if (pt[j] == NULL)
 	    	{
@@ -631,7 +631,7 @@ LIB_LOCAL void copy_all_surfaces(
 */
 
 EXPORT	boolean	i_insert_point_in_tri(
-	POINT	*p,
+	FT_POINT	*p,
 	TRI	*tri,
 	SURFACE	*s)
 {
@@ -684,7 +684,7 @@ EXPORT	boolean	i_insert_point_in_tri(
 
 /*ARGSUSED*/
 EXPORT	boolean	i_undo_insert_point_in_tri(
-	POINT	*p,
+	FT_POINT	*p,
 	TRI	*tri,
 	SURFACE	*s)
 {
@@ -768,12 +768,12 @@ EXPORT	boolean	i_undo_insert_point_in_tri(
 */
 
 EXPORT	boolean	i_insert_point_in_tri_side(
-	POINT	*p,
+	FT_POINT	*p,
 	int	side,
 	TRI	*tri,
 	SURFACE	*s)
 {
-	POINT        *pp[3];
+	FT_POINT        *pp[3];
 	POINTER      neighbor[3];
 	TRI	     *nbr_tri, *new_nbr_tri, *new_tri;
 	int	     siden, sidep, nbr_side, nbr_siden, nbr_sidep, bdry;
@@ -858,7 +858,7 @@ EXPORT	boolean	i_insert_point_in_tri_side(
 }		/*end i_insert_point_in_tri_side*/
 
 EXPORT	boolean	i_undo_insert_point_in_tri_side(
-	POINT	*p,
+	FT_POINT	*p,
 	int	side,
 	TRI	*tri,
 	SURFACE	*s)
@@ -1124,7 +1124,7 @@ LIB_LOCAL void i_fprint_surface(
 	int    i, num_points;
 	CURVE  **pos_cur,**neg_cur;
 	TRI    *tri;
-	POINT  *p;
+	FT_POINT  *p;
 
 	(void) fprintf(file,"\tSurface %llu:\n",surface_number(s));
 	if (s == NULL)
@@ -1210,7 +1210,7 @@ LIB_LOCAL SURFACE *read_print_surface(
 	COMPONENT	pcomp = 0, ncomp = 0;
 	CURVE		**newc;
 	CURVE		**pos_curves, **neg_curves;
-	POINT		**new_pts;
+	FT_POINT		**new_pts;
 	SURFACE		*s;
 	TRI		**new_tris, *tri;
 	int		j, k, n_pos_curves, n_neg_curves, ncurves, ntris;
@@ -1314,7 +1314,7 @@ LIB_LOCAL SURFACE *read_print_surface(
 	    return s;
 	}
 
-	uni_array(&new_pts,npts,sizeof(POINT *));
+	uni_array(&new_pts,npts,sizeof(FT_POINT *));
 	for (j = 0; j < npts; ++j) 
 	{
 	    new_pts[j] = Point(NULL);
@@ -1561,9 +1561,9 @@ EXPORT int i_delete_surface(
 }		/*end i_delete_surface*/
 
 EXPORT TRI *i_make_tri(
-	POINT		*p0,
-	POINT		*p1,
-	POINT		*p2,
+	FT_POINT		*p0,
+	FT_POINT		*p1,
+	FT_POINT		*p2,
 	POINTER		neighbor01,
 	POINTER		neighbor12,
 	POINTER		neighbor20,
@@ -1634,7 +1634,7 @@ LIB_LOCAL void fprint_tri(
 	TRI	  *tri,
 	INTERFACE *intfc)
 {
-	POINT	           *p[3];
+	FT_POINT	           *p[3];
 	SURFACE            *s;
 	const double* const *sv;
 	const double        *tnor;
@@ -1751,7 +1751,7 @@ LOCAL void fprint_triangle_numbers(
 	TRI		*tri)
 {
 	INTERFACE  *intfc = current_interface();
-	POINT	   *p;
+	FT_POINT	   *p;
 	int	   i, side;
 	static const char *sideno[] = {"01", "12", "20"};
 
@@ -2090,7 +2090,7 @@ EXPORT boolean next_tri(
 /*n times. */
 LIB_LOCAL boolean next_point3d(
 	INTERFACE	   *intfc,
-	POINT		   **P,
+	FT_POINT		   **P,
 	HYPER_SURF_ELEMENT **HSE,
 	HYPER_SURF	   **HS)
 {
@@ -2373,7 +2373,7 @@ EXPORT	void link_tri_list_to_surface(
 
 EXPORT	TRI	*Prev_tri_at_vertex(
 	TRI	*tri,
-	POINT	*p)
+	FT_POINT	*p)
 {
 	int	side;
 
@@ -2388,7 +2388,7 @@ EXPORT	TRI	*Prev_tri_at_vertex(
 
 EXPORT	TRI	*Next_tri_at_vertex(
 	TRI	*tri,
-	POINT	*p)
+	FT_POINT	*p)
 {
 	int	side;
 
@@ -2412,7 +2412,7 @@ LOCAL	void reset_tri_points_at_bond(
 	BOND *b)
 {
 	TRI	    *t;
-	POINT	    **p, *ps, *pe, *psold, *peold;
+	FT_POINT	    **p, *ps, *pe, *psold, *peold;
 	int	    i, j, is, ie, side;
 	double	    *cs, *ce, *c[3], ds, min_ds;
 	ORIENTATION orient;
@@ -2516,7 +2516,7 @@ EXPORT	BOND_TRI *i_link_tri_to_bond(
 	ORIENTATION orient = ORIENTATION_NOT_SET;
 	INTERFACE   *cur_intfc = current_interface();
 	size_t	    size_bond_tri;
-	POINT	    *ps, *pe, **p;
+	FT_POINT	    *ps, *pe, **p;
 	int	    i, side;
 
 	if (btri == NULL)
@@ -2566,7 +2566,7 @@ EXPORT	BOND_TRI *i_link_tri_to_bond(
 	}
 	if (orient == ORIENTATION_NOT_SET)
 	{
-	    POINT  **p;
+	    FT_POINT  **p;
 
 	    screen("ERROR in i_link_tri_to_bond(), no side "
 		   "of tri shares common points with bond\n");
@@ -2604,7 +2604,7 @@ EXPORT	BOND_TRI *i_link_tri_to_bond(
 EXPORT	void i_reverse_bond(
 	BOND *b)
 {
-	POINT *ptmp;
+	FT_POINT *ptmp;
 	BOND_TRI **btris;
 
 	ptmp = b->start;
@@ -2674,7 +2674,7 @@ EXPORT	SURFACE  *i_join_surfaces(
 {
 	BOND     *b;
 	NODE     *ns, *ne;
-	POINT    *ps, *pe;
+	FT_POINT    *ps, *pe;
 	SURFACE  *sp, *sn;
 	SURFACE  *news;
 	TRI      *nt, *t, *ptri, *ntri;
@@ -2926,14 +2926,14 @@ LOCAL void add_bdry_curve_to_hash_table(
 {
 	CURVE		**c1,**c2;
 	BOND		*b1,*b2;
-	POINT		*p;
+	FT_POINT		*p;
 
 	for (c1=s1->pos_curves, c2=s2->pos_curves; c2 && *c2; ++c1, ++c2)
 	{
 	    b1 = (*c1)->first;	b2 = (*c2)->first;
 	    
 	    
-	    p = (POINT*)find_from_hash_table((POINTER)b1->start,
+	    p = (FT_POINT*)find_from_hash_table((POINTER)b1->start,
 				             hash_table,h_size);
 	    if (p == NULL)
 	    	(void) add_to_hash_table((POINTER)b1->start,(POINTER)b2->start,
@@ -2943,7 +2943,7 @@ LOCAL void add_bdry_curve_to_hash_table(
 		
 	    for (; b1 && b2; b1=b1->next, b2=b2->next)
 	    {
-	    	p = (POINT*)find_from_hash_table((POINTER)b1->end,
+	    	p = (FT_POINT*)find_from_hash_table((POINTER)b1->end,
 				                 hash_table,h_size);
 	    	if (p != NULL)
 	    	{
@@ -2960,7 +2960,7 @@ LOCAL void add_bdry_curve_to_hash_table(
 	{
 	    b1 = (*c1)->first;	b2 = (*c2)->first;
 	    
-	    p = (POINT*)find_from_hash_table((POINTER)b1->start,
+	    p = (FT_POINT*)find_from_hash_table((POINTER)b1->start,
 	    		                     hash_table,h_size);
 	    if (p == NULL)
 	    	(void) add_to_hash_table((POINTER)b1->start,(POINTER)b2->start,
@@ -2971,7 +2971,7 @@ LOCAL void add_bdry_curve_to_hash_table(
 	    {
 	    	
 
-	    	p = (POINT*)find_from_hash_table((POINTER)b1->end,
+	    	p = (FT_POINT*)find_from_hash_table((POINTER)b1->end,
 				                 hash_table,h_size);
 	    	if (p != NULL)
 	    	{
@@ -3014,7 +3014,7 @@ EXPORT	void rotate_triangle(
 	TRI *tri,
 	int id)
 {
-	POINT        *ptmp[3];
+	FT_POINT        *ptmp[3];
 	TRI_NEIGHBOR nbtmp[3];
 	int          i,bdry[3];
 

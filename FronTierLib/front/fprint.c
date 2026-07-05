@@ -1051,7 +1051,7 @@ LOCAL	void	show_states_at_point_on_tri(
 {
 	INTERFACE	*intfc = s->interface;
 	Locstate	sl, sr;
-	POINT		*p = Point_of_tri(tri)[i];
+	FT_POINT		*p = Point_of_tri(tri)[i];
 
 	(void) fprintf(file,"tri->p%d %g %g %g, Boundary = %d\n",i+1,
 		      Coords(p)[0],Coords(p)[1],Coords(p)[2],Boundary_point(p));
@@ -1069,7 +1069,7 @@ EXPORT	void print_tri_states(
 	INTERFACE *intfc = hs->interface;
 	HYPER_SURF_ELEMENT *hse = Hyper_surf_element(tri);
 	Locstate  sl, sr;
-	POINT     *p;
+	FT_POINT     *p;
 	int       i;
 
 	for (i = 0; i < 3; ++i)
@@ -1323,7 +1323,7 @@ LOCAL   void xgraph_plot_var(
         static double *x,*c;
 	char fname[100];
 	FILE *xfile;
-	POINT *p;
+	FT_POINT *p;
         HYPER_SURF *hs;
         HYPER_SURF_ELEMENT *hse;
         Locstate sl,sr;
@@ -3362,7 +3362,7 @@ LOCAL	void gd_plot_var(
         char gd_name[200];
         static double xmin,xmax,cmin[MAX_COUNT],cmax[MAX_COUNT];
 	double height;
-	POINT *p;
+	FT_POINT *p;
         HYPER_SURF *hs;
         HYPER_SURF_ELEMENT *hse;
         Locstate sl,sr;

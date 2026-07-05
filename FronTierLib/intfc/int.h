@@ -115,8 +115,8 @@ struct _BOND
 {
 	struct _BOND *next;
 	struct _BOND *prev;
-	POINT  *start;
-	POINT  *end;
+	FT_POINT  *start;
+	FT_POINT  *end;
 	double length;
 	double length0;			/* for fixed length bond */
 
@@ -198,7 +198,7 @@ struct _NODE
 	struct _HYPER_SURF_BDRY *hsb;
 
 	struct _INTERFACE *interface;
-	POINT *posn;
+	FT_POINT *posn;
 
 	struct _CURVE **in_curves;	/* Pointer to Set of In Curves */
 	struct _CURVE **out_curves;	/* Pointer to Set of Out Curves */
@@ -227,7 +227,7 @@ typedef enum _TRI_STORAGE_TYPE TRI_STORAGE_TYPE;
 
 struct _TRI
 {
-	POINT *__pts[3];
+	FT_POINT *__pts[3];
 	/* object adj to edge ij */
 	TRI_NEIGHBOR neighbor[3];
 	double side_length0[3];		/* equilibrium length of each side */
@@ -345,7 +345,7 @@ struct _HYPER_SURF
 {
 	union {
 		int	*bptr;
-		POINT	*p;
+		FT_POINT	*p;
 		CURVE	*c;
 		SURFACE	*s;
 	} obj;
@@ -460,7 +460,7 @@ struct _O_NODE
 	struct _NODE	*node;
 	struct _NODE	**nopp;
 	struct _CURVE	**nc;
-	POINT		**pt;
+	FT_POINT		**pt;
 	double		*ang;
 	ORIENTATION	*orient;
 	int		num_c;
@@ -481,7 +481,7 @@ typedef struct _P_LINK P_LINK;
 struct _BBI_POINT {		/* Block based interface point */
         SURFACE *s;
 	CURVE   *c;
-	POINT	*p;
+	FT_POINT	*p;
 };
 typedef struct _BBI_POINT BBI_POINT;
 
@@ -712,10 +712,10 @@ struct _Cross
 	struct _Cross *prev;
 	struct _Cross *next;
 
-	POINT	**pt;	/* Points that have crossed */
+	FT_POINT	**pt;	/* Points that have crossed */
 	int     npt;
 
-	POINT *p;		/* Intersection POINT */
+	FT_POINT *p;		/* Intersection FT_POINT */
 	BOND *b1, *b2;		/* BONDS that Intersect */
 	CURVE *c1, *c2;		/* CURVES that Intersect */
 
@@ -746,7 +746,7 @@ typedef struct { double _coords[MAXD];} TG_PT;
 
 struct _CRXING {
         int                crx_num;
-        POINT              *pt;
+        FT_POINT              *pt;
 	BOND		   *bond;
         int                end;
         TG_PT              *nd;
@@ -770,8 +770,8 @@ typedef enum _CRX_TYPE CRX_TYPE;
 
 typedef struct {
         double           coords[4];
-        POINT           *vertex;
-        POINT           *edge[2];
+        FT_POINT           *vertex;
+        FT_POINT           *edge[2];
 } CRX_STORE;
 
 /*#bjet2 */
@@ -856,7 +856,7 @@ typedef enum _GRID_DIRECTION GRID_DIRECTION;
 *	is the first element of any of the possible objects to which
 *	hs or hsb can point.  The current legal objects are
 *
-*		SURFACE, CURVE, NODE (2d only), and POINT (1d only)
+*		SURFACE, CURVE, NODE (2d only), and FT_POINT (1d only)
 *
 *	The arrangement of data allows the boundary information to
 *	be extracted from these structures without an explicit knowledge
@@ -1067,12 +1067,12 @@ enum {
 #define  bond_length(b)  ((b)->length)
 #define  bond_length0(b)  ((b)->length0)	/* for fixed length bond */
 
- /* Separation between two POINTS: */
+ /* Separation between two FT_POINTS: */
 
 #define scaled_separation(p,q,h,dim)					\
 	_scaled_separation(Coords(p),Coords(q),h,dim)
 
-IMPORT double separation(POINT *p, POINT *q, int dim);
+IMPORT double separation(FT_POINT *p, FT_POINT *q, int dim);
 
 
  /* Is a CURVE closed ? */
@@ -1397,7 +1397,7 @@ typedef enum _SURFACE_COLOR SURFACE_COLOR;
 /* smooth parameters */
 typedef struct {
         double   cor, cos;
-        POINT   *pt;
+        FT_POINT   *pt;
         TRI     *tri;
         double   avep[3];
 }       SMOOTH_PARA;
@@ -1410,7 +1410,7 @@ typedef struct {
 struct _BBI_POINT2 {             /* Block based interface point */
         HYPER_SURF      *hs;
         CURVE           *c;
-        POINT           *p;
+        FT_POINT           *p;
         COMPONENT       lcomp, ucomp;   /* add for 2d bond construction */
 };
 typedef struct _BBI_POINT2 BBI_POINT2;

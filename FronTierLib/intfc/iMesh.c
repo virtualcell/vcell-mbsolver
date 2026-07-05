@@ -226,10 +226,10 @@ void iMesh_createEnt(iMesh_Instance instance,
 
 	if (new_entity_topology == iMesh_LINE_SEGMENT)
 	{
-	    POINT *p[2];
+	    FT_POINT *p[2];
 	    if (lower_order_entity_handles_size != 2)
 		FAILURE(iBase_BAD_ARRAY_SIZE, 
-			"EDGE must have 2 lower order handles (POINT)\n");
+			"EDGE must have 2 lower order handles (FT_POINT)\n");
 	    hand->topo = iMesh_LINE_SEGMENT;
 	    p[0] = (*(lower_hand++))->obj.point;
 	    p[1] = (*(lower_hand++))->obj.point;
@@ -237,10 +237,10 @@ void iMesh_createEnt(iMesh_Instance instance,
 	}
 	else if (new_entity_topology == iMesh_TRIANGLE)
 	{
-	    POINT *p[3];
+	    FT_POINT *p[3];
 	    if (lower_order_entity_handles_size != 3)
 		FAILURE(iBase_BAD_ARRAY_SIZE, 
-			"EDGE must have 3 lower order handles (POINT)\n");
+			"EDGE must have 3 lower order handles (FT_POINT)\n");
 	    hand->topo = iMesh_TRIANGLE;
 	    p[0] = (*(lower_hand++))->obj.point;
 	    p[1] = (*(lower_hand++))->obj.point;
@@ -660,7 +660,7 @@ void iMesh_addEntSet(iMesh_Instance instance,
 {
 	FT_ESET_HANDLE *hand_to_add = (FT_ESET_HANDLE*)entity_set_to_add;
 	FT_ESET_HANDLE *hand = (FT_ESET_HANDLE*)entity_set_handle;
-	POINT **p;
+	FT_POINT **p;
 	BOND **b;
 	TRI **t;
 	CURVE **c;
@@ -675,7 +675,7 @@ void iMesh_addEntSet(iMesh_Instance instance,
 	switch (hand->type)
 	{
 	case POINT_SET:
-	    for (p = (POINT**)hand_to_add->ent_set_data; p && *p; ++p)
+	    for (p = (FT_POINT**)hand_to_add->ent_set_data; p && *p; ++p)
 		unique_add_to_pointers((POINTER)(*p),
 					(POINTER*)hand->ent_set_data);
 	    break;
@@ -717,7 +717,7 @@ void iMesh_isEntSetContained(iMesh_Instance instance,
 {
 	FT_ESET_HANDLE *hand = (FT_ESET_HANDLE*)containing_entity_set;
 	FT_ESET_HANDLE *hand_contained = (FT_ESET_HANDLE*)contained_entity_set;
-	POINT **p,**p0;
+	FT_POINT **p,**p0;
 	BOND **b,**b0,*b1;
 	TRI **t,**t0,*t1;
 	CURVE **c,**c0;
@@ -734,11 +734,11 @@ void iMesh_isEntSetContained(iMesh_Instance instance,
 	    switch (hand->type) 
 	    {
 	    case POINT_SET:
-		for (p = (POINT**)hand_contained->ent_set_data; p && *p; 
+		for (p = (FT_POINT**)hand_contained->ent_set_data; p && *p;
 			++p)
 	    	{
 		    boolean is_p_contained = NO;
-		    for (p0 = (POINT**)hand->ent_set_data; p0 && *p0; ++p0)
+		    for (p0 = (FT_POINT**)hand->ent_set_data; p0 && *p0; ++p0)
 		    {
 		    	if (*p == *p0) is_p_contained = YES;
 		    }
@@ -750,7 +750,7 @@ void iMesh_isEntSetContained(iMesh_Instance instance,
 	        }
 	        break;
 	    case BOND_SET:
-		for (p = (POINT**)hand_contained->ent_set_data; p && *p;
+		for (p = (FT_POINT**)hand_contained->ent_set_data; p && *p;
 			++p)
 		{
 		    boolean is_p_contained = NO;
@@ -767,7 +767,7 @@ void iMesh_isEntSetContained(iMesh_Instance instance,
 		}
 		break;
 	    case TRI_SET:
-		for (p = (POINT**)hand_contained->ent_set_data; p && *p;
+		for (p = (FT_POINT**)hand_contained->ent_set_data; p && *p;
 			++p)
 		{
 		    boolean is_p_contained = NO;
@@ -788,7 +788,7 @@ void iMesh_isEntSetContained(iMesh_Instance instance,
 		}
 		break;
 	    case CURVE_SET:
-		for (p = (POINT**)hand_contained->ent_set_data; p && *p;
+		for (p = (FT_POINT**)hand_contained->ent_set_data; p && *p;
 			++p)
 		{
 		    boolean is_p_contained = NO;
@@ -812,7 +812,7 @@ void iMesh_isEntSetContained(iMesh_Instance instance,
 		}
 		break;
 	    case SURFACE_SET:
-		for (p = (POINT**)hand_contained->ent_set_data; p && *p;
+		for (p = (FT_POINT**)hand_contained->ent_set_data; p && *p;
 			++p)
 		{
 		    boolean is_p_contained = NO;
@@ -838,7 +838,7 @@ void iMesh_isEntSetContained(iMesh_Instance instance,
 		}
 		break;
 	    case INTERFACE_SET:
-		for (p = (POINT**)hand_contained->ent_set_data; p && *p; 
+		for (p = (FT_POINT**)hand_contained->ent_set_data; p && *p;
 			++p)
 		{
 		    boolean is_p_contained = NO;
@@ -1611,7 +1611,7 @@ void iMesh_getEntAdj(iMesh_Instance instance,
 	    uni_array(&adj_ent,2,sizeof(FTEHANDLE));
 	    if (ent->topo == iMesh_POINT)
 	    {
-		POINT *p = ent->obj.point;
+		FT_POINT *p = ent->obj.point;
 		BOND *b = Bond_of_hse(p->hse);
 		adj_ent[0].topo = adj_ent[1].topo = iMesh_POINT;
 		if (p == b->start)
@@ -1790,10 +1790,10 @@ void iMesh_getEntities(iMesh_Instance instance,
 	    if (entity_type == iBase_VERTEX || 
 		entity_topology == iMesh_POINT)
 	    {
-		POINT **pts;
+		FT_POINT **pts;
 		num_ent = size_of_pointers(ent_set->ent_set_data);
 		uni_array(&entities,num_ent,sizeof(FTEHANDLE));
-		pts = (POINT**)ent_set->ent_set_data;
+		pts = (FT_POINT**)ent_set->ent_set_data;
 		for (i = 0; i < num_ent; ++i)
 		{
 		    entities[i].topo = iMesh_POINT;
@@ -1854,7 +1854,7 @@ void iMesh_getEntities(iMesh_Instance instance,
 	    {
 		CURVE **c;
 		BOND *b;
-		POINT **pts;
+		FT_POINT **pts;
 		num_ent = 0;
 		for (c = (CURVE**)ent_set->ent_set_data; c && *c; ++c)
 		    num_ent += NumOfCurvePoints(*c);
@@ -1908,7 +1908,7 @@ void iMesh_getEntities(iMesh_Instance instance,
 		entity_topology == iMesh_POINT)
 	    {
 		SURFACE **s;
-		POINT *p;
+		FT_POINT *p;
 		TRI *t;
 		num_ent = 0;
 		for (s = (SURFACE**)ent_set->ent_set_data; s && *s; ++s)
@@ -1972,7 +1972,7 @@ void iMesh_getEntities(iMesh_Instance instance,
 		entity_topology == iMesh_POINT)
 	    {
 		INTERFACE *intfc = (INTERFACE*)ent_set->ent_set_data;
-		POINT              *p;
+		FT_POINT              *p;
         	HYPER_SURF_ELEMENT *hse;
         	HYPER_SURF         *hs;
 		num_ent = NumOfIntfcPoints(intfc);
@@ -2066,18 +2066,18 @@ void iMesh_initEntArrIter(iMesh_Instance instance,
 	    {
 		CURVE **c;
 		BOND *b;
-		POINT **ptr;
+		FT_POINT **ptr;
 		total_num_ents = 0;
 		for (c = (CURVE**)ent_set->ent_set_data; c && *c; ++c)
 		    total_num_ents += NumOfCurvePoints(*c);
-		uni_array(&IT->storage,total_num_ents,sizeof(POINT*));
+		uni_array(&IT->storage,total_num_ents,sizeof(FT_POINT*));
 		IT->storage_allocated = YES;
-		ptr = (POINT**)IT->storage;
+		ptr = (FT_POINT**)IT->storage;
 		for (c = (CURVE**)ent_set->ent_set_data; c && *c; ++c)
 		{
 		    for (b = (*c)->first; b != NULL; b = b->next)
-			*(ptr++) = (POINT*)b->start;
-		    *(ptr++) = (POINT*)(*c)->last->end;
+			*(ptr++) = (FT_POINT*)b->start;
+		    *(ptr++) = (FT_POINT*)(*c)->last->end;
 		}
 		IT->cur_ptr = IT->storage;
 	    }
@@ -2085,14 +2085,14 @@ void iMesh_initEntArrIter(iMesh_Instance instance,
 	    {
 		SURFACE **s;
 		TRI *t;
-		POINT *p;
-		POINT **ptr;
+		FT_POINT *p;
+		FT_POINT **ptr;
 		total_num_ents = 0;
 		for (s = (SURFACE**)ent_set->ent_set_data; s && *s; ++s)
 		    total_num_ents += NumOfSurfPoints(*s);
-		uni_array(&IT->storage,total_num_ents,sizeof(POINT*));
+		uni_array(&IT->storage,total_num_ents,sizeof(FT_POINT*));
 		IT->storage_allocated = YES;
-		ptr = (POINT**)IT->storage;
+		ptr = (FT_POINT**)IT->storage;
 		for (s = (SURFACE**)ent_set->ent_set_data; s && *s; ++s)
 		{
 		    reset_surface_points(*s);
@@ -2104,7 +2104,7 @@ void iMesh_initEntArrIter(iMesh_Instance instance,
 			    p = Point_of_tri(t)[i];
 			    if (sorted(p) == NO)
 			    {
-				*(ptr++) = (POINT*)p;
+				*(ptr++) = (FT_POINT*)p;
 				sorted(p) = YES;
 			    }
 			}
@@ -2114,15 +2114,15 @@ void iMesh_initEntArrIter(iMesh_Instance instance,
 	    }
 	    else if (ent_set->type == INTERFACE_SET)
 	    {
-		POINT *p;
+		FT_POINT *p;
 		HYPER_SURF_ELEMENT *hse;
 		HYPER_SURF *hs;
 		INTERFACE *intfc = (INTERFACE*)ent_set->ent_set_data;
-		POINT **ptr;
+		FT_POINT **ptr;
 		total_num_ents = NumOfIntfcPoints(intfc);
-		uni_array(&IT->storage,total_num_ents,sizeof(POINT*));
+		uni_array(&IT->storage,total_num_ents,sizeof(FT_POINT*));
 		IT->storage_allocated = YES;
-		ptr = (POINT**)IT->storage;
+		ptr = (FT_POINT**)IT->storage;
 		next_point(intfc,NULL,NULL,NULL);
 		while (next_point(intfc,&p,&hse,&hs))
 		{
@@ -2270,7 +2270,7 @@ void iMesh_getNextEntArrIter(iMesh_Instance instance,
 	    for (i = 0; i < array_size; ++i)
 	    {
 		ents[i]->topo = IT->topo;
-		ents[i]->obj.point = (POINT*)*(ptr++);
+		ents[i]->obj.point = (FT_POINT*)*(ptr++);
 		if (ptr == NULL)
 		{
 		    *has_data = NO;
@@ -2511,8 +2511,8 @@ void iMesh_addEntToSet(iMesh_Instance instance,
 	    {
 	    case POINT_SET:
 		{
-		    POINT *p = ent->obj.point;
-		    POINT **pts = (POINT**)ent_set->ent_set_data;
+		    FT_POINT *p = ent->obj.point;
+		    FT_POINT **pts = (FT_POINT**)ent_set->ent_set_data;
 		    unique_add_to_pointers((POINTER)p,(POINTER**)&pts);
 		}
 		break;
@@ -2572,8 +2572,8 @@ void iMesh_rmvEntFromSet(iMesh_Instance instance,
 	    {
 	    case POINT_SET:
 		{
-		    POINT *p = ent->obj.point;
-		    POINT **pts = (POINT**)ent_set->ent_set_data;
+		    FT_POINT *p = ent->obj.point;
+		    FT_POINT **pts = (FT_POINT**)ent_set->ent_set_data;
 		    delete_from_pointers((POINTER)p,(POINTER**)&pts);
 		}
 		break;
@@ -2681,9 +2681,9 @@ void iMesh_isEntContained(iMesh_Instance instance,
 	    {
 	    case POINT_SET:
 		{
-		    POINT *p = ent_contained->obj.point;
-		    POINT **pts;
-		    for (pts = (POINT**)ent_set->ent_set_data; pts && *pts;
+		    FT_POINT *p = ent_contained->obj.point;
+		    FT_POINT **pts;
+		    for (pts = (FT_POINT**)ent_set->ent_set_data; pts && *pts;
 					++pts)
 		    {
 			if (p == *pts)
@@ -2696,7 +2696,7 @@ void iMesh_isEntContained(iMesh_Instance instance,
 		break;
 	    case BOND_SET:
 		{
-		    POINT *p = ent_contained->obj.point;
+		    FT_POINT *p = ent_contained->obj.point;
 		    BOND **bonds;
 		    for (bonds = (BOND**)ent_set->ent_set_data; bonds && *bonds;
 					++bonds)
@@ -2711,7 +2711,7 @@ void iMesh_isEntContained(iMesh_Instance instance,
 		break;
 	    case TRI_SET:
 		{
-		    POINT *p = ent_contained->obj.point;
+		    FT_POINT *p = ent_contained->obj.point;
 		    TRI **tris;
 		    for (tris = (TRI**)ent_set->ent_set_data; tris && *tris;
 					++tris)
@@ -2730,7 +2730,7 @@ void iMesh_isEntContained(iMesh_Instance instance,
 		break;
 	    case CURVE_SET:
 		{
-		    POINT *p = ent_contained->obj.point;
+		    FT_POINT *p = ent_contained->obj.point;
 		    CURVE *curve,**c;
 		    BOND *b;
 		    for (c = (CURVE**)ent_set->ent_set_data; c && *c; ++c)
@@ -2750,7 +2750,7 @@ void iMesh_isEntContained(iMesh_Instance instance,
 		break;
 	    case SURFACE_SET:
 		{
-		    POINT *p = ent_contained->obj.point;
+		    FT_POINT *p = ent_contained->obj.point;
 		    SURFACE *surf,**s;
 		    TRI *t;
 		    for (s = (SURFACE**)ent_set->ent_set_data; s && *s; ++s)
@@ -2775,7 +2775,7 @@ void iMesh_isEntContained(iMesh_Instance instance,
 	    case INTERFACE_SET:
 		{
 		    INTERFACE          *intfc;
-        	    POINT              *p,*point;
+        	    FT_POINT              *p,*point;
         	    HYPER_SURF_ELEMENT *hse;
         	    HYPER_SURF         *hs;
 		    printf("type == INTERFACE_SET\n");
@@ -3126,7 +3126,7 @@ void iMesh_getTagType(iMesh_Instance instance,
 {
 }	/* end iMesh_getTagType */
 
-iBase_EntityHandle entityOfPoint(POINT *p)
+iBase_EntityHandle entityOfPoint(FT_POINT *p)
 {
 	FTEHANDLE *entity;
 	scalar(&entity,sizeof(FTEHANDLE));	

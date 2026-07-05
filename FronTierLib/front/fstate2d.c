@@ -44,7 +44,7 @@ struct	_DUMMY_ARRAY {
 	union {
 		HYPER_SURF_ELEMENT		**hse;
 		HYPER_SURF			**hs;
-		POINT				**p;
+		FT_POINT				**p;
 		Locstate			*st;
 		double				*t;
 		byte				*bytes;
@@ -65,7 +65,7 @@ LOCAL	void	no_continuation_along_curve(int,ORIENTATION,int,
 					    Locstate*,Locstate*,
 					    CURVE*,HYPER_SURF**,
 					    HYPER_SURF_ELEMENT**,double*,
-					    POINT**,Front*);
+					    FT_POINT**,Front*);
 
 /*
 *		states_at_distance_along_curve():
@@ -133,11 +133,11 @@ LOCAL	DUMMY_ARRAY	*alloc_dummy_point_array(
 	int			rad,
 	INTERFACE		*intfc)
 {
-	POINT	**old_pts = (dpa != NULL) ? dpa->da.p : NULL;
+	FT_POINT	**old_pts = (dpa != NULL) ? dpa->da.p : NULL;
 	int	i, len = 2*rad + 1;
 	int	olen = (dpa != NULL) ? dpa->len : 0;
 
-	dpa = alloc_dummy_array(dpa,rad,sizeof(POINT*));
+	dpa = alloc_dummy_array(dpa,rad,sizeof(FT_POINT*));
 
 	for (i = 0; i < olen; i++)
 	    dpa->da.p[i] = old_pts[i];
@@ -148,7 +148,7 @@ LOCAL	DUMMY_ARRAY	*alloc_dummy_point_array(
 
 
 EXPORT void states_at_distance_along_curve(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	ORIENTATION	orient, /* direction along curve for state evaluation */
@@ -159,7 +159,7 @@ EXPORT void states_at_distance_along_curve(
 	HYPER_SURF			**curr_hs,
 	HYPER_SURF_ELEMENT		**curr_hse,
 	double		*t,
-	POINT		**posn,
+	FT_POINT		**posn,
 	Front		*fr)
 {
 	CURVE		*cc;
@@ -270,10 +270,10 @@ LOCAL	void	no_continuation_along_curve(
 	HYPER_SURF			**curr_hs,
 	HYPER_SURF_ELEMENT		**curr_hse,
 	double		*t,
-	POINT		**posn,
+	FT_POINT		**posn,
 	Front		*fr)
 {
-	POINT		*curr_posn;
+	FT_POINT		*curr_posn;
 	int		i, j, dim = fr->rect_grid->dim;
 	int		isgn = (orient == NEGATIVE_ORIENTATION) ? -1 : 1;
 	size_t		sizest = fr->sizest;

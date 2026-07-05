@@ -365,7 +365,7 @@ EXPORT void set_topological_grid(
 	enum { DEFAULT_GMAX = 20 };
 	HYPER_SURF	*hs;
 	HYPER_SURF_ELEMENT *hse;
-	POINT		*p;
+	FT_POINT		*p;
 	RECT_GRID	*top_grid = &topological_grid(intfc);
 	double		*L, *U;
 	int		dim = intfc->dim;
@@ -534,7 +534,7 @@ EXPORT int comps_consistent_at_node(
 	        free_these(5,On.nc,On.nopp,On.pt,On.ang,On.orient);
 	    uni_array(&On.nc,On.num_c,sizeof(CURVE *));
 	    uni_array(&On.nopp,On.num_c,sizeof(NODE *));
-	    uni_array(&On.pt,On.num_c,sizeof(POINT *));
+	    uni_array(&On.pt,On.num_c,sizeof(FT_POINT *));
 	    uni_array(&On.ang,On.num_c,FLOAT);
 	    uni_array(&On.orient,On.num_c,INT);
 	    alloc_num_c = On.num_c;

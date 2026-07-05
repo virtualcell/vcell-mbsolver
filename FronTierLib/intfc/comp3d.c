@@ -59,7 +59,7 @@ typedef struct {
 	SIDE    side;		/* side of tri upon which pt lies */
 	int     side_index;	/* used when side == ONEDGE or ONVERTEX */
 	int     vertex_index;	/* used when side == ONVERTEX */
-	POINT   *pv, *p1, *p2;	/* Vertices marking boundary closest to pt */
+	FT_POINT   *pv, *p1, *p2;	/* Vertices marking boundary closest to pt */
 	TRI     *tri;		/* Triangle being projected upon */
 	SURFACE *s;		/* Surface containing tri */
 	int	idir;		/* used in directional projection */
@@ -93,7 +93,7 @@ LOCAL	void	show_TRI_list(INTERFACE*);
 LOCAL	void 	set_tri_list_tolerance(RECT_GRID*);
 LOCAL   double   shortest_2line_dist_dir(int,double*,double*,double*,double*,
 				double*);
-LOCAL   COMPONENT component_wrt_icoords3d_vertex(double*,int*,POINT*,
+LOCAL   COMPONENT component_wrt_icoords3d_vertex(double*,int*,FT_POINT*,
 				INTERFACE*);
 LOCAL	int 	compare_tris(const void*,const void*);
 
@@ -329,7 +329,7 @@ LOCAL COMPONENT component_wrt_icoords3d(
 	TRI_PROJECTION	*closest = &Closest, *tri_proj = &Tri_proj;
 	TRI		**t;
 	SURFACE		**s;
-	POINT		*p;
+	FT_POINT		*p;
 	int		i, nt, num = 0;
 	int		dim = intfc->dim;
 	int		ix = icoords[0], iy = icoords[1], iz = icoords[2];
@@ -1426,7 +1426,7 @@ LOCAL void shortest_distance3d(
 	TRI   *tri = tri_proj->tri;
 	double pt0, pt1, pt2;
 	double a0, a1, a2;
-	POINT *P0, *P1, *P2;	/* vertices of tri */
+	FT_POINT *P0, *P1, *P2;	/* vertices of tri */
 	double *p0, *p1, *p2;	/* pi = Coords(Pi)  */
 	double dp00, dp01, dp02;	/* dpij = ptj - pi[j] */
 	double dp10, dp11, dp12;
@@ -1855,9 +1855,9 @@ LOCAL	boolean old_tri_on_vertex(
 	TRI_PROJECTION *ntp,
 	TRI_PROJECTION *tp)
 {
-	POINT *p, *np;
+	FT_POINT *p, *np;
 	int  vi, nvi, si, nsi;
-	POINT *op, *nop;
+	FT_POINT *op, *nop;
 	int   opi, nopi;
         double dtol = 10*MACH_EPS;	
 
@@ -1875,7 +1875,7 @@ LOCAL	boolean old_tri_on_vertex(
 	    if (p == np) /* Closest point is a common vertex */
 	    {
 		double dot,ndot,dots,dotns,ndots,ndotns;
-		POINT *po, *npo;
+		FT_POINT *po, *npo;
 		int i;
 		double sv[3], nsv[3];
 		dot  = Dot3d(tp->dpt,Tri_normal(tp->tri));
@@ -1942,7 +1942,7 @@ LOCAL	boolean old_tri_on_edge(
 	TRI_PROJECTION *ntp,
 	TRI_PROJECTION *tp)
 {
-        POINT *p, *np;
+        FT_POINT *p, *np;
         int i, vi, nvi;
 	double sv[3], nsv[3];
 	switch (ntp->side)
@@ -2837,7 +2837,7 @@ LOCAL void blocks_on_tri(
 	RECT_GRID *grid,
 	INTERFACE *intfc)
 {
-	POINT	**p;
+	FT_POINT	**p;
 	int	i,j,k;
 	int	i_diff[3], inc_size;
 	int	ima[3][3], imi[3][3], imin[3], imax[3], ib[3];
@@ -3771,7 +3771,7 @@ EXPORT boolean tri_edge_crossing(
 	int   *ie,
 	double *h)
 {
-	POINT	    **p;
+	FT_POINT	    **p;
 	const double *n;
 	double	    norm[MAXD], D;
 	double	    crds_end[MAXD];
@@ -3915,7 +3915,7 @@ LOCAL  boolean point_tri_crossing(
 	double *norm,
 	double tol)
 {
-POINT	**pt = Point_of_tri(tri);
+FT_POINT	**pt = Point_of_tri(tri);
 double	*p0 = Coords(pt[0]), *p1 = Coords(pt[1]), *p2=Coords(pt[2]);
 int	i, iv0;
 
@@ -3962,7 +3962,7 @@ EXPORT boolean line_tri_crossing(
 	double *crds2,
 	double tol)
 {
-POINT	**pt = Point_of_tri(tri);
+FT_POINT	**pt = Point_of_tri(tri);
 double	*p0 = Coords(pt[0]), *p1 = Coords(pt[1]), *p2=Coords(pt[2]);
 const double *n;
 double    norm[MAXD], v[MAXD], D, t1, t2;
@@ -4098,7 +4098,7 @@ LOCAL COMPONENT comp_from_line_tri(
 {
 	COMPONENT	comp;
 	TRI		**t;
-	POINT		**pt = Point_of_tri(tri);
+	FT_POINT		**pt = Point_of_tri(tri);
 	int		ix = icoords[0], iy = icoords[1], iz = icoords[2];
 	int             i, nt, ixmin, ixmax, iymin, iymax, izmin, izmax;
 	int		*gmax = (&topological_grid(intfc))->gmax;
@@ -4169,7 +4169,7 @@ LOCAL COMPONENT comp_from_line_tri(
 LOCAL COMPONENT component_wrt_icoords3d_vertex(
 	double		*coords,
 	int		*icoords,
-	POINT		*p,
+	FT_POINT		*p,
 	INTERFACE	*intfc)
 {
 	COMPONENT	comp;

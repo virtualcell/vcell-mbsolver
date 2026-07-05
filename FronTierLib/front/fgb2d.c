@@ -31,7 +31,7 @@ LOCAL   void set_crx_storage_for_reconstruction_on_grid2d(INTERFACE*,
 LOCAL	int grid_crossings_on_segment_on_grid(INTERFACE*,double,double,double, 
 			double,int,int,int,int,double,double,double,double,CURVE*,
 			int*,int*,RECT_GRID*);
-LOCAL   int point_on_bond2d1(POINT*,BOND*);
+LOCAL   int point_on_bond2d1(FT_POINT*,BOND*);
 LOCAL   int count_component2d(COMPONENT***,int,int,int[][2]);
 LOCAL 	int shift_from_cell_edge_on_comp(double*,int,RECT_GRID*,double);
 LOCAL	int find_index_of_node(NODE*,INTERFACE*);
@@ -39,7 +39,7 @@ LOCAL  	int **set_node_index_list_on_grid(INTERFACE*,RECT_GRID*);
 LOCAL	int insert_grid_crossings2d_on_grid(INTERFACE*,RECT_GRID*);
 LOCAL 	int count_intfc_crossings_of_grid_lattice2d(INTERFACE*,RECT_GRID*);
 LOCAL	int add_comp_crx_to_list2d(INTERFACE*,int*,int,CROSSING_DIRECTION,
-			POINT*,CURVE*,int*);
+			FT_POINT*,CURVE*,int*);
 LOCAL   int walk_comp_along_grid_line2d(INTERFACE*,int*,int*,int*,int*,
         		GRID_DIRECTION);
 LOCAL   boolean reconstruct_crx_intfc2d(INTERFACE*,int,int*,int*);
@@ -610,7 +610,7 @@ LOCAL	int grid_crossings_on_segment_on_grid(
 	RECT_GRID	*rgr)
 {
 	register int	ix, iy;
-	register POINT	*p_h, *p_v;
+	register FT_POINT	*p_h, *p_v;
 
 	double              hx = rgr->h[0];
 	double              hy = rgr->h[1];
@@ -974,7 +974,7 @@ LOCAL	int add_comp_crx_to_list2d(
 	int		   *n_crx,
 	int		   msk,
 	CROSSING_DIRECTION dir,
-	POINT		   *p,
+	FT_POINT		   *p,
 	CURVE		   *cur,
 	int		   *First_cross_on_curve)
 {

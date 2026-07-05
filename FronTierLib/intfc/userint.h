@@ -82,7 +82,7 @@ struct _I_USER_INTERFACE {
 
 	/* Dimensionally dependent functions for interface element looping */
 
-	boolean	(*_next_point)(struct _INTERFACE*,POINT**,
+	boolean	(*_next_point)(struct _INTERFACE*,FT_POINT**,
 			       HYPER_SURF_ELEMENT**,HYPER_SURF**);
 	boolean	(*_next_hypersurface)(struct _INTERFACE*,HYPER_SURF**);
 
@@ -112,7 +112,7 @@ struct _I_USER_INTERFACE {
 	HYPER_SURF_BDRY	*(*_make_hypersurface_boundary)(void);
 
 	/* Node utility functions */
-	NODE	*(*_make_node)(POINT*);
+	NODE	*(*_make_node)(FT_POINT*);
 	NODE	*(*_copy_node)(NODE*);
 	boolean	(*_delete_node)(NODE*);
 	void	(*_fprint_node)(FILE*,NODE*);
@@ -140,40 +140,40 @@ struct _I_USER_INTERFACE {
 	CURVE	*(*_read_curve)(INTERFACE*,int);
 	void	(*_user_read_curve)(CURVE*);
 	boolean	(*_user_read_print_curve)(CURVE*,const IO_TYPE*,boolean);
-	boolean	(*_user_split_curve)(int,POINT*,BOND*,CURVE*,CURVE**);
+	boolean	(*_user_split_curve)(int,FT_POINT*,BOND*,CURVE*,CURVE**);
 	boolean	(*_user_join_curves)(CURVE*,CURVE*,CURVE*);
 
 	/* Bond utilities */
-	BOND	*(*_Bond)(POINT*,POINT*);
+	BOND	*(*_Bond)(FT_POINT*,FT_POINT*);
 	BOND_TRI *(*_link_tri_to_bond)(BOND_TRI*,TRI*,SURFACE*,BOND*,CURVE*);
 	void 	(*_reverse_bond)(BOND*);
 	void 	(*_reorder_curve_link_list)(CURVE*);
 
 	/* Point utility functions */
-	POINT	*(*_Point)(double*);
-	POINT	*(*_Static_point)(INTERFACE*);
-	POINT	*(*_copy_point)(POINT*);
-	POINT   *(*_average_points)(boolean,POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
-		                         POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*);
-	POINT	*(*_make_point)(double*,COMPONENT,COMPONENT);
-	int	(*_delete_point)(POINT*);
-	void	(*_fprint_point)(FILE*,POINT*);
-	void	(*_user_fprint_point)(FILE*,POINT*);
-	POINT	*(*_read_point)(INTERFACE*,int);
-	void	(*_user_read_point)(INTERFACE*,POINT*);
-	POINT	*(*_read_print_point)(INTERFACE*,const IO_TYPE*,boolean);
-	void	(*_user_read_print_point)(POINT*,const IO_TYPE*,boolean);
-	boolean	(*_insert_point_in_bond)(POINT*,BOND*,CURVE*);
+	FT_POINT	*(*_Point)(double*);
+	FT_POINT	*(*_Static_point)(INTERFACE*);
+	FT_POINT	*(*_copy_point)(FT_POINT*);
+	FT_POINT   *(*_average_points)(boolean,FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+		                         FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*);
+	FT_POINT	*(*_make_point)(double*,COMPONENT,COMPONENT);
+	int	(*_delete_point)(FT_POINT*);
+	void	(*_fprint_point)(FILE*,FT_POINT*);
+	void	(*_user_fprint_point)(FILE*,FT_POINT*);
+	FT_POINT	*(*_read_point)(INTERFACE*,int);
+	void	(*_user_read_point)(INTERFACE*,FT_POINT*);
+	FT_POINT	*(*_read_print_point)(INTERFACE*,const IO_TYPE*,boolean);
+	void	(*_user_read_print_point)(FT_POINT*,const IO_TYPE*,boolean);
+	boolean	(*_insert_point_in_bond)(FT_POINT*,BOND*,CURVE*);
 	boolean	(*_delete_start_of_bond)(BOND*,CURVE*);
 	boolean	(*_delete_end_of_bond)(BOND*,CURVE*);
 	SURFACE *(*_join_surfaces)(CURVE*);
-	boolean	(*_insert_point_in_tri)(POINT*,TRI*,SURFACE*);
-	boolean	(*_insert_point_in_tri_side)(POINT*,int,TRI*,SURFACE*);
-	boolean	(*_undo_insert_point_in_tri)(POINT*,TRI*,SURFACE*);
-	boolean	(*_undo_insert_point_in_tri_side)(POINT*,int,TRI*,SURFACE*);
+	boolean	(*_insert_point_in_tri)(FT_POINT*,TRI*,SURFACE*);
+	boolean	(*_insert_point_in_tri_side)(FT_POINT*,int,TRI*,SURFACE*);
+	boolean	(*_undo_insert_point_in_tri)(FT_POINT*,TRI*,SURFACE*);
+	boolean	(*_undo_insert_point_in_tri_side)(FT_POINT*,int,TRI*,SURFACE*);
 
 	/* Tri utility functions */
-	TRI *(*_make_tri)(POINT*,POINT*,POINT*,
+	TRI *(*_make_tri)(FT_POINT*,FT_POINT*,FT_POINT*,
 			  POINTER,POINTER,POINTER,int);
 
 	/* Surface utility functions */
@@ -187,7 +187,7 @@ struct _I_USER_INTERFACE {
 	void	(*_user_read_print_surface)(SURFACE*,const IO_TYPE*,boolean);
 
 	/* C_BOND utility functions */
-	C_BOND *(*_CBond)(C_BOND*,POINT*,POINT*,TRI*,TRI*);
+	C_BOND *(*_CBond)(C_BOND*,FT_POINT*,FT_POINT*,TRI*,TRI*);
 	boolean	(*_sort_bond_tris)(INTERFACE*);
         /*#bjet2 */
 	boolean    (*_assign_btri_states)(BOND_TRI*,BOND_TRI*);
@@ -197,7 +197,7 @@ struct _I_USER_INTERFACE {
 	INTERFACE	*(*_receive_interface)(int);
 	void	(*_reconstruct_interface_pointers)(INTERFACE*,struct Table*,
 						   POINTER*,POINTER*);
-	void	(*_reconstruct_point_pointers)(POINT*,INTERFACE*,INTERFACE*,
+	void	(*_reconstruct_point_pointers)(FT_POINT*,INTERFACE*,INTERFACE*,
 					       POINTER*,POINTER*,int);
 	void	(*_reconstruct_node_pointers)(NODE*,INTERFACE*,INTERFACE*,
 					      POINTER*,POINTER*,int);
@@ -222,7 +222,7 @@ struct _I_USER_INTERFACE {
 	SURFACE *(*_detach_one_surface)(SURFACE *); 
 	void    (*_print_wall_crx)(const char*,int*,int,int,CRXING*);
 	void    (*_print_wall_curve_crx)(const char*,int*,int,int,CRXING*);
-	void    (*_print_wall_curve_crx0)(const char*,POINT *, int,CRXING*);
+	void    (*_print_wall_curve_crx0)(const char*,FT_POINT *, int,CRXING*);
 
 
 	boolean	(*_intersections)(INTERFACE*,CROSS**,const boolean);
@@ -231,7 +231,7 @@ struct _I_USER_INTERFACE {
 	int	(*_print_number_of_tangles)(const char*,INTERFACE*,CROSS*);
 	void	(*_print_crossing_elements)(CROSS*,INTERFACE*);
 
-	CURVE	*(*_attach_curve_to_node)(CURVE*,POINT*,BOND*,NODE*);
+	CURVE	*(*_attach_curve_to_node)(CURVE*,FT_POINT*,BOND*,NODE*);
 	void	(*_invert_curve)(CURVE*);
 	void	(*_invert_surface)(SURFACE*);
 	void	(*_reverse_curve)(CURVE*);
@@ -246,7 +246,7 @@ struct _I_USER_INTERFACE {
 	void	(*_reflect_surface)(SURFACE*,double*,double*);
 	void	(*_reflect_curve)(CURVE*,double*,double*);
 	void	(*_reflect_node)(NODE*,double*,double*);
-	void	(*_reflect_point)(POINT*,double*,double*,INTERFACE*);
+	void	(*_reflect_point)(FT_POINT*,double*,double*,INTERFACE*);
 	boolean	(*_make_interface_topology_lists)(INTERFACE*);
 
 	double	(*_random01)(INTERFACE*);

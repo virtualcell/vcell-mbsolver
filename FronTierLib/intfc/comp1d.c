@@ -68,10 +68,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <intfc/iloc.h>
 
 	/* LOCAL Function Declarations */
-LOCAL	boolean	comp_is_on_point(POINT*,const COMPONENT*,int);
+LOCAL	boolean	comp_is_on_point(FT_POINT*,const COMPONENT*,int);
 LOCAL	void	show_Comp_list(INTERFACE*);
 LOCAL	void	show_point_list(INTERFACE*);
-LOCAL	void	sort_point_list(POINT**,int);
+LOCAL	void	sort_point_list(FT_POINT**,int);
 #if defined(__cplusplus)
 extern "C" {
 #endif /* defined(__cplusplus) */
@@ -81,7 +81,7 @@ LOCAL	int	pt_compr(const void *,const void *);
 #endif /* defined(__cplusplus) */
 
 LOCAL	boolean	comp_is_on_point(
-	POINT           *pt,
+	FT_POINT           *pt,
 	const COMPONENT *comps,
 	int             n_eq)
 {
@@ -111,7 +111,7 @@ EXPORT boolean make_point_comp_lists(
 {
 	int		ix, ix0, ix1;
 	int		zp;
-	POINT		**p;
+	FT_POINT		**p;
 	struct Table	*T;
 	COMPONENT	icomp;
         RECT_GRID       *grid;
@@ -176,7 +176,7 @@ EXPORT boolean make_point_comp_lists(
 
 	for (ix = 0; ix < grid->gmax[0]; ++ix)
 	    T->compon1d[ix] = NO_COMP;
-	uni_array(&T->pts_in_zone,grid->gmax[0],sizeof(POINT **));
+	uni_array(&T->pts_in_zone,grid->gmax[0],sizeof(FT_POINT **));
 	/* NOTE: vector returns pointer values initalized to NULL */
 	if (T->pts_in_zone == NULL)
 	{
@@ -246,7 +246,7 @@ LIB_LOCAL COMPONENT component1d(
 	INTERFACE	*intfc)
 {
 	double		x = coords[0];
-	POINT		**p;
+	FT_POINT		**p;
 	int		ix;	
 	int		k;
 	struct Table	*T = intfc->table;
@@ -357,8 +357,8 @@ LIB_LOCAL boolean nearest_interface_point1d(
 {
         const COMPONENT *eq_comps;
 	int             n_eq;
-	POINT		**p;
-	POINT		*p_closest;
+	FT_POINT		**p;
+	FT_POINT		*p_closest;
 	int		ix;		/* Grid square containing x */
 	int		icoords[MAXD];
 	int		ix1,ix2;
@@ -493,8 +493,8 @@ LIB_LOCAL boolean long_nearest_interface_point1d(
 {
         const COMPONENT *eq_comps;
 	int             n_eq;
-	POINT **p;
-	POINT *p_closest;
+	FT_POINT **p;
+	FT_POINT *p_closest;
 
 			/* Find Closest Point on Front: */
 
@@ -579,8 +579,8 @@ EXPORT	boolean i_intersections1d(
 	CROSS		**cross,
 	const boolean	bdry)
 {
-	POINT   **points, **p;
-	POINT   **usp;
+	FT_POINT   **points, **p;
+	FT_POINT   **usp;
 	CROSS   *cr, Cr;
 	int     i, j, k, np;
 
@@ -588,8 +588,8 @@ EXPORT	boolean i_intersections1d(
 	if (points == NULL)
 	    return FUNCTION_SUCCEEDED;
 	np = intfc->num_points;
-	p   = (POINT **)store(np*sizeof(POINT*));
-	usp = (POINT **)store(np*sizeof(POINT*));
+	p   = (FT_POINT **)store(np*sizeof(FT_POINT*));
+	usp = (FT_POINT **)store(np*sizeof(FT_POINT*));
 	for (i = 0; i < np; ++i)
 	    usp[i] = p[i] = points[i];
 
@@ -611,7 +611,7 @@ EXPORT	boolean i_intersections1d(
 		cr->next->prev = cr;
 		cr = cr->next;
 		cr->next = NULL;
-		cr->pt = (POINT **)store((j-i)*sizeof(POINT*));
+		cr->pt = (FT_POINT **)store((j-i)*sizeof(FT_POINT*));
 		for (cr->npt = 0, k = i; k < j; ++k)
 		{
 	            if (bdry || !is_bdry(usp[k]))
@@ -629,7 +629,7 @@ EXPORT	boolean i_intersections1d(
 EXPORT boolean consistent_components1d(
 	INTERFACE *intfc)
 {
-	POINT **p;
+	FT_POINT **p;
 	int   i, np;
 
 	p = intfc->points;
@@ -647,7 +647,7 @@ EXPORT boolean consistent_components1d(
 EXPORT void reset_intfc_components(
 	INTERFACE *intfc)
 {
-	POINT **p;
+	FT_POINT **p;
 	int   i, np;
 
 	p = intfc->points;
@@ -699,10 +699,10 @@ LIB_LOCAL void	i_print_intersections1d(
 }		/*end i_print_intersections1d*/
 
 LOCAL	void sort_point_list(
-	POINT	**points,
+	FT_POINT	**points,
 	int     num_points)
 {
-	qsort((POINTER)points,(size_t)num_points,sizeof(POINT*),pt_compr);
+	qsort((POINTER)points,(size_t)num_points,sizeof(FT_POINT*),pt_compr);
 }		/*end sort_point_list*/
 
 #if defined(__cplusplus)
@@ -713,8 +713,8 @@ LOCAL	int	pt_compr(
 	const void *pp1,
 	const void *pp2)
 {
-	POINT	**p1 = (POINT**)pp1;
-	POINT	**p2 = (POINT**)pp2;
+	FT_POINT	**p1 = (FT_POINT**)pp1;
+	FT_POINT	**p2 = (FT_POINT**)pp2;
 	if (Coords(*p1)[0] < Coords(*p2)[0])
 	    return -1;
 	if (Coords(*p1)[0] > Coords(*p2)[0])

@@ -108,14 +108,14 @@ LOCAL	void	set_tol_for_smooth(Front *fr)
 
 EXPORT	boolean	compute_smooth_para(
 	SMOOTH_PARA	*smooth_para,
-	POINT		*p,
+	FT_POINT		*p,
 	TRI		*tri,
 	SURFACE		*s,
 	SMOOTH_TOL	*stol)
 {
 	TRI	*tri2, *tri1, **ptris;
 	int	n, j, k;
-	POINT	*p1, *p2, *p3;
+	FT_POINT	*p1, *p2, *p3;
 	double	hv1[3], hv2[3], ang, tri_area;
 	double	dist, lenk, max_cos, avep[3];
 	
@@ -182,14 +182,14 @@ EXPORT	boolean	compute_smooth_para(
 
 EXPORT	boolean	compute_average_point(
 	SMOOTH_PARA	*smooth_para,
-	POINT		*p,
+	FT_POINT		*p,
 	TRI		*tri,
 	SURFACE		*s,
 	SMOOTH_TOL	*stol)
 {
 	TRI	*tri1, **ptris;
 	int	j, k, n;
-	POINT	*p1;
+	FT_POINT	*p1;
 	double	avep[3];
 	
 	if(Boundary_point(p))
@@ -225,7 +225,7 @@ LOCAL  void    detect_and_move_points(
 	SURFACE		*s)
 {
 	TRI		*tri;
-	POINT		*p;
+	FT_POINT		*p;
 	int		i, num;
 	SMOOTH_PARA	smooth_que[MAX_SMOOTH_PARA];
 	SMOOTH_TOL	stol;
@@ -287,7 +287,7 @@ LOCAL  void    detect_and_move_points(
 EXPORT  void	smooth_curve(
 	CURVE	*c)
 {
-	POINT	*p, *prevp, *nextp, *pt[MAX_CURVE_PTS];
+	FT_POINT	*p, *prevp, *nextp, *pt[MAX_CURVE_PTS];
 	BOND	*b;
 	int	i, k, num;
 	double	nor[4], smo_fac = sqrt(0.6);
@@ -904,7 +904,7 @@ LOCAL void redistribute_curve3d(
 	{
 	    if (b->length >= max_b_length)
 	    {
-	        POINT *pm = Point(NULL);
+	        FT_POINT *pm = Point(NULL);
 		int   i;
 	        for (i = 0; i < 3; ++i)
 		    Coords(pm)[i] = 0.5*(Coords(b->start)[i]+Coords(b->end)[i]);
@@ -950,7 +950,7 @@ LOCAL void redistribute_curve3d(
 EXPORT	boolean	point_outside_open_bdry(
 	int		*k,
 	double		*nor,
-	POINT		*p,
+	FT_POINT		*p,
 	INTERFACE	*intfc)
 {
 	int		i;

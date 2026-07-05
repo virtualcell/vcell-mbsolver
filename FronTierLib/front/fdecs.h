@@ -241,7 +241,7 @@ typedef struct _Nor_stencil Nor_stencil;
 
 struct _Tan_stencil {
 	int                npts;
-	POINT	 	   **p,		**pstore;
+	FT_POINT	 	   **p,		**pstore;
 	HYPER_SURF_ELEMENT **hse,	**hsestore;
 	HYPER_SURF	   **hs,	**hsstore;
 	Locstate	   *leftst,	*leftststore;
@@ -539,11 +539,11 @@ struct _Front {
 	void (*curve_propagate)(struct _Front*,POINTER,CURVE*,CURVE*,double);
 	int  (*node_propagate)(struct _Front*,POINTER,NODE*,NODE*,RPROBLEM**,
 			       double,double*,NODE_FLAG,POINTER);
-	void (*_point_propagate)(struct _Front*,POINTER,POINT*,POINT*,
+	void (*_point_propagate)(struct _Front*,POINTER,FT_POINT*,FT_POINT*,
 			        HYPER_SURF_ELEMENT*,HYPER_SURF*,double,double*);
-	void (*_point_propagate_along_wall)(struct _Front*,POINTER,POINT*,
+	void (*_point_propagate_along_wall)(struct _Front*,POINTER,FT_POINT*,
 				BOND*,CURVE*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
-				POINT*,double,double*);
+				FT_POINT*,double,double*);
 	void (*bond_propagate)(struct _Front*,POINTER,BOND*,BOND*,
 			       CURVE*,double);
 	int  (*snd_node_propagate)(struct _Front*,struct _Front*,POINTER,
@@ -552,7 +552,7 @@ struct _Front {
 				CURVE*,CURVE*,double);
 	void (*tan_surface_propagate)(struct _Front*,struct _Front*,INTERFACE*,
 				SURFACE*,SURFACE*,double);
-	boolean (*_tan_point_propagate)(struct _Front*,POINT*,POINT*,
+	boolean (*_tan_point_propagate)(struct _Front*,FT_POINT*,FT_POINT*,
 				HYPER_SURF_ELEMENT*,HYPER_SURF*,double,int);
 	void (*_npt_tang_solver)(double,double,Tan_stencil*,
 	                        Locstate,Locstate,struct _Front*);
@@ -561,17 +561,17 @@ struct _Front {
         void (*_npt_parab_tan_solver2d)(double,double,Tan_stencil*,
                                 Locstate,Locstate,struct _Front*);
         void (*_npt_parab_tan_solver3d)(struct _Front*,const Tparams*,
-                                const Tparams*,POINT*);
-	void (*impose_bc)(POINT*,BOND*,CURVE*,double*,struct _Front*,
+                                const Tparams*,FT_POINT*);
+	void (*impose_bc)(FT_POINT*,BOND*,CURVE*,double*,struct _Front*,
 			  boolean,boolean);
-	int  (*vfunc)(POINTER,struct _Front*,POINT*,HYPER_SURF_ELEMENT*,
+	int  (*vfunc)(POINTER,struct _Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 				HYPER_SURF*,double*); /* analytical velo func */
 	void (*_compute_force_and_torque)(struct _Front*,HYPER_SURF*,double,
 				double*,double*);
 	boolean (*_untrack_surface)(SURFACE*,COMPONENT,struct _Front*);
 	boolean (*_reconstruct_front_at_grid_crossing)(struct _Front*);
 	boolean (*_repair_front_at_grid_crossing)(struct _Front*);
-	void (*_principal_tangent)(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+	void (*_principal_tangent)(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 				double*,double*);
 	void (*surface_propagate)(struct _Front*,struct _Front*,POINTER,
 				double,double*);
@@ -588,14 +588,14 @@ struct _Front {
 				struct _Front*,int,double,int);
 	int  (*B_node_bifurcation)(struct _Front*,POINTER,O_CURVE*,O_CURVE*,
 				O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,
-				O_CURVE*,O_CURVE*,O_CURVE*,POINT*,Locstate,
+				O_CURVE*,O_CURVE*,O_CURVE*,FT_POINT*,Locstate,
 				Locstate,ANGLE_DIRECTION,RPROBLEM**,
 				double,double*,NODE_FLAG);
 	int  (*twodrproblem)(struct _Front*,struct _Front*,POINTER,RPROBLEM**);
 	boolean (*_untrack_curve)(O_CURVE*,O_CURVE*,COMPONENT,double,
 			        struct _Front*,POINTER,RPROBLEM*,
 				UNTRACK_FLAG);
-	boolean (*_untrack_point)(POINT*,COMPONENT,struct _Front*);
+	boolean (*_untrack_point)(FT_POINT*,COMPONENT,struct _Front*);
 	void (*identify_physical_node)(NODE*);
 	void (*init_2drproblem)(RPROBLEM*,struct _Front*);
 	void (*phys_split_bdry_cross)(CURVE**,CURVE**);
@@ -605,10 +605,10 @@ struct _Front {
 
 		/* Identification of boundary states and components */
 
-	int  (*neumann_bdry_state)(double*,COMPONENT,POINT*,HYPER_SURF*,
+	int  (*neumann_bdry_state)(double*,COMPONENT,FT_POINT*,HYPER_SURF*,
 				struct _Front*,POINTER,Locstate);
 	ANGLE_DIRECTION  (*_find_i_to_prop_dir)(struct _Front*,POINTER,NODE*,
-				CURVE*,ORIENTATION,double,COMPONENT*,POINT*,
+				CURVE*,ORIENTATION,double,COMPONENT*,FT_POINT*,
 				double*);
 	int  (*is_nzn_bdry)(double,double,COMPONENT,CURVE*);
 
@@ -1368,9 +1368,9 @@ struct _F_BASIC_DATA {
 typedef struct _F_BASIC_DATA F_BASIC_DATA;
 
 struct _VELO_FUNC_PACK {
-        int (*func)(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+        int (*func)(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
                         HYPER_SURF*,double*);
-	void (*point_propagate)(struct _Front*,POINTER,POINT*,POINT*,
+	void (*point_propagate)(struct _Front*,POINTER,FT_POINT*,FT_POINT*,
                         HYPER_SURF_ELEMENT*,HYPER_SURF*,double,double*);
         POINTER func_params;
 };

@@ -41,23 +41,23 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	/* LOCAL Function Declarations */
 LOCAL	int	are_curves_close(CURVE*,CURVE*,RECT_GRID*);
 LOCAL	int	degen_cr_tr(double**,int,double*,double,double*,
-			    POINT*,POINT*,POINT*);
-LOCAL	int	robust_H_extend_cross_trace(RECT_GRID*,POINT*,POINT*,BOND*,
-					BOND*,POINT*,double*,int,double*,POINT*);
+			    FT_POINT*,FT_POINT*,FT_POINT*);
+LOCAL	int	robust_H_extend_cross_trace(RECT_GRID*,FT_POINT*,FT_POINT*,BOND*,
+					BOND*,FT_POINT*,double*,int,double*,FT_POINT*);
 LOCAL	int	robust_cross_curves_trace(BOND*,BOND*,BOND*,BOND*,
 					  ORIENTATION,ORIENTATION,
 					  BOND*,BOND*,BOND*,BOND*,
 					  ORIENTATION,ORIENTATION,
-					  double*,POINT*,Front*);
+					  double*,FT_POINT*,Front*);
 LOCAL	int	unpropagated_nodes_remain_on_interface(NODE*,NODE*,INTERFACE*);
 LOCAL	void	find_partial_time_cross(BOND*,BOND*,BOND*,BOND*,
 					ORIENTATION,ORIENTATION,
-					NODE*,NODE*,POINT*,double*,POINT*,
+					NODE*,NODE*,FT_POINT*,double*,FT_POINT*,
 					NODE**,Front*);
 LOCAL	void	find_partial_time_cross_by_extension(O_CURVE*,O_CURVE*,BOND*,
-						     NODE*,NODE*,POINT*,double*,
-						     POINT*,NODE**,Front*);
-LOCAL	void	leaving_robust_cross_trace(int,double,POINT*);
+						     NODE*,NODE*,FT_POINT*,double*,
+						     FT_POINT*,NODE**,Front*);
+LOCAL	void	leaving_robust_cross_trace(int,double,FT_POINT*);
 
 LOCAL const double SC_TOL = 1.5; /*TOLERANCE*/
 
@@ -68,11 +68,11 @@ EXPORT int find_cross_status(
 	O_CURVE		*newc1,
 	O_CURVE		*oldc2,
 	O_CURVE		*newc2,
-	POINT		*p1_opp,
-	POINT		*p2_opp,
+	FT_POINT		*p1_opp,
+	FT_POINT		*p2_opp,
 	BOND		*b1virtual,
 	BOND		*b2virtual,
-	POINT		*pans,
+	FT_POINT		*pans,
 	NODE		**interact_node1,
 	NODE		**interact_node2,
 	Front		*fr,
@@ -88,7 +88,7 @@ EXPORT int find_cross_status(
 	double		dt_tmp;
 	int		dim = rgr->dim;
 	int		sc1,sc2;      /* YES for short curves; otherwise NO */
-	static	POINT	*ptmp = NULL;
+	static	FT_POINT	*ptmp = NULL;
 
 	debug_print("status","Entered find_cross_status()\n");
 
@@ -335,10 +335,10 @@ LOCAL const double EXTEND_FAC = 100.0; /*TOLERANCE*/
 EXPORT int find_D_extend_status(
 	O_CURVE		*oldc1,
 	O_CURVE		*newc1,
-	POINT		*p1_opp,
+	FT_POINT		*p1_opp,
 	BOND		*oldb2,
 	BOND		*newb2,
-	POINT		*pans,
+	FT_POINT		*pans,
 	Front		*fr,
 	POINTER		wave,
 	double		dt,
@@ -346,7 +346,7 @@ EXPORT int find_D_extend_status(
 {
 	NODE		*endn_oldc1;
 	BOND		B2;
-	POINT		Ps,Pe;
+	FT_POINT		Ps,Pe;
 	RECT_GRID	*rgr = fr->rect_grid;
 	double		d2[MAXD];
 	double		dt_tmp;
@@ -429,13 +429,13 @@ EXPORT int find_D_extend_status(
 EXPORT int find_H_extend_status(
 	O_CURVE		*oldc1,
 	O_CURVE		*newc1,
-	POINT		*p1_opp,
+	FT_POINT		*p1_opp,
 	O_CURVE		*oldc2,
 	O_CURVE		*newc2,
 	double		*moments,
 	int		npts,
 	BOND		*newb2,
-	POINT		*pans,
+	FT_POINT		*pans,
 	Front		*fr,
 	POINTER		wave,
 	double		dt,
@@ -443,7 +443,7 @@ EXPORT int find_H_extend_status(
 {
 	NODE		*endn_oldc1;
 	BOND		B2;
-	POINT		Ps, Pe;
+	FT_POINT		Ps, Pe;
 	int		i, dim = fr->rect_grid->dim;
 	RECT_GRID	*rgr = fr->rect_grid;
 	double		d2[MAXD];
@@ -530,13 +530,13 @@ EXPORT int find_cross_or_extend_to_cross_status(
 	O_CURVE		*newc1,
 	O_CURVE		*oldc2,
 	O_CURVE		*newc2,
-	POINT		*p1_opp,
-	POINT		*p2_opp,
+	FT_POINT		*p1_opp,
+	FT_POINT		*p2_opp,
 	BOND		*b1virtual,
 	BOND		*b2virtual,
 	BOND		*newb1dir,
 	BOND		*newb2dir,
-	POINT		*pans,
+	FT_POINT		*pans,
 	NODE		**interact_node1,
 	NODE		**interact_node2,
 	Front		*fr,
@@ -834,14 +834,14 @@ LOCAL void find_partial_time_cross_by_extension(
 	BOND		*newbdir,
 	NODE		*oldn,
 	NODE		*newn,
-	POINT		*newp,
+	FT_POINT		*newp,
 	double		*dt_frac,
-	POINT		*pans,
+	FT_POINT		*pans,
 	NODE		**interact_node,
 	Front		*fr)
 {
 	static	BOND	*newb = NULL;
-	static	POINT	*ptmp = NULL;
+	static	FT_POINT	*ptmp = NULL;
 	double		dx, dy, dt_tmp;
 
 	if (ptmp == NULL)
@@ -895,15 +895,15 @@ LOCAL void find_partial_time_cross(
 	ORIENTATION	newc_orient,
 	NODE		*oldn,
 	NODE		*newn,
-	POINT		*newp,
+	FT_POINT		*newp,
 	double		*dt_frac,
-	POINT		*pans,
+	FT_POINT		*pans,
 	NODE		**interact_node,
 	Front		*fr)
 {
-	static	POINT	*ptmp = NULL;
+	static	FT_POINT	*ptmp = NULL;
 
-	POINT		*oldp = oldn->posn;
+	FT_POINT		*oldp = oldn->posn;
 	BOND		*b, *newb;
 	RECT_GRID	*rgr = fr->rect_grid;
 	double		dt_tmp;
@@ -935,13 +935,13 @@ LOCAL void find_partial_time_cross(
 EXPORT int find_circle_cross_status(
 	O_CURVE		*oldc,
 	O_CURVE		*newc,
-	POINT		*newp,
+	FT_POINT		*newp,
 	double		radius,
-	POINT		*pans,
+	FT_POINT		*pans,
 	Front		*fr,
 	double		*dt_frac)
 {
-	POINT		*oldp;
+	FT_POINT		*oldp;
 	int		sc;	      /* YES for short curves; otherwise NO */
 
 	if (unpropagated_nodes_remain_on_interface(Node_of_o_curve(newc),NULL,
@@ -999,12 +999,12 @@ LOCAL const double RCT_MAX =  1.05; /* TOLERANCE */
 
 EXPORT int robust_cross_trace(
 	RECT_GRID	*rgr,
-	POINT		*op,	/* old and new points */
-	POINT		*np,
+	FT_POINT		*op,	/* old and new points */
+	FT_POINT		*np,
 	BOND		*ob,	/* old and new bonds  */
 	BOND		*nb,
 	double		*t_frac,
-	POINT		*pans)
+	FT_POINT		*pans)
 {
 	INTERFACE	*intfc = current_interface();
 	double		p1[MAXD], np1[MAXD];
@@ -1215,7 +1215,7 @@ EXPORT int robust_cross_trace(
 LOCAL void leaving_robust_cross_trace(
 	int		ans,
 	double		t_frac,
-	POINT		*pans)
+	FT_POINT		*pans)
 {
 	if (!debugging("r_cross_trace")) return;
 	debug_print("r_cross_trace","Left robust_cross_trace()\n");
@@ -1248,9 +1248,9 @@ LOCAL	int degen_cr_tr(
 	double		*magsv,
 	double		epsilon,
 	double		*t_frac,
-	POINT		*op,
-	POINT		*np,
-	POINT		*pans)
+	FT_POINT		*op,
+	FT_POINT		*np,
+	FT_POINT		*pans)
 {
 	INTERFACE	*intfc = current_interface();
 	double		crpr[6], dpr[6], max_mag_sq, max_cr_pr;
@@ -1477,17 +1477,17 @@ LOCAL	int degen_cr_tr(
 
 LOCAL	int	robust_H_extend_cross_trace(
 	RECT_GRID	*rgr,
-	POINT		*op,
-	POINT		*np,
+	FT_POINT		*op,
+	FT_POINT		*np,
 	BOND		*ob,
 	BOND		*nb,
-	POINT		*opc,
+	FT_POINT		*opc,
 	double		*moments,
 	int		npts,
 	double		*t,
-	POINT		*pans)
+	FT_POINT		*pans)
 {
-	POINT		NPC;
+	FT_POINT		NPC;
 	double		r,xcen,ycen,numxc,numyc,den,xbar,ybar,rsqr;
 	double		a1,a2,a3,a4,a5,a6,a7;
 
@@ -1547,13 +1547,13 @@ LOCAL	int	robust_H_extend_cross_trace(
 */
 
 EXPORT int robust_circle_cross_trace(
-	POINT		*op,	/*Position at start of time step*/
-	POINT		*np,	/*Position at end of time step*/
-	POINT		*opc,   /*Center of circle at start of time step*/
-	POINT		*npc,   /*Center of circle at end of time step*/
+	FT_POINT		*op,	/*Position at start of time step*/
+	FT_POINT		*np,	/*Position at end of time step*/
+	FT_POINT		*opc,   /*Center of circle at start of time step*/
+	FT_POINT		*npc,   /*Center of circle at end of time step*/
 	double		radius, /*Radius at end of time step*/
 	double		*t,     /*Fractional time of intersection*/
-	POINT		*pans)  /*Intersection point*/
+	FT_POINT		*pans)  /*Intersection point*/
 {
 	double		x1 = (double)Coords(op)[0];
 	double		y1 = (double)Coords(op)[1];
@@ -1643,13 +1643,13 @@ LOCAL	int robust_cross_curves_trace(
 	ORIENTATION	oc2_or,
 	ORIENTATION	nc2_or,
 	double		*dt_frac,
-	POINT		*pans,
+	FT_POINT		*pans,
 	Front		*fr)
 {
-	static	POINT	*ptmp = NULL;
+	static	FT_POINT	*ptmp = NULL;
 
 	BOND		*ob1, *nb1, *ob2, *nb2;
-	POINT		*op, *np;
+	FT_POINT		*op, *np;
 	RECT_GRID	*rgr = fr->rect_grid;
 	double		dt_tmp, dt_max;
 	int		cross_found = NO;
@@ -1758,7 +1758,7 @@ EXPORT	void set_prop_status_for_pseudo_cross_node(
 	NODE		*oppn1, *oppn2;
 	double		v1[MAXD], v2[MAXD];
 	int		dim = oldc1->curve->interface->dim;
-	static	POINT   *p1 = NULL, *p2 = NULL, *p1_opp = NULL, *p2_opp = NULL;
+	static	FT_POINT   *p1 = NULL, *p2 = NULL, *p1_opp = NULL, *p2_opp = NULL;
 
 	if (p2_opp == NULL) 
 	{

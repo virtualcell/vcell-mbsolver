@@ -39,11 +39,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <intfc/iloc.h>
 
 /* LOCAL Function Declarations */
-LOCAL   CURVE   *id_curve_by_points(SURFACE*,POINT*,POINT*,ORIENTATION*);
-LOCAL   ORIENTATION     is_point_a_node_of_curve(CURVE*,POINT*);
-LOCAL   double   value_x(double*,POINT*,double*);
-LOCAL   double   value_y(double*,POINT*,double*);
-LOCAL   double   value_z(double*,POINT*,double*);
+LOCAL   CURVE   *id_curve_by_points(SURFACE*,FT_POINT*,FT_POINT*,ORIENTATION*);
+LOCAL   ORIENTATION     is_point_a_node_of_curve(CURVE*,FT_POINT*);
+LOCAL   double   value_x(double*,FT_POINT*,double*);
+LOCAL   double   value_y(double*,FT_POINT*,double*);
+LOCAL   double   value_z(double*,FT_POINT*,double*);
 LOCAL   void    set_curve_bdry_flag(CURVE*,RECT_GRID*);
 LOCAL   void    normal_of_plane_surface(SURFACE*,double*);
 LOCAL   void    strip_curves_in_surface(SURFACE*);
@@ -60,8 +60,8 @@ EXPORT  void  planar_surface_triangulation(
 	double        coords[MAXD];
 	double        x1,x2,x3,x4,y1,y2,y3,y4,z1,z2,z3,z4,x,y,z;
 	CURVE        **c1;
-	POINT        *p1,*p2;
-	POINT        *pmin,*pmel,*pmeu,*pmax;
+	FT_POINT        *p1,*p2;
+	FT_POINT        *pmin,*pmel,*pmeu,*pmax;
 	boolean      hole_flag = NO;
 	RECT_GRID    *gr;
 
@@ -413,7 +413,7 @@ LOCAL void right_planar_surface_triangulation(
 {
 	BOND      *b;
 	CURVE     *curve;
-	POINT     ***p, *pt[4], *midp, *corner;
+	FT_POINT     ***p, *pt[4], *midp, *corner;
 	NODE      *ns, *ne;
 	RECT_GRID dual_grid;
 	TRI       ****tri;
@@ -448,7 +448,7 @@ LOCAL void right_planar_surface_triangulation(
 
 	    imax = dual_grid.gmax[0]+dual_grid.lbuf[0]+dual_grid.ubuf[0];
 	    jmax = dual_grid.gmax[1]+dual_grid.lbuf[1]+dual_grid.ubuf[1];
-	    bi_array(&p,imax+1,jmax+1,sizeof(POINT *));
+	    bi_array(&p,imax+1,jmax+1,sizeof(FT_POINT *));
 	    tri_array(&tri,imax,jmax,4,sizeof(TRI *));
 
 	    for (iy = 0; iy <= jmax; iy++)
@@ -468,7 +468,7 @@ LOCAL void right_planar_surface_triangulation(
 
 	    imax = dual_grid.gmax[2]+dual_grid.lbuf[2]+dual_grid.ubuf[2];
 	    jmax = dual_grid.gmax[0]+dual_grid.lbuf[0]+dual_grid.ubuf[0];
-	    bi_array(&p,imax+1,jmax+1,sizeof(POINT *));
+	    bi_array(&p,imax+1,jmax+1,sizeof(FT_POINT *));
 	    tri_array(&tri,imax,jmax,4,sizeof(TRI *));
 
 	    for (ix = 0; ix <= jmax; ix++)
@@ -488,7 +488,7 @@ LOCAL void right_planar_surface_triangulation(
 
 	    imax = dual_grid.gmax[1]+dual_grid.lbuf[1]+dual_grid.ubuf[1];
 	    jmax = dual_grid.gmax[2]+dual_grid.lbuf[2]+dual_grid.ubuf[2];
-	    bi_array(&p,imax+1,jmax+1,sizeof(POINT *));
+	    bi_array(&p,imax+1,jmax+1,sizeof(FT_POINT *));
 	    tri_array(&tri,imax,jmax,4,sizeof(TRI *));
 
 	    for (iz = 0; iz <= jmax; iz++)
@@ -779,13 +779,13 @@ LOCAL void strip_curves_in_surface(
 EXPORT	void	planar_hole_surface_triangulation(
 	SURFACE	     *surf,
 	RECT_GRID    *gr,
-	POINT        *pmin,
-	POINT        *pmel,
-	POINT        *pmeu,
-	POINT        *pmax)
+	FT_POINT        *pmin,
+	FT_POINT        *pmel,
+	FT_POINT        *pmeu,
+	FT_POINT        *pmax)
 {
 	BOND             *b;
-	POINT            ***p, *pt[4], *midp;
+	FT_POINT            ***p, *pt[4], *midp;
 	TRI              *tri2,****tri;
 	TRI              **tri1,**tri_list=NULL;
 	double            coords[MAXD], nor[MAXD];
@@ -799,7 +799,7 @@ EXPORT	void	planar_hole_surface_triangulation(
 	int              imel,imeu,jmel,jmeu;
 	double            dx[3],dy[3],dz[3];
 	ORIENTATION      orient_o[4],orient_i[4];
-	POINT            *P[4],*Q[4];
+	FT_POINT            *P[4],*Q[4];
 	CURVE            *cur_o[4],*cur_i[4];
 	double            h[3];
 
@@ -893,7 +893,7 @@ EXPORT	void	planar_hole_surface_triangulation(
 	    break;
 	}
 
-	bi_array(&p,imax+1,jmax+1,sizeof(POINT *));
+	bi_array(&p,imax+1,jmax+1,sizeof(FT_POINT *));
 	tri_array(&tri,imax,jmax,4,sizeof(TRI *));
 	
 	switch (n_dir)
@@ -1532,7 +1532,7 @@ EXPORT	void	oblique_planar_surface_triangulation(
 	RECT_GRID	*gr)
 {
 	BOND            *b;
-	POINT           ***p, *pt[4], *midp, *corner;
+	FT_POINT           ***p, *pt[4], *midp, *corner;
 	TRI             ****tri;
 	double           coords[MAXD], nor[MAXD];
 	double           n_max;
@@ -1541,11 +1541,11 @@ EXPORT	void	oblique_planar_surface_triangulation(
 	int             i, dim, n_dir;
 	ANGLE_DIRECTION orient;
 	int             ip1, ip2;
-	POINT           *q;
+	FT_POINT           *q;
 	double           x,y,z,x1,y1,z1,x4,y4,z4;
 	CURVE           **c1;
 	CURVE           *curve[4];
-	POINT           *Q[4];
+	FT_POINT           *Q[4];
 	ORIENTATION     curve_orient[4];
 	double           h0,h1,h2;
 
@@ -1639,7 +1639,7 @@ EXPORT	void	oblique_planar_surface_triangulation(
 	    break;
 	}
 
-	bi_array(&p,imax+1,jmax+1,sizeof(POINT *));
+	bi_array(&p,imax+1,jmax+1,sizeof(FT_POINT *));
 	tri_array(&tri,imax,jmax,4,sizeof(TRI *));
 	
 	switch (n_dir)
@@ -2204,7 +2204,7 @@ LOCAL void normal_of_plane_surface(
 {
 	CURVE **c;
 	BOND  *b;
-	POINT *p;
+	FT_POINT *p;
 	double area, p_cnt[MAXD], p1[MAXD], p2[MAXD];
 	double pnor[3], nnor[3];
 	int   i, num, dim;
@@ -2282,10 +2282,10 @@ LOCAL void normal_of_plane_surface(
 
 LOCAL ORIENTATION is_point_a_node_of_curve(
 	CURVE                *curve,
-	POINT                *p)
+	FT_POINT                *p)
 {
 	ORIENTATION which_point = ORIENTATION_NOT_SET;
-	POINT       *p1,*p2;
+	FT_POINT       *p1,*p2;
 
 	p1 = curve->start->posn;
 	p2 = curve->end->posn;
@@ -2303,8 +2303,8 @@ LOCAL ORIENTATION is_point_a_node_of_curve(
 
 LOCAL CURVE *id_curve_by_points(
 	SURFACE     *surf,
-	POINT       *ps,
-	POINT       *pe,
+	FT_POINT       *ps,
+	FT_POINT       *pe,
 	ORIENTATION *orientation)
 {
 	ORIENTATION x = ORIENTATION_NOT_SET, y = ORIENTATION_NOT_SET;
@@ -2357,7 +2357,7 @@ LOCAL         void set_curve_bdry_flag(
 	CURVE     *curve,
 	RECT_GRID *gr)
 {
-	POINT *p3,*p4;
+	FT_POINT *p3,*p4;
 	double VL[3],VU[3];
 	double x2,y2,z2,x3,y3,z3;
 	int   m1,m2,m3;
@@ -2406,7 +2406,7 @@ LOCAL         void set_curve_bdry_flag(
 
 LOCAL double value_x(
 	double *coords,
-	POINT *corner,
+	FT_POINT *corner,
 	double *nor)
 {
 	double x,y,z;
@@ -2438,7 +2438,7 @@ LOCAL double value_x(
 
 LOCAL double value_y(
 	double *coords,
-	POINT *corner,
+	FT_POINT *corner,
 	double *nor)
 {
 	double x,y,z;
@@ -2469,7 +2469,7 @@ LOCAL double value_y(
 
 LOCAL double value_z(
 	double *coords,
-	POINT *corner,
+	FT_POINT *corner,
 	double *nor)
 {
 	double x,y,z;

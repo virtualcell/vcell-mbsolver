@@ -61,7 +61,7 @@ LOCAL	void	i_user_read_print_intfc_rect_grids(const IO_TYPE*,INTERFACE*,
 LOCAL	void	i_user_copy_hyper_surf(HYPER_SURF*,HYPER_SURF*);
 
 LOCAL	boolean	i_user_join_curves(CURVE*,CURVE*,CURVE*);
-LOCAL	boolean	i_user_split_curve(int,POINT*,BOND*,CURVE*,CURVE**);
+LOCAL	boolean	i_user_split_curve(int,FT_POINT*,BOND*,CURVE*,CURVE**);
 LOCAL	int	i_user_read_node(NODE*);
 LOCAL	void	i_user_fprint_curve(FILE*,CURVE*);
 LOCAL	void	i_user_fprint_node(FILE*,NODE*);
@@ -69,9 +69,9 @@ LOCAL	void	i_user_read_curve(CURVE*);
 LOCAL	boolean	i_user_read_print_curve(CURVE*,const IO_TYPE*,boolean);
 LOCAL	void	i_user_read_print_node(NODE*,const IO_TYPE*,boolean);
 
-LOCAL	void	i_user_fprint_point(FILE*,POINT*);
-LOCAL	void	i_user_read_point(INTERFACE*,POINT*);
-LOCAL	void	i_user_read_print_point(POINT*,const IO_TYPE*,boolean);
+LOCAL	void	i_user_fprint_point(FILE*,FT_POINT*);
+LOCAL	void	i_user_read_point(INTERFACE*,FT_POINT*);
+LOCAL	void	i_user_read_print_point(FT_POINT*,const IO_TYPE*,boolean);
 
 LOCAL	void	i_gview_plot_interface(const char*,INTERFACE*);
 LOCAL	void	i_user_install_faces(SURFACE*,int);
@@ -100,7 +100,7 @@ EXPORT	I_USER_INTERFACE *i_user_hook(
 	    for (i = 0; i < MAXD; ++i)
 	    {
 	        User_hooks[i].size_interface = sizeof(I_INTERFACE);
-	        User_hooks[i].size_point = sizeof(POINT);
+	        User_hooks[i].size_point = sizeof(FT_POINT);
 	        User_hooks[i].size_hyper_surf = sizeof(HYPER_SURF);
 	        User_hooks[i]._read_boundary_type_from_string =
 		    i_read_boundary_type_from_string;
@@ -517,7 +517,7 @@ LOCAL	void	i_user_read_print_node(
 /*ARGSUSED*/
 LOCAL	boolean i_user_split_curve(
 	int		is_a_node,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*bond,
 	CURVE		*curve,
 	CURVE		**curves)
@@ -537,20 +537,20 @@ LOCAL	boolean i_user_join_curves(
 /*ARGSUSED*/
 LOCAL	void	i_user_fprint_point(
 	FILE		*file,
-	POINT		*point)
+	FT_POINT		*point)
 {
 }		/*end i_user_fprint_point*/
 
 /*ARGSUSED*/
 LOCAL	void	i_user_read_point(
 	INTERFACE	*intfc,
-	POINT		*p)
+	FT_POINT		*p)
 {
 }		/*end i_user_read_point*/
 
 /*ARGSUSED*/
 LOCAL	void	i_user_read_print_point(
-	POINT	      *p,
+	FT_POINT	      *p,
 	const IO_TYPE *io_type,
 	boolean          overlay)
 {

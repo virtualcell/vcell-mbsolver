@@ -4031,7 +4031,7 @@ LOCAL	int  make_curves_from_crx(
 	int		ix,iy,iz, i,j,k, num, d, **mem_ind;
 	static O_SURFACE    **sarr=NULL;
 	CURVE		*newc[MAX_CURVE];
-	POINT		*pt[MAX_CURVE][2];
+	FT_POINT		*pt[MAX_CURVE][2];
 	int             nsurf=0, scnt[MAX_CURVE];
 	
         DEBUG_ENTER(make_curves_from_crx)
@@ -4332,13 +4332,13 @@ EXPORT boolean read_sdl_surface(
 	int i,j,k,l,m,i1,i2,i3,num_vtx,num_pts,num_point_tris;
 	int max_num_vtx,max_num_pts,num_tris;
 	boolean point_recorded;
-	POINT **points;
+	FT_POINT **points;
 	TRI **tris;
 	INTERFACE *sav_intfc;
 	double L[MAXD],U[MAXD];
 	double dist,max_side,min_side,ave_side;
 	TRI **ptris;
-	POINT *p;
+	FT_POINT *p;
 	int num_ptris;
 
 	sav_intfc = current_interface();
@@ -4390,7 +4390,7 @@ EXPORT boolean read_sdl_surface(
 	    	num_pts++;
 	    }
 	}
-	uni_array(&points,num_pts,sizeof(POINT*));
+	uni_array(&points,num_pts,sizeof(FT_POINT*));
 	for (i = 0; i < num_pts; ++i)
 	{
 	    points[i] = Point(vertex+3*i);
@@ -4503,7 +4503,7 @@ EXPORT boolean read_vtk_surface(
 	int i,j,k,l,m,i1,i2,i3,num_vtx,num_pts,num_point_tris,num_ptris;
 	int max_num_vtx,max_num_pts,num_tris;
 	boolean point_recorded;
-	POINT **points,*p;
+	FT_POINT **points,*p;
 	TRI **tris,**ptris;
 	INTERFACE *sav_intfc;
 	double L[MAXD],U[MAXD];
@@ -4565,7 +4565,7 @@ EXPORT boolean read_vtk_surface(
                 num_pts++;
             }
 	}
-	uni_array(&points,num_pts,sizeof(POINT*));
+	uni_array(&points,num_pts,sizeof(FT_POINT*));
 	for (i = 0; i < num_pts; ++i)
 	{
 	    points[i] = Point(vertex+3*i);

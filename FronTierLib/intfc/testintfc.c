@@ -86,7 +86,7 @@ LOCAL 	void move_interface(INTERFACE*,int (*vfunc)(POINTER,double*,double*),
 			POINTER,double);
 LOCAL 	INTERFACE *make_line_interface(RECT_GRID*);
 LOCAL 	INTERFACE *make_elliptic_interface(RECT_GRID*);
-LOCAL 	boolean bond_cross_bdry_curve_at_node(BOND*,NODE*,POINT*,
+LOCAL 	boolean bond_cross_bdry_curve_at_node(BOND*,NODE*,FT_POINT*,
 		CURVE**,BOND**);
 LOCAL 	int translation_vel(POINTER,double*,double*);
 LOCAL 	int radial_motion_vel(POINTER,double*,double*);
@@ -213,7 +213,7 @@ LOCAL void check_component(INTERFACE *intfc)
 LOCAL	void	test1d(void)
 {
 	INTERFACE  *intfc, *new_intfc;
-	POINT *p;
+	FT_POINT *p;
 	double x;
 	COMPONENT left, right;
 	
@@ -251,7 +251,7 @@ LOCAL	void test2d(void)
 	int i;
 	INTERFACE  *intfc;
 	RECT_GRID rgr;
-	POINT *p;
+	FT_POINT *p;
 	BOND *b, *bond;
 	CURVE *c;
 	RECT_GRID grid;
@@ -384,12 +384,12 @@ LOCAL void move_bdry_node(
 	double dt)
 {
 	int i;
-	POINT *p1,*p2;
+	FT_POINT *p1,*p2;
 	double vel[MAXD];
 	BOND *bi,*bb;
 	CURVE **c,*cb;
-	static POINT *p,*pe,*pc;
-	POINT *ptmp;
+	static FT_POINT *p,*pe,*pc;
+	FT_POINT *ptmp;
 	int extended,on_first;
 	ORIENTATION orient,cb_orient;
 
@@ -481,7 +481,7 @@ LOCAL void move_bdry_node(
 LOCAL boolean bond_cross_bdry_curve_at_node(
 	BOND *b,
 	NODE *n,
-	POINT *p,
+	FT_POINT *p,
 	CURVE **c_crx,
 	BOND **b_crx)
 {
@@ -565,7 +565,7 @@ LOCAL INTERFACE *make_line_interface(
 {
 	INTERFACE       *infc;
 	double coords1[2],coords2[2],coords[2];
-	POINT *p1,*p2;
+	FT_POINT *p1,*p2;
 	NODE *ns,*ne;
 	CURVE *curve;
 	COMPONENT left_c,right_c;

@@ -35,7 +35,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <front/fdecs.h>		/* includes int.h, table.h */
 
 	/* LOCAL Function Declarations */
-LOCAL	int	is_curve_near_linear(POINT*,POINT*,CURVE*,RECT_GRID*);
+LOCAL	int	is_curve_near_linear(FT_POINT*,FT_POINT*,CURVE*,RECT_GRID*);
 LOCAL	int	non_null_bdry_curve_at_node(RPROBLEM*,NODE*,O_CURVE*);
 LOCAL	int	test_newc_for_null(CURVE*,RP_NODE*,RP_NODE*,RPROBLEM*);
 LOCAL	void	delete_null_bdry_curves_at_node(RPROBLEM*,RP_NODE*,Front*);
@@ -744,7 +744,7 @@ EXPORT int is_null_curve(
 	}
 	else if (curve->interface == rp->old_intfc)
 	{
-	    POINT *p0 = curve->start->posn, *p1 = curve->end->posn;
+	    FT_POINT *p0 = curve->start->posn, *p1 = curve->end->posn;
 	    RECT_GRID *gr = computational_grid(rp->old_intfc);
 
 	    for (rpn1 = rp->first_rp_node; rpn1 != NULL; rpn1 = rpn1->next)
@@ -785,14 +785,14 @@ LOCAL	int test_newc_for_null(
 	Front		*fr = rp->fr;
 	POINTER		wave = rp->wave;
 	RECT_GRID	*gr = computational_grid(cur->interface);
-	POINT		*p0, *p1;
+	FT_POINT		*p0, *p1;
 	BOND		*b;
 	O_CURVE		Oc, Oldoc;
 	double		*L = gr->L, *U = gr->U;
 	double		V[MAXD];
 	int		status = YES;
 	int		dim = gr->dim;
-	static	POINT	*newp0 = NULL, *newp1 = NULL;
+	static	FT_POINT	*newp0 = NULL, *newp1 = NULL;
 	
 	if (newp1 == NULL)
 	{
@@ -863,8 +863,8 @@ LOCAL	int test_newc_for_null(
 }		/*end test_newc_for_null*/
 
 LOCAL	int is_curve_near_linear(
-	POINT		*p0,
-	POINT		*p1,
+	FT_POINT		*p0,
+	FT_POINT		*p1,
 	CURVE		*cur,
 	RECT_GRID	*gr)
 {
@@ -1089,7 +1089,7 @@ EXPORT void delete_null_boundary_curves(
 	Locstate	sl, sr;
 	double		V[MAXD];
 	ORIENTATION	bc_orient;
-	static	POINT	*pnew = NULL;
+	static	FT_POINT	*pnew = NULL;
 
 	debug_print("2drp","Entered delete_null_boundary_curves\n");
 	if (debugging("2drp"))
@@ -1178,7 +1178,7 @@ LOCAL void delete_null_bdry_curves_at_node(
 	CURVE		**c,*bc1,*bc2,*newbc,*ctmp;
 	ORIENTATION	bc1_orient,bc2_orient,ctmp_orient;
 	Locstate	sl,sr;
-	POINT		*p2new;
+	FT_POINT		*p2new;
 
 	debug_print("2drp","Entered delete_null_bdry_curves_at_node()\n");
 	if (debugging("2drp"))
@@ -2212,7 +2212,7 @@ EXPORT  void set_states_at_node_by_propagate(
 	O_CURVE		*newc,
 	double		dt)
 {
-	POINT		*ptmp;
+	FT_POINT		*ptmp;
 	double		V[MAXD];
 	size_t		sizest = front->sizest;
  

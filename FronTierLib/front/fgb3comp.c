@@ -296,7 +296,7 @@ EXPORT  TRI*  Tri_on_side_along_wall(
 BOND_TRI    **btris;
 BOND	    *b;
 TRI	    *n_t;
-POINT	    *p;
+FT_POINT	    *p;
 int	    i;
 
 	if(!is_side_bdry(t, side))
@@ -347,7 +347,7 @@ int	    i;
 EXPORT  boolean  is_wall_vertex(TRI *t, int iv)
 {
 SURFACE      *surf;
-POINT	     *p;
+FT_POINT	     *p;
 TRI	     **tris;
 int	     i, nt;
 	
@@ -371,7 +371,7 @@ int	     i, nt;
 }
 
 EXPORT  int tri_list_along_wall(
-	POINT     *p,
+	FT_POINT     *p,
 	TRI       *tri,
 	TRI       ***ptris,
 	INTERFACE *intfc)
@@ -818,7 +818,7 @@ static CURVE_CRX_SORT    *c_crx = NULL;
 
 
 LOCAL  boolean  insert_fixed_curve_crx_on_face(
-	POINT	   *p, 
+	FT_POINT	   *p,
 	BOND	   *b,
 	CURVE      *curve, 
 	int	   *smin, 
@@ -833,7 +833,7 @@ LOCAL  boolean  insert_fixed_curve_crx_on_face(
 	int		*face_list;
 	TRI		*tri;
 	SURFACE		*surf, *s;
-	POINT		*newp;
+	FT_POINT		*newp;
 	BOND_TRI	**btris;
 	Locstate  	sl, sr;
 	double		face_crds[3], *coords, d, dmin;
@@ -1050,7 +1050,7 @@ LOCAL void insert_curve_face_crossings(
 	TRI		*tri;
 	SURFACE		*surf, *crx_surf;
 	HYPER_SURF	*hs_on;
-	POINT		*newp;
+	FT_POINT		*newp;
 	Locstate  	sl, sr;
 	double		crds_crx[MAXD], *pt1, *pt2, *coords;
 	double           *h = rgr->h, tol;
@@ -1433,7 +1433,7 @@ LOCAL	int make_wall_curves(
 	int		ix,iy,iz, i,j,k, ind, ie[4];
 	static O_SURFACE    **sarr=NULL;
 	CURVE		*newc[MAX_3_COMP_CURV];
-	POINT		*pt[MAX_3_COMP_CURV][2];
+	FT_POINT		*pt[MAX_3_COMP_CURV][2];
 	int             nsurf=0, scnt[MAX_3_COMP_CURV];
 	
 
@@ -1861,7 +1861,7 @@ LOCAL   boolean fix_crx_on_wall(
 	int	   c0, 
 	int        c1)
 {
-	POINT 		*p;
+	FT_POINT 		*p;
 	SURFACE		*s;
 	HYPER_SURF	*hs_on;
 	Locstate	sl, sr;
@@ -2278,7 +2278,7 @@ LOCAL void change_3d_intfc_states(
 	Locstate	st,
 	int		sizest)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	CURVE		**c;
 	HYPER_SURF_ELEMENT *hse;
 	HYPER_SURF	*hs;
@@ -2338,7 +2338,7 @@ LOCAL  void  get_wall_physical_state(
 {
 HYPER_SURF              *hs;
 HYPER_SURF_ELEMENT      *hse;
-POINT                   *p;
+FT_POINT                   *p;
 Locstate  		sl, sr;
 
 	*st = NULL;

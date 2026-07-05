@@ -80,7 +80,7 @@ LOCAL	boolean	is_pt_near_bdry_like_curve(INTERFACE*,double,double,double,double)
 LOCAL	boolean	nodes_of_c_on_same_bdry_like_path(CURVE*);
 LOCAL	void	nearest_bdry_like_point(double,double,INTERFACE*,double*,double*,
 					double*,BOND**,CURVE**);
-LOCAL	void	short_dist(double,double,BOND*,POINT**,double*,double*,SIDE*);
+LOCAL	void	short_dist(double,double,BOND*,FT_POINT**,double*,double*,SIDE*);
 LOCAL	void	transfer_states_cp_to_cb(CURVE*,SIDE,CURVE*,ORIENTATION,
 					 SIDE,Front*);
 
@@ -246,7 +246,7 @@ EXPORT	boolean all_pts_on_c_are_ext_to_rect(
 {
 	INTERFACE	   *intfc = c->interface;
 	BOND		   *b;
-	POINT		   *p, *ps, *pe;
+	FT_POINT		   *p, *ps, *pe;
 	double		   *h = rgr->h, *L = rgr->VL, *U = rgr->VU;
 	double		   xl, yl, xu, yu;
 	double		   x, y,  xd, yd, xh, yh;
@@ -317,7 +317,7 @@ EXPORT	boolean all_pts_of_c_are_exterior_like(
 	INTERFACE	*old_intfc)
 {
 	BOND 		*b;
-	POINT		*p;
+	FT_POINT		*p;
 	COMPONENT	comp;
 
 	if (old_intfc->modified)
@@ -354,7 +354,7 @@ EXPORT	boolean c_parallel_to_bdry_like_curves(
 
 {
 	BOND		*b;
-	POINT		*ps, *pe;
+	FT_POINT		*ps, *pe;
 	double		x, y, xtol, ytol;
 	boolean		is_nr;
 	static const double tol = 0.001;/*TOLERANCE*/
@@ -400,7 +400,7 @@ LOCAL	boolean is_pt_near_bdry_like_curve(
 {
 	CURVE		*bc;
 	BOND		*bb;
-	POINT		*ps, *pe;
+	FT_POINT		*ps, *pe;
 	double		tol, dist;
 	double		bx, by, bt;
 	double		tx, ty, nx, ny, blen;
@@ -630,7 +630,7 @@ LOCAL	void transfer_states_cp_to_cb(
 	HYPER_SURF_ELEMENT *hse;
 	CURVE		*ppc;
 	BOND		*bs, *be, *b, *bp;
-	POINT		*p;
+	FT_POINT		*p;
 	double		coords[MAXD], t;
 	ORIENTATION	cb_opp_orient;
 
@@ -851,8 +851,8 @@ LOCAL	void nearest_bdry_like_point(
 {
 	CURVE		*c_closest = NULL;
 	BOND		*b_closest = NULL;
-	POINT		*p_closest = NULL;
-	POINT		*p;
+	FT_POINT		*p_closest = NULL;
+	FT_POINT		*p;
 	BOND		*b;
 	CURVE		**c;
 	SIDE		side;	/* Side of interface bond - 
@@ -960,7 +960,7 @@ LOCAL	void short_dist(
 	double		x,
 	double		y,
 	BOND		*b,
-	POINT		**p,
+	FT_POINT		**p,
 	double		*distance,
 	double		*norm_dist,
 	SIDE		*side)

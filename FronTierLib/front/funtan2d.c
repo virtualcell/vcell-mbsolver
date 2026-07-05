@@ -47,7 +47,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 struct _Snlist {
 	CURVE		**nc;
 	NODE    	**nopp, *sn;
-	POINT		**pt;
+	FT_POINT		**pt;
 	double		*ang;
 	ORIENTATION	*orient;
 	int		num_c;
@@ -90,7 +90,7 @@ LOCAL	boolean	correct_and_identify_node_types(Front*);
 LOCAL	boolean	is_node_in_node_list(NODE*,NNLIST*);
 LOCAL	boolean	pass1_delete_unphys_curves(Front*,NNLIST**,double,int);
 LOCAL	boolean	pass2_delete_unphys_curves(Front*,NNLIST**,double,int);
-LOCAL	double	Pangle(POINT*,POINT*,POINT*);
+LOCAL	double	Pangle(FT_POINT*,FT_POINT*,FT_POINT*);
 LOCAL	double	area_of_loop(NNLIST*,int);
 LOCAL	int	total_number_curves_at_node(NODE*);
 LOCAL	void	alloc_sn_list(Snlist*);
@@ -126,13 +126,13 @@ LOCAL 	void 	set_side_components(INTERFACE*,RECT_BOX*,BOX_INFO*);
 LOCAL 	void 	set_interior_components(INTERFACE*,RECT_BOX*,BOX_INFO*);
 LOCAL 	void 	remove_box_unphysical_crx(INTERFACE*,RECT_BOX*,BOX_INFO*);
 LOCAL	boolean 	bond_in_box(BOND*,INTERFACE*,RECT_BOX*);
-LOCAL	boolean 	bond_enclose_point(BOND*,POINT*);
+LOCAL	boolean 	bond_enclose_point(BOND*,FT_POINT*);
 LOCAL	boolean 	out_box_bond(BOND*,RECT_BOX*);
-LOCAL	boolean 	out_box_point(POINT*,RECT_BOX*);
-LOCAL	boolean 	point_on_box_bdry(POINT*,RECT_BOX*);
+LOCAL	boolean 	out_box_point(FT_POINT*,RECT_BOX*);
+LOCAL	boolean 	point_on_box_bdry(FT_POINT*,RECT_BOX*);
 LOCAL	boolean 	in_clockwise_order(BOND*,CURVE*,BOND*,CURVE*,RECT_BOX*);
 LOCAL 	boolean 	new_closed_loop(BOND*,int*,NODE*);
-LOCAL   boolean    seg_cross_bond(int,BOND*,double,double,double,POINT*);
+LOCAL   boolean    seg_cross_bond(int,BOND*,double,double,double,FT_POINT*);
 LOCAL	CURVE 	*copy_curve_without_geom(CURVE*,NODE*,NODE*);
 
 
@@ -554,7 +554,7 @@ LOCAL	void set_curve_info_in_new_node_list(
 {
 	NNLIST		*nl;
 	CURVE		**ci, **co, *c1;
-	POINT 		*pt[4];
+	FT_POINT 		*pt[4];
         NODE    	*m;
 	int		i, j;
 	ORIENTATION	orient;
@@ -1311,7 +1311,7 @@ LOCAL 	double area_of_loop(
 	double		area, a;
 	int		j;
 	BOND		*b;
-	POINT		*p0;
+	FT_POINT		*p0;
 
 	DEBUG_ENTER(area_of_loop)
 
@@ -1353,9 +1353,9 @@ LOCAL 	double area_of_loop(
 
 
 LOCAL 	double Pangle(
-	POINT		*p0,
-	POINT		*p1,
-	POINT		*p2)
+	FT_POINT		*p0,
+	FT_POINT		*p1,
+	FT_POINT		*p2)
 {
 	double		x,y,a;
 
@@ -1565,7 +1565,7 @@ EXPORT	void eliminate_small_loops(
 {
 	CURVE		*c;
 	BOND		*b1, *b2, *bb;
-	POINT		*p0;
+	FT_POINT		*p0;
 	CROSS		*cr;
 	double		area, min_area = hx*hy;
 
@@ -1663,7 +1663,7 @@ LOCAL	void free_sn_list(
 LOCAL	void print_Snlist(
 	Snlist		*snlist)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	int		i;
 
 	if (snlist == NULL)
@@ -1716,7 +1716,7 @@ LOCAL	void set_curve_list_for_node(
 {
 	CURVE		**ci, **co, *c1;
         NODE		*sn, *m;
-	POINT		*p;
+	FT_POINT		*p;
 	int		i, j;
 	ORIENTATION	orient;
 	double		a;
@@ -2567,7 +2567,7 @@ LOCAL void insert_box_crossings_in_curves(
 	int i,j,num_crx = box_info->num_crx;
 	int num_out_bond = 0;
 	CRXING *crx_store = box_info->crx_store;
-	POINT *p;
+	FT_POINT *p;
 	BOND *b,*bout;
 	CURVE *c;
 
@@ -2721,7 +2721,7 @@ LOCAL	void count_box_crossings(
 	int i,j,ii,jj,k,l,nb;
 	BOND **bonds,*b,*tmp_b;
 	CURVE **curves,**c,**bc;
-	POINT *ps,*pe,*p;
+	FT_POINT *ps,*pe,*p;
 	double coords[3] = {0,0,0};
 	int num_crx = 0;
 	double *L = box->grid->L;
@@ -2847,7 +2847,7 @@ LOCAL	void install_box_crossings(
 	int i,j,ii,jj,k,l,nb,nc;
 	BOND **bonds,*b,*tmp_b;
 	CURVE **curves,*c;
-	POINT *ps,*pe,*p,*pt;
+	FT_POINT *ps,*pe,*p,*pt;
 	double coords[3] = {0,0,0};
 	int num_crx = 0;
 	double *L = box->grid->L;
@@ -3132,7 +3132,7 @@ LOCAL	boolean reconnect_box_bonds(
 	BOND **out_bonds = box_info->out_bonds;
 	CURVE **in_curves = box_info->in_curves;
 	CURVE **out_curves = box_info->out_curves;
-	POINT *ps,*pe;
+	FT_POINT *ps,*pe;
 	BOND *b;
 	BOND *b1,*b2;
 	CURVE *c1,*c2;
@@ -3351,7 +3351,7 @@ LOCAL	boolean reconstruct_box_bonds(
 	RECT_BOX *box,
 	BOX_INFO *box_info)
 {
-	POINT *ps,*pe;
+	FT_POINT *ps,*pe;
 	int *gmax = box->smax;
 	int **num_x_crx = box_info->num_x_crx;
 	int **num_y_crx = box_info->num_y_crx;
@@ -3693,7 +3693,7 @@ LOCAL	boolean bond_in_box(
 
 LOCAL	boolean bond_enclose_point(
 	BOND *b,
-	POINT *p)
+	FT_POINT *p)
 {
 	int i;
 	double ratio;
@@ -3757,7 +3757,7 @@ LOCAL	boolean out_box_bond(
 }	/* end out_box_bond */
 
 LOCAL	boolean out_box_point(
-	POINT *p,
+	FT_POINT *p,
 	RECT_BOX *box)
 {
 	double XB[2],YB[2];
@@ -3779,7 +3779,7 @@ LOCAL	boolean out_box_point(
 }	/* end out_box_bond */
 
 LOCAL	boolean point_on_box_bdry(
-	POINT *p,
+	FT_POINT *p,
 	RECT_BOX *box)
 {
 	double XB[2],YB[2];
@@ -3807,7 +3807,7 @@ LOCAL	boolean in_clockwise_order(
 	CURVE *c2,
 	RECT_BOX *box)
 {
-	POINT *p1,*p2;
+	FT_POINT *p1,*p2;
 	double XB[2],YB[2];
 
 	XB[0] = box->grid->L[0] + (double)box->bmin[0]*box->grid->h[0];
@@ -4075,7 +4075,7 @@ LOCAL	boolean	seg_cross_bond(
 	double	l,
 	double	u,
 	double	seg,
-	POINT	*p)
+	FT_POINT	*p)
 {
 	double	x1=Coords(b->start)[0];
 	double	y1=Coords(b->start)[1];

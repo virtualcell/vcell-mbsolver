@@ -89,7 +89,7 @@ LIB_LOCAL 	void copy_tg_pts_from_intfc(
 #if defined(TWOD) || defined(THREED)
 	TG_PT     *fr_pt;
 	INTERFACE *intfc = ntg->grid_intfc;
-	POINT     *point;
+	FT_POINT     *point;
 #endif /* defined(TWOD) || defined(THREED) */
 
 	reset_hash_table(hash_table,h_size);
@@ -158,7 +158,7 @@ LOCAL	void add_intfc_blk_pcs2d(
 {
 	BOND		*b;
 	CURVE		*c;
-	POINT		*p;
+	FT_POINT		*p;
 	int		i;
 	TG_PT		*tp;
 	POINT_COMP_ST	*pcs = blk_el0_pcs_els(blk_el0);
@@ -516,7 +516,7 @@ LOCAL	void add_intfc_blk_pcs3d(
 	SURFACE       *s;
 	BOND	      *b;
 	BOND_TRI      **btris;
-	POINT         *p;
+	FT_POINT         *p;
 	int           i,j,k, npcs;
 	TG_PT         *tp;
 	Locstate      sl,sr;

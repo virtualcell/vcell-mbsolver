@@ -85,8 +85,8 @@ LIB_LOCAL boolean i_intersections2d(
 	BOND            ****bonds_in_block;
 	CURVE		**c;
 	CURVE           ****curves_in_block;
-	POINT		*p;
-	POINT		pc;
+	FT_POINT		*p;
+	FT_POINT		pc;
 	INTERFACE	*oldintfc;
 	COMPONENT       **compon2d;
 	CROSS		*cr, Cr;	/* Cr is a Dummy Place Holder
@@ -325,7 +325,7 @@ LIB_LOCAL	void	i_print_crossing_elements2d(
 EXPORT boolean bond_crosses_curve(
 	BOND *b,
 	CURVE *c,
-	POINT *p,
+	FT_POINT *p,
 	BOND **bcurve,
 	ORIENTATION orient)
 {
@@ -364,7 +364,7 @@ EXPORT boolean bond_crosses_curve(
 *		Usage:
 *			status = cross_bonds(b1,b2,&point);
 *			BOND *b1, *b2;
-*			POINT p;
+*			FT_POINT p;
 *
 *	Returns 1 if the bonds cross, 0 otherwise.
 *
@@ -374,7 +374,7 @@ EXPORT boolean bond_crosses_curve(
 EXPORT boolean cross_bonds(
 	BOND		*b1,
 	BOND		*b2,
-	POINT		*p)
+	FT_POINT		*p)
 {
 	double		x1=(double)Coords(b1->start)[0];
 	double		y1=(double)Coords(b1->start)[1];

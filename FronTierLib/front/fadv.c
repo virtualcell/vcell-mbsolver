@@ -63,7 +63,7 @@ LOCAL	int	reconstruct_front_advance_front3d(double,double*,Front*,
 LOCAL	void	EnforceFlowSpecifedStates3d(Front*);
 LOCAL	void	debug_propagate_3d_front(Front*);
 LOCAL	void	propagate_curve_points(Front*,Front*,POINTER,double);
-LOCAL	void	unfold_interface_section(POINT*,POINT*,TRI*,TRI*,
+LOCAL	void	unfold_interface_section(FT_POINT*,FT_POINT*,TRI*,TRI*,
 	                                 SURFACE*,SURFACE*);
 LOCAL   void    propagate_surface_points(Front*,Front*,POINTER,double,double*);
 
@@ -150,7 +150,7 @@ LOCAL	void	EnforceFlowSpecifedStates1d(
 {
 	INTERFACE	*intfc;
 	HYPER_SURF	*hs;
-	POINT		**p;
+	FT_POINT		**p;
 	Locstate	sl, sr;
 
 	if ((fr==NULL) || (Fsr_list(fr)==NULL) || (fr->rect_grid->dim!=1))
@@ -176,7 +176,7 @@ LOCAL	void	EnforceFlowSpecifedStates2d(
 {
 	INTERFACE	*intfc;
 	CURVE		**c;
-	POINT		*p;
+	FT_POINT		*p;
 	HYPER_SURF	*hs;
 	BOND		*b;
 	Locstate	sl, sr;
@@ -218,7 +218,7 @@ LOCAL	void	EnforceFlowSpecifedStates3d(
 	HYPER_SURF		*hs;
 	INTERFACE		*intfc;
 	SURFACE			**s;
-	POINT			*p;
+	FT_POINT			*p;
 	TRI			*t;
 	Locstate		sl, sr;
 	int			i;
@@ -338,7 +338,7 @@ EXPORT	void set_propagation_limits(
 {
 	HYPER_SURF_ELEMENT *hse;
 	HYPER_SURF         *hs;
-	POINT	           *p;
+	FT_POINT	           *p;
 
 	(void) next_point(newfront->interf,NULL,NULL,NULL);
 	while (next_point(newfront->interf,&p,&hse,&hs))
@@ -2313,7 +2313,7 @@ LOCAL int propagate_points_tangentially(
 	HYPER_SURF		*tmphs;
 	HYPER_SURF_ELEMENT 	*tmphse;
 	SURFACE                 **s_tmp, **s_new;
-	POINT			*tmpp, *newp;
+	FT_POINT			*tmpp, *newp;
 	TRI                     *tri_tmp, *tri_new;
 	int                     i;
 	boolean                    modified;

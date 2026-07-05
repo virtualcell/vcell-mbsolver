@@ -474,7 +474,7 @@ extern "C" {
     \param comp @b in	The component of the side which the normal is pointing to.
  */
 
-   IMPORT  void FT_NormalAtPoint(POINT *p ,
+   IMPORT  void FT_NormalAtPoint(FT_POINT *p ,
    				Front *front ,
    				double *normal ,
 				int comp );
@@ -487,7 +487,7 @@ extern "C" {
     \param curvature @b out	The address where the curvature is to be assigned.
  */
 
-   IMPORT  void FT_CurvatureAtPoint(POINT *p ,
+   IMPORT  void FT_CurvatureAtPoint(FT_POINT *p ,
    				Front *front ,
    				double *curvature );
 
@@ -515,7 +515,7 @@ extern "C" {
  */
 
    IMPORT  Nor_stencil *FT_CreateNormalStencil(Front *front ,
-                                POINT *p ,
+                                FT_POINT *p ,
                                 int comp ,
                                 int num_pts );
 
@@ -656,7 +656,7 @@ extern "C" {
  */
 
    IMPORT  void FT_ArrayOfCurvePoints(CURVE *curve,
-				POINT **point_array);
+				FT_POINT **point_array);
 
 /*! \fn int FT_NumOfNodeCurves(NODE *node)
  *  \ingroup QUERY
@@ -784,7 +784,7 @@ extern "C" {
  */
 
    IMPORT  void FT_ArrayOfSurfPoints(SURFACE *surf,
-				POINT **point_array);
+				FT_POINT **point_array);
 
 
 /*! \fn void FT_ArrayOfSurfCurves(SURFACE *surf, CURVE **curve_array)
@@ -814,7 +814,7 @@ extern "C" {
     \param tris @b out	Pointer to array of tris around the point.
  */
 
-   IMPORT  int FT_FirstRingTrisAroundPoint(POINT *p, TRI *tri, TRI ***tris);
+   IMPORT  int FT_FirstRingTrisAroundPoint(FT_POINT *p, TRI *tri, TRI ***tris);
 
 /*! \fn CURVE* FT_CurveOfPoint(INTERFACE *intfc, POINT *point)
  *  \ingroup QUERY
@@ -825,7 +825,7 @@ extern "C" {
     \param point @b in point on which the curve to be returned.
  */
 
-   IMPORT  CURVE* FT_CurveOfPoint(INTERFACE *intfc,POINT *point);
+   IMPORT  CURVE* FT_CurveOfPoint(INTERFACE *intfc,FT_POINT *point);
 
 /*! \fn NODE* FT_NodeOfPoint(INTERFACE *intfc, POINT *point)
  *  \ingroup QUERY
@@ -836,7 +836,7 @@ extern "C" {
     \param point @b in point on which the curve to be returned.
  */
 
-   IMPORT  NODE* FT_NodeOfPoint(INTERFACE *intfc,POINT *point);
+   IMPORT  NODE* FT_NodeOfPoint(INTERFACE *intfc,FT_POINT *point);
 
 /*! \fn void FT_ParallelExchIntfcBuffer(Front *front)
  *  \ingroup PARALLEL
@@ -890,7 +890,7 @@ extern "C" {
     \param sl @b out Address for the left state.
     \param sr @b out Address for the right state.
  */
-   IMPORT  void FT_GetStatesAtPoint(POINT *p,
+   IMPORT  void FT_GetStatesAtPoint(FT_POINT *p,
 				HYPER_SURF_ELEMENT *hse,
 				HYPER_SURF *hs,
 				POINTER *sl,

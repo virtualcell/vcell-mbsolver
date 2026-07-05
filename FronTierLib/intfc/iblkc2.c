@@ -300,11 +300,11 @@ EXPORT	void stitch_inside_blk(
 	const int *num_tris = bm->num_tris;
 	int       is, ic, i, j, side1, side2;
 	TRI       *tri1, *tri2;
-	POINT     **p1, **p2;
+	FT_POINT     **p1, **p2;
 	BOND      *b;
 	SURFACE   *s;
 	CURVE     *c;
-	POINT 	  *ptmp;
+	FT_POINT 	  *ptmp;
 	ORIENTATION orient;
 	BOND_TRI  *btri;
 
@@ -400,7 +400,7 @@ EXPORT	void stitch_adj_blk(
 	int   i, j, side1, side2;
 	int   ic1,ic2,is1,is2;
 	TRI   *tri1, *tri2;
-	POINT *p1[3], *p2[3];
+	FT_POINT *p1[3], *p2[3];
 	BOND  *b1,*b2;
 	CURVE *c1,*c2;
 	if (bm1 == NULL || bm2 == NULL)
@@ -527,8 +527,8 @@ LOCAL	void remove_null_pair_of_surface(
 	int     is1,
 	int     is2)
 {
-	POINT    *pts[4];
-	POINT    *p1[3], *p2[3];
+	FT_POINT    *pts[4];
+	FT_POINT    *p1[3], *p2[3];
 	int      it, jt, i, j, sides[4];
 	int      search_step;
 	TRI      *tri1, *tri2, *tris[4];
@@ -876,9 +876,9 @@ EXPORT	BLK_CRX *alloc_blk_crx(
 
 EXPORT	void  create_triangle(
 	BLK_TRI *blk_mem,
-	POINT   *p1,
-	POINT   *p2,
-	POINT   *p3,
+	FT_POINT   *p1,
+	FT_POINT   *p2,
+	FT_POINT   *p3,
 	SURFACE *s)
 {
 	TRI      *tri;
@@ -1306,7 +1306,7 @@ LOCAL void blk_case01_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4;
+        FT_POINT *p1, *p2, *p3, *p4;
 	SURFACE *s;
         
 	s = crx_in_idir(blk_crx,1,0)->s;
@@ -1392,7 +1392,7 @@ LOCAL void blk_case02_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4;
+        FT_POINT *p1, *p2, *p3, *p4;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,1)->s;
@@ -1477,7 +1477,7 @@ LOCAL   void blk_case03_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3;
+        FT_POINT *p1, *p2, *p3;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,1)->s;
@@ -1552,7 +1552,7 @@ LOCAL void blk_case04_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4, *p5;
+        FT_POINT *p1, *p2, *p3, *p4, *p5;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -1643,7 +1643,7 @@ LOCAL void blk_case05_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4, *p5, *p6;
+        FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -1741,7 +1741,7 @@ LOCAL void blk_case06_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3;
+        FT_POINT *p1, *p2, *p3;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -1819,7 +1819,7 @@ LOCAL void blk_case07_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4, *p5, *p6;
+        FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	SURFACE *s;
 
         s = crx_in_kdir(blk_crx,0,1)->s;
@@ -1899,7 +1899,7 @@ LOCAL void blk_case08_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4;
+        FT_POINT *p1, *p2, *p3, *p4;
 	SURFACE *s;
 
         s = crx_in_jdir(blk_crx,0,1)->s;
@@ -1984,7 +1984,7 @@ LOCAL void blk_case09_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3;
+        FT_POINT *p1, *p2, *p3;
 	SURFACE *s;
 
         s = crx_in_jdir(blk_crx,0,1)->s;
@@ -2062,7 +2062,7 @@ LOCAL void blk_case10_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4, *p5, *p6;
+        FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -2143,7 +2143,7 @@ LOCAL void blk_case11_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4;
+        FT_POINT *p1, *p2, *p3, *p4;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -2247,7 +2247,7 @@ LOCAL void blk_case12_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem) 
 {
-        POINT *p1, *p2, *p3;
+        FT_POINT *p1, *p2, *p3;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -2347,7 +2347,7 @@ LOCAL void blk_case13_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3, *p4, *p5;
+        FT_POINT *p1, *p2, *p3, *p4, *p5;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -2449,7 +2449,7 @@ LOCAL void blk_case14_comp2(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT *p1, *p2, *p3;
+        FT_POINT *p1, *p2, *p3;
 	SURFACE *s;
 
         s = crx_in_idir(blk_crx,1,0)->s;
@@ -2595,7 +2595,7 @@ LOCAL double area_corner_case03(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -2624,7 +2624,7 @@ LOCAL double area_edge_case02(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3];
@@ -2663,7 +2663,7 @@ LOCAL double area_edge1_case11(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3];
@@ -2701,7 +2701,7 @@ LOCAL double area_edge2_case11(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3];
@@ -2740,7 +2740,7 @@ LOCAL double area_plane_case01(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3]; 
 	double A1[3], A2[3], A3[3], A4[3];
@@ -2779,7 +2779,7 @@ LOCAL double area_glider_case04(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5;
+	FT_POINT *p1, *p2, *p3, *p4, *p5;
 	double *crx1, *crx2, *crx3, *crx4, *crx5;
 	double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -2845,7 +2845,7 @@ LOCAL double area_glider_case13(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5;
+	FT_POINT *p1, *p2, *p3, *p4, *p5;
 	double *crx1, *crx2, *crx3, *crx4, *crx5;
 	double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -2912,7 +2912,7 @@ LOCAL double area_hexagon_case05(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
         double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -3028,7 +3028,7 @@ LOCAL double area_corner1_case06(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3057,7 +3057,7 @@ LOCAL double area_corner2_case06(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3086,7 +3086,7 @@ LOCAL double area_twister_case07(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
 	double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -3202,7 +3202,7 @@ LOCAL double area_corner_case08(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3231,7 +3231,7 @@ LOCAL double area_edge_case08(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3];
@@ -3270,7 +3270,7 @@ LOCAL double area_corner1_case09(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3299,7 +3299,7 @@ LOCAL double area_corner2_case09(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3328,7 +3328,7 @@ LOCAL double area_twister_case10(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
 	double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -3444,7 +3444,7 @@ LOCAL double area_corner1_case12(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3473,7 +3473,7 @@ LOCAL double area_corner2_case12(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3502,7 +3502,7 @@ LOCAL double area_corner3_case12(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3531,7 +3531,7 @@ LOCAL double area_corner_case13(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3560,7 +3560,7 @@ LOCAL double area_corner1_case14(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3589,7 +3589,7 @@ LOCAL double area_corner2_case14(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3618,7 +3618,7 @@ LOCAL double area_corner3_case14(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3647,7 +3647,7 @@ LOCAL double area_corner4_case14(
 	BLK_CRX *blk_crx)
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3;
 	double A[3], D1[3], D2[3];
 	double area;
@@ -3678,7 +3678,7 @@ LOCAL double volume_corner_case03(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;
@@ -3708,7 +3708,7 @@ LOCAL double volume_edge_case02(
 	double crn2[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3], D7[3], D8[3],
@@ -3759,7 +3759,7 @@ LOCAL double volume_edge1_case11(
 	double crn2[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3], D7[3], D8[3],
@@ -3813,7 +3813,7 @@ LOCAL double volume_edge2_case11(
 	double crn2[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3], D7[3], D8[3],
@@ -3867,7 +3867,7 @@ LOCAL double volume_edge1_p2_case11(
 	double crn2[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3], D7[3], D8[3],
@@ -3922,7 +3922,7 @@ LOCAL double volume_plane_case01(
 	double crn4[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3], D7[3], D8[3],
 	      D9[3], D10[3], D11[3], D12[3], D13[3], D14[3], D15[3],
@@ -3990,7 +3990,7 @@ LOCAL double volume_glider_case04(
 	double crn3[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5;
+	FT_POINT *p1, *p2, *p3, *p4, *p5;
 	double *crx1, *crx2, *crx3, *crx4, *crx5;
 	double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3]; 
@@ -4127,7 +4127,7 @@ LOCAL double volume_glider_case13(
 	double crn3[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5;
+	FT_POINT *p1, *p2, *p3, *p4, *p5;
 	double *crx1, *crx2, *crx3, *crx4, *crx5;
 	double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3];
@@ -4267,7 +4267,7 @@ LOCAL double volume_glider_p2_case13(
 	double crn3[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5;
+	FT_POINT *p1, *p2, *p3, *p4, *p5;
 	double *crx1, *crx2, *crx3, *crx4, *crx5;
 	double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3];
@@ -4409,7 +4409,7 @@ LOCAL double volume_hexagon_case05(
 	double *h)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
         double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -4589,7 +4589,7 @@ LOCAL double volume_hexagon_p4_case14(
 	double *h)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
         double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -4704,7 +4704,7 @@ LOCAL double volume_hexagon_p5_case14(
 	double *h)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
         double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -4819,7 +4819,7 @@ LOCAL double volume_hexagon_p6_case14(
 	double *h)
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
         double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -4930,7 +4930,7 @@ LOCAL double volume_corner1_case06(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;
@@ -4959,7 +4959,7 @@ LOCAL double volume_corner2_case06(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;
@@ -4991,7 +4991,7 @@ LOCAL double volume_twister_case07(
 	double crn4[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
         double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -5152,7 +5152,7 @@ LOCAL double volume_corner_case08(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;
@@ -5182,7 +5182,7 @@ LOCAL double volume_edge_case08(
 	double crn2[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4;
+	FT_POINT *p1, *p2, *p3, *p4;
 	double *crx1, *crx2, *crx3, *crx4;
 	double A1[3], A2[3], A3[3], A4[3];
 	double D1[3], D2[3], D3[3], D4[3], D5[3], D6[3], D7[3], D8[3],
@@ -5234,7 +5234,7 @@ LOCAL double volume_corner2_case09(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;
@@ -5266,7 +5266,7 @@ LOCAL double volume_twister_case10(
 	double crn4[])
 {
 	int i;
-	POINT *p1, *p2, *p3, *p4, *p5, *p6;
+	FT_POINT *p1, *p2, *p3, *p4, *p5, *p6;
 	double *crx1, *crx2, *crx3, *crx4, *crx5, *crx6;
         double E1[3], E2[3], E3[3], E4[3], E5[3], E6[3], E7[3], E8[3], 
 	      E9[3], E10[3], E11[3], E12[3], E13[3], E14[3], E15[3], 
@@ -5427,7 +5427,7 @@ LOCAL double volume_corner1_case14(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;
@@ -5456,7 +5456,7 @@ LOCAL double volume_corner4_case14(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;
@@ -5485,7 +5485,7 @@ LOCAL double volume_corner1_p2_case14(
 	double crn[])
 {
 	int i;
-	POINT *p1, *p2, *p3;
+	FT_POINT *p1, *p2, *p3;
 	double *crx1, *crx2, *crx3; 
 	double D1[3], D2[3], D3[3];
 	double volume;

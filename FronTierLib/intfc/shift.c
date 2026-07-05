@@ -50,18 +50,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 EXPORT INTERFACE *remap_interface(
 	INTERFACE	*intfc,
-	void		(*remap)(POINT*,BOND*,CURVE*,POINT*,
+	void		(*remap)(FT_POINT*,BOND*,CURVE*,FT_POINT*,
 				 BOND*,CURVE*,boolean,RECT_GRID*,POINTER),
 	void		(*remap_rect_grid)(INTERFACE*,INTERFACE*,
-					   void (*)(POINT*,BOND*,CURVE*,
-						    POINT*,BOND*,CURVE*,boolean,
+					   void (*)(FT_POINT*,BOND*,CURVE*,
+						    FT_POINT*,BOND*,CURVE*,boolean,
 						    RECT_GRID*,POINTER),
 					   POINTER),
 	POINTER		params)
 {
 	HYPER_SURF	   *hs, *nhs;
 	HYPER_SURF_ELEMENT *hse, *nhse;
-	POINT		   *p, *np;
+	FT_POINT		   *p, *np;
 	INTERFACE	   *new_intfc;
 	RECT_GRID	   *rgr;
 	boolean		   first = YES;
@@ -99,7 +99,7 @@ EXPORT INTERFACE *remap_interface(
 #if defined(ONED)
 	if (new_intfc->dim == 1)
 	{
-	    POINT **pt;
+	    FT_POINT **pt;
 	    for (pt = new_intfc->points; pt && *pt; pt++)
 	    {
 		if (boundary_side(Coords(*pt),rgr,eps) == NOT_A_BDRY)

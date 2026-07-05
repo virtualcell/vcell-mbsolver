@@ -39,7 +39,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 LOCAL	boolean	set_tangent_space_projection(Front*,Tparams*,TRI**,int);
 LOCAL	boolean	tn_common_vertex(int,int,TRI*,const TN*,boolean);
-LOCAL 	boolean 	update_state_in_tan_direction(Front*,const Tparams*,POINT*,
+LOCAL 	boolean 	update_state_in_tan_direction(Front*,const Tparams*,FT_POINT*,
                                               double);
 LOCAL	void	copy_stencil_in_direction(Tan_stencil*,int,Front*);
 LOCAL	void	set_tn_on_tri_side(TN*,TRI*,int);
@@ -60,8 +60,8 @@ LOCAL	boolean	check_record_tri(TRI*,TRI**,int*);
 
 EXPORT	boolean f_tan_point_propagate(
 	Front              *fr,
-	POINT              *p,
-	POINT              *newp,
+	FT_POINT              *p,
+	FT_POINT              *newp,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF         *hs,
 	double dt,
@@ -109,7 +109,7 @@ EXPORT	boolean f_tan_point_propagate(
 
 EXPORT	boolean set_up_tangent_params(
 	Front			*fr,
-	POINT			*p,
+	FT_POINT			*p,
 	HYPER_SURF_ELEMENT	*hse,
 	HYPER_SURF		*hs,
 	Tparams			*tp)
@@ -178,7 +178,7 @@ LOCAL	boolean set_tangent_space_projection(
 	TRI	           **tris,
 	int                num_tris)
 {
-	POINT *p;
+	FT_POINT *p;
     	boolean  folded;
 	double *t[2], *plane[2];
 	double *p0;
@@ -299,7 +299,7 @@ LOCAL	boolean set_tangent_space_projection(
 	      }
 	      else if ((tp[i].tnr.tri == NULL) && (tp[i].tnl.tri == NULL))
 	      {
-		POINT *popp;
+		FT_POINT *popp;
 		double d0, dl;
 		/* all tris are on one side of the plane */
 		popp = (side0 == iv0) ?  Point_of_tri(tris[0])[Next_m3(iv0)] :
@@ -341,7 +341,7 @@ LOCAL	boolean set_tangent_space_projection(
 	    /* onto the tangent space                                      */
 	    if (debugging("tparams"))
 	    {
-		POINT      *p;
+		FT_POINT      *p;
 		double      BBL[3], BBU[3];
 		double      unor[3], ut1[3], ut2[3];
 		double      len;
@@ -430,7 +430,7 @@ LOCAL boolean tn_common_vertex(
 LOCAL	boolean update_state_in_tan_direction(
 	Front         *fr,
 	const Tparams *tp,
-	POINT         *newp,
+	FT_POINT         *newp,
 	double         kappa)
 {
 	Locstate 	    ansl, ansr;
@@ -450,7 +450,7 @@ EXPORT	boolean set_up_tangent_stencil(
 	Front         *fr,
 	Tan_stencil *sten,
 	const Tparams *tp,
-	POINT         *newp,
+	FT_POINT         *newp,
 	double         kappa)
 {
 	int                 il, ir;
@@ -607,7 +607,7 @@ EXPORT	void fill_stencil_in_direction(
 	const Tparams	*tp)
 {
 	TRI 		*n_t, *o_t;
-	POINT 		*ptmp;
+	FT_POINT 		*ptmp;
 	TN              tn;
 	double		l,dist;
 	double		po[3], pn[3], posn[3],dir[3];
@@ -858,7 +858,7 @@ LOCAL	int set_posn_and_states(
 {
 	Locstate	sl1, sl2, sl3;
 	Locstate	sr1, sr2, sr3;
-	POINT		*p1,*p2,*p3;
+	FT_POINT		*p1,*p2,*p3;
 	double		f[3];
 
 
@@ -940,7 +940,7 @@ EXPORT void f_surface_propagate(
 	INTERFACE		*intfc_new = newfront->interf;
 	HYPER_SURF		*oldhs, *newhs;
 	HYPER_SURF_ELEMENT 	*oldhse, *newhse;
-	POINT			*oldp, *newp;
+	FT_POINT			*oldp, *newp;
 	DEBUG_ENTER(f_surface_propagate)
 
 	start_clock("surface_propagate");
@@ -968,8 +968,8 @@ EXPORT void f_surface_propagate(
 EXPORT void second_order_point_propagate(
         Front *front,
         POINTER wave,
-        POINT *oldp,
-        POINT *newp,
+        FT_POINT *oldp,
+        FT_POINT *newp,
         HYPER_SURF_ELEMENT *oldhse,
         HYPER_SURF         *oldhs,
         double              dt,
@@ -1008,8 +1008,8 @@ EXPORT void second_order_point_propagate(
 EXPORT void fourth_order_point_propagate(
         Front *front,
         POINTER wave,
-        POINT *oldp,
-        POINT *newp,
+        FT_POINT *oldp,
+        FT_POINT *newp,
         HYPER_SURF_ELEMENT *oldhse,
         HYPER_SURF         *oldhs,
         double              dt,
@@ -1055,8 +1055,8 @@ EXPORT void fourth_order_point_propagate(
 EXPORT  void first_order_point_propagate(
         Front *front,
         POINTER wave,
-        POINT *oldp,
-        POINT *newp,
+        FT_POINT *oldp,
+        FT_POINT *newp,
         HYPER_SURF_ELEMENT *oldhse,
         HYPER_SURF         *oldhs,
         double              dt,
@@ -1096,7 +1096,7 @@ LOCAL	boolean set_wall_tangent_space(
 	TRI	           **tris,
 	int                num_tris)
 {
-	POINT *p;
+	FT_POINT *p;
     	boolean  folded;
 	double *t, *plane;
 	double *p0;
@@ -1225,7 +1225,7 @@ LOCAL  boolean find_triad_at_point(
 	double			*t1,
 	double			*t2,
 	double			*nor,
-	POINT			*p,
+	FT_POINT			*p,
 	BOND			*b,
 	CURVE			*c,
 	double			*ref_tan)
@@ -1309,7 +1309,7 @@ double		tol = 0.01;
 
 EXPORT	boolean set_up_wall_tangent_params(
 	Tparams			*tp,
-	POINT			*p,
+	FT_POINT			*p,
 	BOND			*b,
 	CURVE			*c,
 	double			*ref_tan,
@@ -1428,7 +1428,7 @@ EXPORT	boolean set_up_wall_tangent_params(
 }		/* end set_up_tangent_params */
 
 LOCAL boolean  check_hse_p(
-	POINT		      *p,
+	FT_POINT		      *p,
 	HYPER_SURF_ELEMENT    *hse,
 	HYPER_SURF	      *hs)
 {
@@ -1517,7 +1517,7 @@ EXPORT	void find_position_along_wall(
 	Front*		fr)
 {
 	TRI 		*n_t, *o_t, **tris_on_p;
-	POINT 		*ptmp;
+	FT_POINT 		*ptmp;
 	double		l;
 	double		po[3], pn[3], dir[3];
 	const double	*plane = tp->plane;

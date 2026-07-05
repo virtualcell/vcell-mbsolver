@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <front/fdecs.h>
 
 struct _POINT_LIST {
-	POINT              *p;
+	FT_POINT              *p;
 	HYPER_SURF         *hs;
 	HYPER_SURF_ELEMENT *hse;
 	struct _POINT_LIST *prev, *next;
@@ -53,7 +53,7 @@ typedef struct _POINT_LIST_STORE POINT_LIST_STORE;
 	/* LOCAL Function Declarations */
 LOCAL	POINT_LIST	*set_point_list(TRI**,int,HYPER_SURF*,
 					POINT_LIST_STORE*);
-LOCAL	TRI*	find_following_null_tri(TRI*,POINT**,int*,ANGLE_DIRECTION);
+LOCAL	TRI*	find_following_null_tri(TRI*,FT_POINT**,int*,ANGLE_DIRECTION);
 LOCAL	boolean	add_matching_pt_to_hash_table(TRI**,TRI**,int,int,SURFACE*,
 					      SURFACE*,P_LINK*,int);
 LOCAL	boolean	buffer_extension3d1(INTERFACE*,INTERFACE*,int,int,boolean);
@@ -295,7 +295,7 @@ EXPORT void install_subdomain_bdry_curves(
 	BOND_TRI *btri;
 	CURVE	 *curve, **c;
 	NODE	 *ns, *ne, **n, **n1;
-	POINT	 *p, *ps, *pe;
+	FT_POINT	 *p, *ps, *pe;
 	TRI	 *tri_start, *start_tri, *null_tris[MAX_SUBDOMAIN_TRIS];
 	SURFACE	 **s;
 	Locstate sl, sr;
@@ -427,7 +427,7 @@ LOCAL void sep_common_pt_for_open_bdry(
 	INTERFACE	*intfc)
 {
 	SURFACE			**s;
-	POINT			*p;
+	FT_POINT			*p;
 	TRI			*tri, *tris[MAX_SUBDOMAIN_TRIS];
 	int			i, k, nt;
 	double			nor[4], tmp_fac;
@@ -471,7 +471,7 @@ EXPORT void install_subdomain_bdry_curves_org(
 	BOND_TRI *btri, *bte;
 	CURVE	 *curve, **c;
 	NODE	 *ns, *ne, **n, **n1;
-	POINT	 *p, *ps, *pe;
+	FT_POINT	 *p, *ps, *pe;
 	TRI	 *tri_start, *tri_end, *start_tri;
 	SURFACE	 **s;
 	Locstate sl, sr;
@@ -703,7 +703,7 @@ LOCAL	void	shift_interface(
 	double     T,
 	int       dir)
 {
-	POINT   *p;
+	FT_POINT   *p;
 	SURFACE **s;
 	TRI     *t;
 	int     i;
@@ -1180,7 +1180,7 @@ LOCAL	void	synchronize_tris_at_subdomain_bdry(
 	P_LINK *p_table,
 	int    p_size)
 {
-	POINT **ps, **pa, *p0, *p1, *p2;
+	FT_POINT **ps, **pa, *p0, *p1, *p2;
 	TRI   *ts, *ta;
 	int   i, j, id, idp, idn;
 
@@ -1194,17 +1194,17 @@ LOCAL	void	synchronize_tris_at_subdomain_bdry(
 		pa = Point_of_tri(ta);
 		for (id = 0; id < 3; ++id)
 		{
-		    p0 = (POINT*) find_from_hash_table((POINTER)pa[id],
+		    p0 = (FT_POINT*) find_from_hash_table((POINTER)pa[id],
 						       p_table,p_size);
 		    if (p0 == ps[0])
 		    {
 		        idn = Next_m3(id);
-		        p1 = (POINT*) find_from_hash_table((POINTER)pa[idn],
+		        p1 = (FT_POINT*) find_from_hash_table((POINTER)pa[idn],
 						           p_table,p_size);
 		        if (p1 == ps[1])
 		        {
 		            idp = Prev_m3(id);
-		            p2 = (POINT*) find_from_hash_table((POINTER)pa[idp],
+		            p2 = (FT_POINT*) find_from_hash_table((POINTER)pa[idp],
 						               p_table,p_size);
 			    if (p2 == ps[2])
 			    {
@@ -1299,7 +1299,7 @@ LOCAL boolean tri_bond_cross_test(
 {
 int	i, j, n;
 TRI	**tris;
-POINT	*p;
+FT_POINT	*p;
 
 	if(tri_bond_cross_line(tri,crx_coord,dir))
 	    return YES;
@@ -1444,7 +1444,7 @@ LOCAL boolean match_two_tris(
 	TRI		*atri)
 {
 	int		j;
-	POINT		**p, **ap;
+	FT_POINT		**p, **ap;
 
 	p = Point_of_tri(tri);
 	ap = Point_of_tri(atri);
@@ -1665,7 +1665,7 @@ LOCAL	POINT_LIST	*set_point_list(
 	HYPER_SURF       *hs,
 	POINT_LIST_STORE *plist_store)
 {
-	POINT      **p;
+	FT_POINT      **p;
 	POINT_LIST *plist, *pl, Plist;
 	TRI        *tri;
 	int        i, j, max_np, tstnum;
@@ -1727,7 +1727,7 @@ EXPORT	SURFACE *copy_buffer_surface(
 	int		p_size)
 {
 	SURFACE		*s;
-	POINT		*p, *np, *ap;
+	FT_POINT		*p, *np, *ap;
 	TRI		*tri, *atri;
 	CURVE		**c, **pos_curves = NULL, **neg_curves = NULL;
 	int		i;
@@ -1784,7 +1784,7 @@ EXPORT	SURFACE *copy_buffer_surface(
 	    	    if (!vertex_on_bond(tri,i))  /* the if is useless */
 		    {
 			ap = Point_of_tri(atri)[i];
-			np = (POINT*)find_from_hash_table((POINTER)ap,
+			np = (FT_POINT*)find_from_hash_table((POINTER)ap,
 					                  p_table,p_size);
 			if (np == NULL)
 			{
@@ -1813,7 +1813,7 @@ EXPORT	CURVE *matching_curve(
 	BOND		*b, *ab;
 	CURVE		**cc, *c;
 	NODE		*ns, *ne;
-	POINT		*ap, *p;
+	FT_POINT		*ap, *p;
 
 	ns = matching_node(ac->start,p_table,p_size);
 	ne = matching_node(ac->end,p_table,p_size);
@@ -1829,7 +1829,7 @@ EXPORT	CURVE *matching_curve(
 		b = b->next, ab = ab->next)
 	{
 	    ap = ab->end;
-	    p = (POINT*) find_from_hash_table((POINTER)ap,p_table,p_size);
+	    p = (FT_POINT*) find_from_hash_table((POINTER)ap,p_table,p_size);
 	    if (p != NULL)
 	    {
 	    	b->end = p;
@@ -1853,16 +1853,16 @@ EXPORT	boolean curves_match(
 	int		p_size)
 {
 	BOND		*b, *ab;
-	POINT		*p, *ap;
+	FT_POINT		*p, *ap;
 
 	ap = ac->start->posn;
-	p = (POINT*)find_from_hash_table((POINTER)ap,p_table,p_size);
+	p = (FT_POINT*)find_from_hash_table((POINTER)ap,p_table,p_size);
 	if (p != c->start->posn)
 	    return NO;
 	for (b = c->first, ab = ac->first; b && ab; b = b->next, ab = ab->next)
 	{
 	    ap = ab->end;
-	    p = (POINT*)find_from_hash_table((POINTER)ap,p_table,p_size);
+	    p = (FT_POINT*)find_from_hash_table((POINTER)ap,p_table,p_size);
 	    if (p != b->end)
 		return NO;
 	}
@@ -1879,9 +1879,9 @@ EXPORT	NODE *matching_node(
 {
 	INTERFACE	*intfc = current_interface();
 	NODE		*newn;
-	POINT		*p, *ap = an->posn;
+	FT_POINT		*p, *ap = an->posn;
 
-	p = (POINT*)find_from_hash_table((POINTER)ap,p_table,p_size);
+	p = (FT_POINT*)find_from_hash_table((POINTER)ap,p_table,p_size);
 	if (p == NULL)
 	{
 	    p = copy_point(ap);
@@ -1993,7 +1993,7 @@ LOCAL boolean tri_out_domain1(
 	int		dir,
 	int		nb)
 {
-	POINT **p;
+	FT_POINT **p;
 	int   i;
 
 	p = Point_of_tri(tri);
@@ -2048,7 +2048,7 @@ LOCAL boolean tri_bond_test(
 {
 int	i, j, n;
 TRI	**tris;
-POINT	*p;
+FT_POINT	*p;
 
 	if(!tri_bond_out_domain(tri,L,U,dir,nb))
 	    return NO;
@@ -2118,13 +2118,13 @@ LOCAL   boolean find_ending_null_side(
         TRI **tri_start,
         int *side_start)
 {
-	POINT	*p, *p1, **recorded_pts;
+	FT_POINT	*p, *p1, **recorded_pts;
 	int	num_recorded_pts;
 	TRI	*next_tri, *next_tri1;
 	int	i, side, side1;
 	CURVE	**c;
 
-	uni_array(&recorded_pts, MAX_NULL_SIDE, sizeof(POINT*));
+	uni_array(&recorded_pts, MAX_NULL_SIDE, sizeof(FT_POINT*));
 
 	next_tri = start;
 	side = start_side;
@@ -2182,7 +2182,7 @@ LOCAL   boolean find_null_side_loop(
         TRI **tri_start,
         int *side_start)
 {
-        POINT *p, **recorded_pts, *ps;
+        FT_POINT *p, **recorded_pts, *ps;
         int i, j, k, num_recorded_pts,num_sides;
         TRI **null_tris, *next_tri = start;
         int *null_sides, side = start_side;
@@ -2190,7 +2190,7 @@ LOCAL   boolean find_null_side_loop(
 
         uni_array(&null_tris,MAX_NULL_SIDE,sizeof(TRI*));
         uni_array(&null_sides,MAX_NULL_SIDE,INT);
-        uni_array(&recorded_pts,3*MAX_NULL_SIDE,sizeof(POINT*));
+        uni_array(&recorded_pts,3*MAX_NULL_SIDE,sizeof(FT_POINT*));
 
         num_sides = 0;
         num_recorded_pts = 0;
@@ -2248,7 +2248,7 @@ LOCAL void merge_point_pointers_at_subdomain_bdry(
 	P_LINK		*p_table,
 	int		p_size)
 {
-	POINT		*p, *ap;
+	FT_POINT		*p, *ap;
 	int		i, j;
 
         for (i = 0; i < nt; ++i)
@@ -2267,7 +2267,7 @@ LOCAL void merge_point_pointers_at_subdomain_bdry(
 		ap = Point_of_tri(tris_a[i])[j];
 		if (sorted(ap) == NO)
 		{
-	            p = (POINT*)find_from_hash_table((POINTER)ap,
+	            p = (FT_POINT*)find_from_hash_table((POINTER)ap,
 						     p_table,p_size);
 		    if(p != Point_of_tri(tris_a[i])[j])
 		        printf("#merge_point  \n");
@@ -2286,7 +2286,7 @@ LOCAL	void	copy_tri_state_to_btri(
 	ORIENTATION	orient,
 	INTERFACE	*intfc)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	Locstate	sl, sr;
 	NODE		*n;
 	CURVE		**c;
@@ -2373,11 +2373,11 @@ LOCAL	void	copy_tri_state_to_btri(
 
 LOCAL TRI *find_following_null_tri(
 	TRI		*tri,
-	POINT		**np,
+	FT_POINT		**np,
 	int		*side,
 	ANGLE_DIRECTION dir)
 {
-	POINT *p;
+	FT_POINT *p;
 	TRI   *newtri;
 	int   nside;
 
@@ -2438,7 +2438,7 @@ EXPORT  void strip_bdry_curves(
 	NODE		**nodes_to_delete = NULL;
 	SURFACE		**s;
 	NODE		**n;
-	POINT		*p;
+	FT_POINT		*p;
 
 	for (c = intfc->curves; c && *c; ++c)
 	{
@@ -2486,7 +2486,7 @@ LOCAL void strip_curve_from_surf(
 {
 	BOND		*b;
 	BOND_TRI	**btris;
-	POINT		*p;
+	FT_POINT		*p;
 	TRI		*tri;
 	int		i;
 	size_t	 	sizest = size_of_state(surf->interface);
@@ -2871,7 +2871,7 @@ EXPORT void install_subdomain_bdry_curves_prev(
 	BOND_TRI *btri, *bte;
 	CURVE	 *curve;
 	NODE	 *ns, *ne, **n;
-	POINT	 *p, *ps, *pe;
+	FT_POINT	 *p, *ps, *pe;
 	TRI	 *tri_start, *tri_end, *start_tri;
 	SURFACE	 **s;
 	boolean  	 sav_intrp;
@@ -3049,7 +3049,7 @@ EXPORT	void search_the_point(INTERFACE *intfc)
 {
 	SURFACE **s;
 	TRI *tri;
-	POINT *p;
+	FT_POINT *p;
 	int i;
 
 	for (s = intfc->surfaces; s && *s; ++s)
@@ -3077,7 +3077,7 @@ EXPORT	void cut_surface(
 	boolean force_clip)
 {
 	TRI *tri,*ntri;
-	POINT *p;
+	FT_POINT *p;
 	double *p1,*p2,*pc;
 	int i;
 
@@ -3183,7 +3183,7 @@ EXPORT void install_hsbdry_on_surface(
 	BOND_TRI *btri;
 	CURVE	 *curve, **c;
 	NODE	 *ns, *ne, **n, **n1;
-	POINT	 *p, *ps, *pe;
+	FT_POINT	 *p, *ps, *pe;
 	TRI	 *tri_start, *start_tri, *null_tris[MAX_SUBDOMAIN_TRIS];
 	Locstate sl, sr;
 	boolean  	 sav_intrp, dup_nodes;

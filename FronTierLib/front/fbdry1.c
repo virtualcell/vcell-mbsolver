@@ -54,7 +54,7 @@ LOCAL	void	eliminate_redundant_closed_node_at_bdry_tangle(CROSS*,
 LOCAL	void	map_states_at_node(Locstate,CURVE*,ORIENTATION,SIDE,Front*);
 LOCAL	void	nearest_boundary_curve(double*,INTERFACE*,double*,BOND**,
 				       CURVE**,COMPONENT*,int*);
-LOCAL	void	nearest_linked_bdry_like_curve(POINT*,BOND*,CURVE*,double*,
+LOCAL	void	nearest_linked_bdry_like_curve(FT_POINT*,BOND*,CURVE*,double*,
 					       BOND**,CURVE**,int);
 
 
@@ -133,7 +133,7 @@ EXPORT int next_boundary(
 
 /*ARGSUSED*/
 EXPORT void f_impose_bc(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	double		*w,
@@ -290,7 +290,7 @@ LOCAL void nearest_boundary_curve(
 	HYPER_SURF	*hs2;
 	HYPER_SURF_ELEMENT *hse;
 	CURVE		**c1;
-	POINT		*ps, *pe;
+	FT_POINT		*ps, *pe;
 	double		coords_c1[MAXD];
 	double		l1s, l1e;
 	double		residual = HUGE_VAL, new_residual;
@@ -377,7 +377,7 @@ LOCAL void nearest_boundary_curve(
 */
 
 LOCAL	void nearest_linked_bdry_like_curve(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	double		*bt,

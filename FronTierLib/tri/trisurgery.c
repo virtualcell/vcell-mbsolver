@@ -42,8 +42,8 @@ enum {
 };
 
 struct _STITCH {
-  	POINT 		*start_pt;
-  	POINT		*end_pt;
+  	FT_POINT 		*start_pt;
+  	FT_POINT		*end_pt;
 	TRI             *detached_tri;
 	BOND            *detached_bond;
   	int		detached_side;
@@ -54,8 +54,8 @@ struct _SEAM {
   	STITCH 	*stitch;
   	SURFACE *surface;
   	int	number_of_stitches;
-  	POINT 	*begin_pt;
-  	POINT	*finish_pt;
+  	FT_POINT 	*begin_pt;
+  	FT_POINT	*finish_pt;
 };
 typedef struct _SEAM SEAM;
 
@@ -67,13 +67,13 @@ struct _SURGERY {
 typedef struct _SURGERY SURGERY;
 
 
-LOCAL   void 	align_seam_with_point(SEAM*,POINT*,SEAM*);
+LOCAL   void 	align_seam_with_point(SEAM*,FT_POINT*,SEAM*);
 LOCAL 	void 	sew_surface_to_curve(SURGERY*);
 LOCAL	int	count_null_sides_of_surf(SURFACE*);
 LOCAL	int	set_surface_seam(SURFACE*,SEAM*);
 LOCAL	void 	set_curve_seam(CURVE*,SEAM*,ORIENTATION);
 LOCAL	void 	print_seam(SEAM*);
-LOCAL	TRI 	*bdry_adjacent_tri(TRI*,POINT*,int);
+LOCAL	TRI 	*bdry_adjacent_tri(TRI*,FT_POINT*,int);
 
 LIB_LOCAL void identify_detached_surface_curve_pair(
 	INTERFACE 	*intfc)
@@ -84,7 +84,7 @@ LIB_LOCAL void identify_detached_surface_curve_pair(
 	ORIENTATION	orientation;
 	SEAM		seam;
 	SEAM		surface_seam;
-	POINT		*curv_node_pt;
+	FT_POINT		*curv_node_pt;
 	SEAM		curve_seam;
 	int		num_bonds;
 	SURGERY		surgery;
@@ -167,7 +167,7 @@ LOCAL 	void	sew_surface_to_curve(
 {
   	SEAM 		*surf_seam = surgery->seam1;
 	SEAM 		*curv_seam = surgery->seam2;
-	POINT		*surf_pt,*curv_pt,*other_pt;
+	FT_POINT		*surf_pt,*curv_pt,*other_pt;
 	TRI		*new_tri,*prev_tri = NULL,*detached_tri;
 	SURFACE		*detached_surf = surf_seam->surface;
 	BOND		*detached_bond;
@@ -252,12 +252,12 @@ LOCAL 	void	sew_surface_to_curve(
 
 LOCAL   void 	align_seam_with_point(
 	SEAM 		*unaligned,
-	POINT 		*point,
+	FT_POINT 		*point,
 	SEAM 		*aligned)
 {
   	int 	num_stitches,i,index_of_nearest_pt;
 	double  	least_dist = 10000, dist;
-	POINT	*stitch_pt;
+	FT_POINT	*stitch_pt;
 
   	num_stitches = unaligned->number_of_stitches;
 	for (i = 0; i < num_stitches; ++i)
@@ -284,7 +284,7 @@ LOCAL   void 	align_seam_with_point(
 
 LIB_LOCAL int next_null_sided_tri(
 	TRI 		*start_tri,
-	POINT 		*vertex,
+	FT_POINT 		*vertex,
 	TRI 		**next_tri)
 {
 	int 		next_side;
@@ -329,7 +329,7 @@ LIB_LOCAL int next_null_sided_tri(
 
 LIB_LOCAL int prev_null_sided_tri(
 	TRI 		*start_tri,
-	POINT 		*vertex,
+	FT_POINT 		*vertex,
 	TRI 		**prev_tri)
 {
 	int 		prev_side;
@@ -373,7 +373,7 @@ LIB_LOCAL int prev_null_sided_tri(
 
 LOCAL	TRI *bdry_adjacent_tri(
 	TRI *tri,
-	POINT *p,
+	FT_POINT *p,
 	int side)
 {
 	BOND *b,*adj_b;
@@ -449,7 +449,7 @@ LOCAL	int	set_surface_seam(
 
 	while (stitch[i].end_pt != seam->finish_pt)
 	{
-	    POINT *vertex;
+	    FT_POINT *vertex;
 	    ++i;
 	    vertex = stitch[i].start_pt = stitch[i-1].end_pt;
 	    next_side = next_null_sided_tri(tri,vertex,&next_tri);

@@ -42,7 +42,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 typedef struct  _BPOINT {
 	struct _BPOINT *prev, *next;
 	NODE           *node; /* NULL unless point is on an interior curve */
-	POINT          *posn; /* Location of the point */
+	FT_POINT          *posn; /* Location of the point */
 	COMPONENT      comp1; /* Component below point - (below in arclength) */
 	COMPONENT      comp2; /* Component above point - (above in arclength) */
 	BDRY_SIDE      side;  /* Side containing the bpoint */
@@ -51,7 +51,7 @@ typedef struct  _BPOINT {
 
 
 	/* LOCAL Function Declarations */
-LOCAL	BDRY_SIDE	boundary_side_of_point(POINT*,double*,double*,double);
+LOCAL	BDRY_SIDE	boundary_side_of_point(FT_POINT*,double*,double*,double);
 LOCAL	BPOINT *node_in_bpoint_list(NODE*,BPOINT*);
 LOCAL	BPOINT *set_bpoint(BPOINT*,NODE*,COMPONENT,COMPONENT,
 	                   double*,double*,double,double*);
@@ -389,7 +389,7 @@ LOCAL BPOINT	*set_bpoint(
 {
 	BPOINT		*bp;
 	BDRY_SIDE	side;
-	POINT		*p = node->posn;
+	FT_POINT		*p = node->posn;
 
 	DEBUG_ENTER(set_bpoint)
 
@@ -470,7 +470,7 @@ LOCAL	BPOINT*	node_in_bpoint_list(
 }		/*end node_in_bpoint_list*/
 
 LOCAL	BDRY_SIDE boundary_side_of_point(
-	POINT *p,
+	FT_POINT *p,
 	double *L,
 	double *U,
 	double eps)

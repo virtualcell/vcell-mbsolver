@@ -46,7 +46,7 @@ enum {
 };
 
 struct _Vertex {
-    	POINT       *point;
+    	FT_POINT       *point;
 	double       x, y;
 	int         index;
 	int         cdt_side_index[3];
@@ -1179,7 +1179,7 @@ LOCAL  boolean  cdt_retriangulate_surface_along_c_curves(
 	for (cdt = cdt_tris;  cdt;  cdt = cdt->next)
 	{
 	    TRI   *tri = cdt->tri;
-	    POINT **p = Point_of_tri(tri);
+	    FT_POINT **p = Point_of_tri(tri);
 	    int   side;
 	    if (DEBUG)
 	    {
@@ -1210,7 +1210,7 @@ LOCAL  boolean  cdt_retriangulate_surface_along_c_curves(
 		{
 		    Cdt	  *ncdt;
 		    TRI   *ntri = Tri_on_side(tri,side);
-	    	    POINT **np = Point_of_tri(ntri);
+	    	    FT_POINT **np = Point_of_tri(ntri);
 		    int   nside;
 
 		    for (nside = 0; nside < 3; ++nside)
@@ -1308,10 +1308,10 @@ LOCAL 	boolean  c_bonds_intersect(
 	C_BOND *cb0,
 	C_BOND *cb1)
 {
-	POINT *p0s = cb0->start;
-	POINT *p0e = cb0->end;
-	POINT *p1s = cb1->start;
-	POINT *p1e = cb1->end;
+	FT_POINT *p0s = cb0->start;
+	FT_POINT *p0e = cb0->end;
+	FT_POINT *p1s = cb1->start;
+	FT_POINT *p1e = cb1->end;
 	double *c0s, *c0e, *c1s, *c1e;
 	double d00, d01, d02;
 	double d10, d11, d12;
@@ -1442,7 +1442,7 @@ LOCAL 	boolean prepare_v_and_e_for_cdt(
 {
 	C_BOND		**cbp, **cbp1;
 	Cdt_Side	*tri_side;
-	POINT		*ps, *pe;
+	FT_POINT		*ps, *pe;
 	double		*o;
 	TRI		*tri = cdt->tri;
 	Vertex		*v;
@@ -1658,7 +1658,7 @@ LOCAL void install_tris_from_dtris(
 	/* Create new triangles */
 	for (i = 0; i < out->numberoftriangles; ++i)
 	{
-	    POINT *p0, *p1, *p2;
+	    FT_POINT *p0, *p1, *p2;
 	    p0 = v[out->trianglelist[3*i]].point;
 	    p1 = v[out->trianglelist[3*i+1]].point;
 	    p2 = v[out->trianglelist[3*i+2]].point;
@@ -1708,7 +1708,7 @@ LOCAL void install_tris_from_dtris(
 	isurf = cdt->isurf;
 	for (cb = cdt->c_bond_list;  cb && *cb;  ++cb)
 	{
-	    POINT    *ps = (*cb)->start, *pe = (*cb)->end;
+	    FT_POINT    *ps = (*cb)->start, *pe = (*cb)->end;
 	    BOND     *b;
 	    BOND_TRI *btri;
 	    int      is, ie;
@@ -1791,7 +1791,7 @@ LOCAL	void	set_states_at_cross_points(
 {
 	C_BOND	   *cb;
 	INTERFACE  *intfc = fr->interf;
-	POINT	   *p, *pt[3];
+	FT_POINT	   *p, *pt[3];
 	TRI	   *tri;
 	HYPER_SURF *hs[2];
 	Locstate   sl[3], sr[3];

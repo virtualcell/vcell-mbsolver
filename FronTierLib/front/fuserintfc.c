@@ -46,45 +46,45 @@ LOCAL	double	f_cross_tolerance(INTERFACE*);
 LOCAL	void	f_fprint_intfc_state(FILE*,Locstate,INTERFACE*);
 LOCAL	void	f_fprint_state_data(FILE*,Locstate,INTERFACE*);
 LOCAL	void	f_reflect_state(Locstate,INTERFACE*,double*,double*,double*);
-LOCAL	void	f_tangent(POINT*,BOND*,CURVE*,double*,Front*);
+LOCAL	void	f_tangent(FT_POINT*,BOND*,CURVE*,double*,Front*);
 LOCAL	void	f_fshow_intfc_states1d(FILE*,INTERFACE*);
-LOCAL	void	normal1d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,double*,Front*);
-LOCAL	void	slsr1d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	normal1d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,double*,Front*);
+LOCAL	void	slsr1d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 		       Locstate*,Locstate*);
 LOCAL	void	state_at_point(COMPONENT,double*,HYPER_SURF_ELEMENT*,
 			       HYPER_SURF*,Locstate);
 LOCAL 	void 	assign_boundary_node_type(NODE*,INTERFACE*,RECT_GRID*,double);
 LOCAL 	void 	assign_boundary_curve_wave_type(CURVE*,INTERFACE*,RECT_GRID*,
 			double);
-LOCAL   void    assign_boundary_point_wave_type(POINT*,INTERFACE*,RECT_GRID*,
+LOCAL   void    assign_boundary_point_wave_type(FT_POINT*,INTERFACE*,RECT_GRID*,
                        	double);
 LOCAL   double   lagrangian_n_pt(int,double,double*,double*);
 LOCAL	boolean	f_set_boundary1d(INTERFACE*,RECT_GRID*,COMPONENT,double);
 LOCAL	boolean	f_set_boundary2d(INTERFACE*,RECT_GRID*,COMPONENT,double);
 LOCAL	void	f_fshow_intfc_states2d(FILE*,INTERFACE*);
-LOCAL	void	f_lagrangian_tangent(POINT*,BOND*,CURVE*,double*,Front*);
-LOCAL	void	f_wlsp_tangent(POINT*,BOND*,CURVE*,double*,Front*);
-/* linpack dependent LOCAL	void	f_spline_tangent(POINT*,BOND*,CURVE*,double*,Front*); */
-LOCAL	void	first_order_normal2d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	f_lagrangian_tangent(FT_POINT*,BOND*,CURVE*,double*,Front*);
+LOCAL	void	f_wlsp_tangent(FT_POINT*,BOND*,CURVE*,double*,Front*);
+/* linpack dependent LOCAL	void	f_spline_tangent(FT_POINT*,BOND*,CURVE*,double*,Front*); */
+LOCAL	void	first_order_normal2d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 			double*,Front*);
-LOCAL	void	f_normal2d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	f_normal2d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 			double*,Front*);
-LOCAL	void	slsr2d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	slsr2d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 		       Locstate*,Locstate*);
 LOCAL	void	state_along_bond(COMPONENT,double*,HYPER_SURF_ELEMENT*,
 				 HYPER_SURF*,Locstate);
-LOCAL	void	f_area_weighted_normal3d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	f_area_weighted_normal3d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 	                                 double*,Front*);
-LOCAL	void	f_sine_weighted_normal3d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	f_sine_weighted_normal3d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 	                                 double*,Front*);
-LOCAL	void	f_plane_fit_normal3d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	f_plane_fit_normal3d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 	                             double*,Front*);
-LOCAL	void	f_wlsp_normal(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	f_wlsp_normal(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 	                             double*,Front*);
 LOCAL	boolean	f_set_boundary3d(INTERFACE*,RECT_GRID*,COMPONENT,double);
 LOCAL	void	f_fshow_intfc_states3d(FILE*,INTERFACE*);
 LOCAL 	void 	f_WLSP_set_intfc_geom(Front*,INTERFACE*);
-LOCAL	void	slsr3d(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+LOCAL	void	slsr3d(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 		       Locstate*,Locstate*);
 LOCAL	void	state_in_tri(COMPONENT,double*,HYPER_SURF_ELEMENT*,
 			     HYPER_SURF*,Locstate);
@@ -517,14 +517,14 @@ LOCAL	Locstate f_read_print_state_data(
 
 /*ARGSUSED*/
 LOCAL	void	f_tangent(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	double		*t,
 	Front		*front)
 {
 	int		dim = front->interf->dim;
-	POINT		*p1, *p2;
+	FT_POINT		*p1, *p2;
 	double		length;
 	int		i;
 	static	BOND  	*bdir1 = NULL, *bdir2 = NULL;
@@ -781,7 +781,7 @@ LOCAL	void f_fshow_intfc_states1d(
 	FILE		*file,
 	INTERFACE	*intfc)
 {
-	POINT	**p;
+	FT_POINT	**p;
 
 	(void) fprintf(file,"\t\tSTATES ON THE FRONT\n\n");
 	if (size_of_state(intfc) > 0)
@@ -808,7 +808,7 @@ LOCAL	void f_fshow_intfc_states1d(
 
 /*ARGSUSED*/
 LOCAL	void	slsr1d(
-	POINT		*p,
+	FT_POINT		*p,
 	HYPER_SURF_ELEMENT* hse,
 	HYPER_SURF	*hs,
 	Locstate	*sl,
@@ -832,7 +832,7 @@ LOCAL	void state_at_point(
 	HYPER_SURF	   *hs,
 	Locstate	   state)
 {
-	POINT	*p = Point_of_hs(hs);
+	FT_POINT	*p = Point_of_hs(hs);
 	size_t	sizest = f_user_interface(hs->interface)._sizest;
 
 	if (comp == negative_component(p))
@@ -867,7 +867,7 @@ LOCAL	void state_at_point(
 
 /*ARGSUSED*/
 EXPORT	void normal1d(
-	POINT		*p,
+	FT_POINT		*p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	*hs,
 	double		*nor,
@@ -1002,7 +1002,7 @@ EXPORT	void	f_set_tangent_function(
 
 /*ARGSUSED*/
 LOCAL	void	f_lagrangian_tangent(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	double		*t,
@@ -1280,7 +1280,7 @@ LOCAL	void state_along_bond(
 }		/*end state_along_bond*/
 
 LOCAL	void	slsr2d(
-	POINT		*p,
+	FT_POINT		*p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	*hs,
 	Locstate	*sl,
@@ -1314,7 +1314,7 @@ LOCAL boolean f_set_boundary1d(
 {
         boolean            status;
         boolean            sav_copy = copy_intfc_states();
-        POINT           **p;
+        FT_POINT           **p;
 
         set_copy_intfc_states(NO);
         status = i_set_boundary1d(intfc,gr,default_comp,eps);
@@ -1409,7 +1409,7 @@ LOCAL void assign_boundary_node_type(
 }	/* end assign_boundary_node_type */
 
 LOCAL void assign_boundary_point_wave_type(
-        POINT *point,
+        FT_POINT *point,
         INTERFACE *intfc,
         RECT_GRID *gr,
         double eps)
@@ -1510,7 +1510,7 @@ LOCAL void assign_boundary_curve_wave_type(
 */
 
 LOCAL	void first_order_normal2d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor,
@@ -1526,7 +1526,7 @@ LOCAL	void first_order_normal2d(
 
 
 LOCAL	void f_normal2d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor,
@@ -1578,7 +1578,7 @@ LOCAL	void state_in_tri(
 {
 	TRI		*tri = Tri_of_hse(hse);
 	Locstate	sl, sr, s[3];
-	POINT		*p;
+	FT_POINT		*p;
 	int		i;
 
 	for (i = 0; i < 3; ++i)
@@ -1637,7 +1637,7 @@ LOCAL boolean f_set_boundary3d(
 }		/*end f_set_boundary3d*/
 
 LOCAL void slsr3d_error_info(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	TRI		   *tri,
@@ -1685,7 +1685,7 @@ int i;
 LOCAL boolean  state_on_bdry_point(
 	Locstate     *sl,
 	Locstate     *sr,
-	POINT	     *p, 
+	FT_POINT	     *p,
 	TRI	     *tri,
 	HYPER_SURF   *hs)
 {
@@ -1742,7 +1742,7 @@ LOCAL boolean  state_on_bdry_point(
 
 /*ARGSUSED*/
 LOCAL	void	slsr3d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	Locstate	   *sl,
@@ -1816,7 +1816,7 @@ EXPORT	void	set_normal3d_method(
 
 /*ARGSUSED*/
 LOCAL  void f_plane_fit_normal3d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor,
@@ -1827,7 +1827,7 @@ LOCAL  void f_plane_fit_normal3d(
 
 /*ARGSUSED*/
 LOCAL  void f_area_weighted_normal3d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor,
@@ -1838,7 +1838,7 @@ LOCAL  void f_area_weighted_normal3d(
 
 /*ARGSUSED*/
 LOCAL  void f_sine_weighted_normal3d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor,
@@ -1849,7 +1849,7 @@ LOCAL  void f_sine_weighted_normal3d(
 
 /*ARGSUSED*/
 LOCAL  void f_wlsp_normal(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor,
@@ -1861,7 +1861,7 @@ LOCAL  void f_wlsp_normal(
 
         if (intfc->normal_unset)
         {
-	    POINT *ptmp;
+	    FT_POINT *ptmp;
 	    HYPER_SURF_ELEMENT *hsetmp;
 	    HYPER_SURF         *hstmp;
             f_WLSP_set_intfc_geom(front,intfc);
@@ -1899,7 +1899,7 @@ LOCAL  void f_wlsp_normal(
 }		/*end f_wlsp_normal */
 
 LOCAL void f_wlsp_tangent(
-        POINT *p,
+        FT_POINT *p,
         BOND  *b,
         CURVE *c,
         double *tgnt,
@@ -1912,7 +1912,7 @@ LOCAL void f_wlsp_tangent(
 }       /* end f_wlsp_tangent */
 
 EXPORT  double   f_wlsp_curvature(
-        POINT           *p,
+        FT_POINT           *p,
         HYPER_SURF_ELEMENT      *hse,
         HYPER_SURF              *hs,
         Front           *front)
@@ -1922,7 +1922,7 @@ EXPORT  double   f_wlsp_curvature(
 	CURVE *c;
         if (intfc->normal_unset)
         {
-	    POINT              *ptmp;
+	    FT_POINT              *ptmp;
             HYPER_SURF_ELEMENT *hsetmp;
             HYPER_SURF         *hstmp;
             f_WLSP_set_intfc_geom(front,intfc);
@@ -1954,7 +1954,7 @@ LOCAL void f_WLSP_set_intfc_geom(
 	Front *front,
 	INTERFACE *intfc)	/* intfc may not be the same as front->interf */
 {
-        POINT              *p;
+        FT_POINT              *p;
         HYPER_SURF_ELEMENT *hse;
         HYPER_SURF         *hs;
         int dim = intfc->dim;

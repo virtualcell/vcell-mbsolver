@@ -43,7 +43,7 @@ LOCAL	void	rotate_interface(INTERFACE*,double*,double**);
 LOCAL	void	rotate_point(double*,double*,double**,double*,int);
 #if defined(TWOD)
 LOCAL	boolean	exterior_curve(CURVE*,RECT_GRID*);
-LOCAL	boolean	exterior_point(POINT*,RECT_GRID*);
+LOCAL	boolean	exterior_point(FT_POINT*,RECT_GRID*);
 LOCAL	void	insert_cuts_and_bdry2d(INTERFACE*,double**);
 #endif /* defined(TWOD) */
 
@@ -240,7 +240,7 @@ LOCAL void rotate_interface(
 	BOND		*b;
 	CURVE	 	**c;
 	NODE  		**n;
-	POINT		*p;
+	FT_POINT		*p;
 	int		dim = intfc->dim;
 	
 	if (is_identity_matrix(Q,dim) == YES)
@@ -327,7 +327,7 @@ LOCAL	boolean is_identity_matrix(
  */
 
 LOCAL	boolean exterior_point(
-	POINT		*p,
+	FT_POINT		*p,
 	RECT_GRID	*grid)
 {
 	int   i,dim = grid->dim;
@@ -435,7 +435,7 @@ LOCAL 	void insert_cuts_and_bdry2d(
 	CROSS		*cross;
 	CURVE		**cc, *c[4];
 	CURVE		**curves1, **curves2;
-	POINT		*p;
+	FT_POINT		*p;
 	INTERFACE	*sav_intfc;
 	NODE		*n, **nn, *bn[4];
 	int		i;

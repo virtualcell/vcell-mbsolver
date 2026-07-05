@@ -140,7 +140,7 @@ EXPORT	boolean long_nearest_similar_interface_point(
 
 EXPORT	boolean next_point(
 	INTERFACE	   *intfc,
-	POINT		   **pp,
+	FT_POINT		   **pp,
 	HYPER_SURF_ELEMENT **phse,
 	HYPER_SURF	   **phs)
 {
@@ -268,7 +268,7 @@ EXPORT	int delete_interface(
 /* Node utilities */
 
 EXPORT	NODE *make_node(
-	POINT		*p)
+	FT_POINT		*p)
 {
 	INTERFACE *intfc = current_interface();
 
@@ -521,7 +521,7 @@ EXPORT	boolean user_read_print_curve(
 
 EXPORT	boolean user_split_curve(
 	int		is_a_node,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*bond,
 	CURVE		*curve,
 	CURVE		**curves)
@@ -546,8 +546,8 @@ EXPORT	boolean user_join_curves(
 
 /* BOND utilities */
 EXPORT	BOND *Bond(
-	POINT	*start,
-	POINT	*end)
+	FT_POINT	*start,
+	FT_POINT	*end)
 {
 	INTERFACE *intfc = current_interface();
 
@@ -595,8 +595,8 @@ EXPORT	void reorder_curve_link_list(
 /* C_BOND utilities */
 EXPORT	C_BOND *CBond(
 	C_BOND *cb,
-	POINT  *start,
-	POINT  *end,
+	FT_POINT  *start,
+	FT_POINT  *end,
 	TRI    *t1,
 	TRI    *t2)
 {
@@ -609,7 +609,7 @@ EXPORT	C_BOND *CBond(
 
 
 /* Point utilities */
-EXPORT	POINT *Point(
+EXPORT	FT_POINT *Point(
 	double		*crds)
 {
 	INTERFACE	*intfc = current_interface();
@@ -619,7 +619,7 @@ EXPORT	POINT *Point(
 	return (*i_user_interface(intfc)._Point)(crds);
 }		/*end Point*/
 
-EXPORT	POINT *Static_point(
+EXPORT	FT_POINT *Static_point(
 	INTERFACE	*intfc)
 {
 	if (intfc == NULL)
@@ -627,8 +627,8 @@ EXPORT	POINT *Static_point(
 	return (*i_user_interface(intfc)._Static_point)(intfc);
 }		/*end Static_point*/
 
-EXPORT	POINT *copy_point(
-	POINT		*p)
+EXPORT	FT_POINT *copy_point(
+	FT_POINT		*p)
 {
 	INTERFACE *intfc = current_interface();
 
@@ -637,12 +637,12 @@ EXPORT	POINT *copy_point(
 	return (*i_user_interface(intfc)._copy_point)(p);
 }		/*end copy_point*/
 
-EXPORT	POINT *average_points(
+EXPORT	FT_POINT *average_points(
 	boolean               newpoint,
-	POINT		   *p1,
+	FT_POINT		   *p1,
 	HYPER_SURF_ELEMENT *hse1,
 	HYPER_SURF	   *hs1,
-	POINT		   *p2,
+	FT_POINT		   *p2,
 	HYPER_SURF_ELEMENT *hse2,
 	HYPER_SURF	   *hs2)
 {
@@ -661,7 +661,7 @@ EXPORT	POINT *average_points(
 }		/*end average_points*/
 
 
-EXPORT	POINT *make_point(
+EXPORT	FT_POINT *make_point(
 	double		*crds,
 	COMPONENT	ncomp,
 	COMPONENT	pcomp)
@@ -674,7 +674,7 @@ EXPORT	POINT *make_point(
 }		/*end make_point*/
 
 EXPORT	int delete_point(
-	POINT		*p)
+	FT_POINT		*p)
 {
 	if (p == NULL)
 	{
@@ -690,14 +690,14 @@ EXPORT	int delete_point(
 }		/*end delete_point*/
 
 EXPORT	void print_point(
-	POINT		*point)
+	FT_POINT		*point)
 {
 	fprint_point(stdout,point);
 }		/*end print_point*/
 
 EXPORT	void fprint_point(
 	FILE		*file,
-	POINT		*p)
+	FT_POINT		*p)
 {
 	if (p == NULL || p->interface == NULL)
 	    return;
@@ -706,14 +706,14 @@ EXPORT	void fprint_point(
 
 EXPORT	void user_fprint_point(
 	FILE		*file,
-	POINT		*p)
+	FT_POINT		*p)
 {
 	if (p == NULL || p->interface == NULL)
 	    return;
 	(*i_user_interface(p->interface)._user_fprint_point)(file,p);
 }		/*end fprint_point*/
 
-EXPORT	POINT *read_point(
+EXPORT	FT_POINT *read_point(
 	INTERFACE	*intfc,
 	int		i)
 {
@@ -724,14 +724,14 @@ EXPORT	POINT *read_point(
 
 EXPORT	void user_read_point(
 	INTERFACE	*intfc,
-	POINT		*p)
+	FT_POINT		*p)
 {
 	if (intfc == NULL)
 	    return;
 	(*i_user_interface(intfc)._user_read_point)(intfc,p);
 }		/*end user_read_point*/
 
-EXPORT	POINT	*read_print_point(
+EXPORT	FT_POINT	*read_print_point(
 	INTERFACE     *intfc,
 	const IO_TYPE *io_type,
 	boolean          overlay)
@@ -743,7 +743,7 @@ EXPORT	POINT	*read_print_point(
 }		/*end read_print_point*/
 
 EXPORT	void user_read_print_point(
-	POINT	      *p,
+	FT_POINT	      *p,
 	const IO_TYPE *io_type,
 	boolean          overlay)
 {
@@ -755,7 +755,7 @@ EXPORT	void user_read_print_point(
 
 
 EXPORT	boolean insert_point_in_bond(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c)
 {
@@ -786,7 +786,7 @@ EXPORT	boolean delete_end_of_bond(
 
 
 EXPORT	boolean	insert_point_in_tri(
-	POINT	*p,
+	FT_POINT	*p,
 	TRI	*tri,
 	SURFACE	*s)
 {
@@ -796,7 +796,7 @@ EXPORT	boolean	insert_point_in_tri(
 }		/*end insert_point_in_tri*/
 
 EXPORT	boolean	insert_point_in_tri_side(
-	POINT	*p,
+	FT_POINT	*p,
 	int	side,
 	TRI	*tri,
 	SURFACE	*s)
@@ -809,7 +809,7 @@ EXPORT	boolean	insert_point_in_tri_side(
 }		/*end insert_point_in_tri_side*/
 
 EXPORT	boolean	undo_insert_point_in_tri(
-	POINT	*p,
+	FT_POINT	*p,
 	TRI	*tri,
 	SURFACE	*s)
 {
@@ -820,7 +820,7 @@ EXPORT	boolean	undo_insert_point_in_tri(
 }		/*end undo_insert_point_in_tri*/
 
 EXPORT	boolean	undo_insert_point_in_tri_side(
-	POINT	*p,
+	FT_POINT	*p,
 	int	side,
 	TRI	*tri,
 	SURFACE	*s)
@@ -834,9 +834,9 @@ EXPORT	boolean	undo_insert_point_in_tri_side(
 
 /* Tri utilities */
 EXPORT	TRI	*make_tri(
-	POINT		*p0,
-	POINT		*p1,
-	POINT		*p2,
+	FT_POINT		*p0,
+	FT_POINT		*p1,
+	FT_POINT		*p2,
 	POINTER		neighbor01,
 	POINTER		neighbor12,
 	POINTER		neighbor20,
@@ -981,7 +981,7 @@ EXPORT	void reconstruct_interface_pointers(
 }		/*end reconstruct_interface_pointers*/
 
 EXPORT	void reconstruct_point_pointers(
-	POINT		*p,
+	FT_POINT		*p,
 	INTERFACE	*nintfc,
 	INTERFACE	*ointfc,
 	POINTER		*ocad,
@@ -1162,7 +1162,7 @@ EXPORT	void print_crossing_elements(
 
 EXPORT	CURVE *attach_curve_to_node(
 	CURVE		*c1,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	NODE		*n)
 {
@@ -1389,7 +1389,7 @@ EXPORT  void  print_wall_curve_crx(
 /*check the crx p pair */
 EXPORT  void  print_wall_curve_crx0(
 	const char	*msg,
-	POINT		*p,
+	FT_POINT		*p,
 	int 		k, 
 	CRXING  	*crx)
 {
@@ -1403,7 +1403,7 @@ EXPORT  void  print_wall_curve_crx0(
 
 
 EXPORT	void	reflect_point(
-	POINT		*point,	/* Point being reflected */
+	FT_POINT		*point,	/* Point being reflected */
 	double		*p,	/* point on reflection plane */
 	double		*n,	/* normal vector to reflection plane */
 	INTERFACE	*intfc)	/* Interface being reflected */

@@ -50,14 +50,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	/* LOCAL Function Declarations */
 LOCAL	int	add_crx_to_list2d(TRI_GRID*,int*,int,CROSSING_DIRECTION,
-				  POINT*,CURVE*,int*);
+				  FT_POINT*,CURVE*,int*);
 LOCAL	int	count_intfc_crossings_of_dual_lattice2d(TRI_GRID*,INTERFACE*,
 							RECT_GRID*,int**);
 LOCAL	int	find_index_of_node(NODE*,INTERFACE*);
 LOCAL	int	grid_crossings_on_segment(TRI_GRID*,double,double,double,double,
 					  int,int,int,int,double,double,double,
 					  double,CURVE*,int*,int*,RECT_GRID*,
-					  int*,POINT**);
+					  int*,FT_POINT**);
 LOCAL	int	shift_from_cell_edge(double*,int,RECT_GRID*,double);
 LOCAL	void	add_blk_node_to_list(BLK_EL1*,NODE*,TG_PT*);
 LOCAL	void	count_crossings(TRI_GRID*,double,double,double,double,int,int,int,

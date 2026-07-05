@@ -36,7 +36,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <tri/trilocaldecs.h>
 
 	/* LOCAL Function Declarations */
-LOCAL	int	add_crx_to_list1d(TRI_GRID*,int,POINT*,int);
+LOCAL	int	add_crx_to_list1d(TRI_GRID*,int,FT_POINT*,int);
 LOCAL	void	count_intfc_crossings_of_dual_lattice1d(TRI_GRID*);
 
 /*
@@ -57,7 +57,7 @@ LIB_LOCAL	int insert_grid_crossings1d(
 {
 	INTERFACE	*intfc = ntg->grid_intfc;
 	RECT_GRID	*rgr = &ntg->rect_grid;
-	POINT		**p;
+	FT_POINT		**p;
 	int		ic[MAXD];
 	int		status;
 	int		n_crx;
@@ -96,7 +96,7 @@ LOCAL	void count_intfc_crossings_of_dual_lattice1d(
 {
 	INTERFACE	*intfc = ntg->grid_intfc;
 	RECT_GRID	*rgr = &ntg->rect_grid;
-	POINT		**p;
+	FT_POINT		**p;
 	int		ic[MAXD];
 	Table		*T = table_of_interface(intfc);
 
@@ -130,7 +130,7 @@ LOCAL	void count_intfc_crossings_of_dual_lattice1d(
 LOCAL	int add_crx_to_list1d(
 	TRI_GRID	*ntg,
 	int		n_crx,
-	POINT		*p,
+	FT_POINT		*p,
 	int		ix)
 {
 	register CRXING *cross;
@@ -204,7 +204,7 @@ EXPORT	int set_components1d(
 	double        *edges;
 	int	     xmax = gr->gmax[0];
 	int	     ix;
-	POINT	     **p, *pt;
+	FT_POINT	     **p, *pt;
 	Table	     *T = table_of_interface(ntg->grid_intfc);
 	COMPONENT    *comps = T->components;
 

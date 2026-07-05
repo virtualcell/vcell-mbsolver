@@ -38,15 +38,15 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	/* LOCAL Function Prototypes */
 LOCAL	BDRY_SIDE rect_bdry_side_for_surface(int*,int*,SURFACE*,RECT_GRID*);
 LOCAL	void  set_area_weighted_normal(TRI**,int,double*);
-LOCAL   void  set_nel_max_normal(POINT*,TRI**,int,double*);
-LOCAL	void  debug_print_tri_list_around_point(POINT*,TRI*,INTERFACE*,TRI**,
+LOCAL   void  set_nel_max_normal(FT_POINT*,TRI**,int,double*);
+LOCAL	void  debug_print_tri_list_around_point(FT_POINT*,TRI*,INTERFACE*,TRI**,
 	                                            int,const char*);
 LOCAL   void  reflect(double,double,double,double,double*,double*,RECT_GRID*);
-LOCAL   void  set_cross_position(double,double,int,double,double,int,POINT *);
+LOCAL   void  set_cross_position(double,double,int,double,double,int,FT_POINT *);
 
 EXPORT	double separation(
-	POINT		*p,
-	POINT		*q,
+	FT_POINT		*p,
+	FT_POINT		*q,
 	int		dim)
 {
 	int		i;
@@ -493,7 +493,7 @@ EXPORT	void	average_position_of_surface(
 */
 
 EXPORT  int set_tri_list_around_point(
-	POINT     *p,
+	FT_POINT     *p,
 	TRI       *tri,
 	TRI       ***ptris,
 	INTERFACE *intfc)
@@ -619,7 +619,7 @@ EXPORT  int set_tri_list_around_point(
 }		/*end set_tri_list_around_point*/
 
 LOCAL	void	debug_print_tri_list_around_point(
-	POINT      *p,
+	FT_POINT      *p,
 	TRI        *tri,
 	INTERFACE  *intfc,
 	TRI        **tris,
@@ -729,7 +729,7 @@ EXPORT	void rect_bdry_side_for_hyper_surf(
 	{
 	    double L = gr->L[0];
 	    double U = gr->U[0];
-	    POINT *p = (POINT *) hs;
+	    FT_POINT *p = (FT_POINT *) hs;
 	    *idir = 0;
 	    if (fabs(Coords(p)[0] - L) < fabs(Coords(p)[0] - U))
 	    {
@@ -851,7 +851,7 @@ EXPORT void reset_intfc_num_points(
 {
 	HYPER_SURF	*hs;
 	HYPER_SURF_ELEMENT *hse;
-	POINT		*p; 
+	FT_POINT		*p;
 	int		np = 0;
 
 	(void) next_point(intfc,NULL,NULL,NULL);
@@ -891,7 +891,7 @@ LIB_LOCAL	int	i_print_number_of_tangles(
 
 struct	_TRI_LIST_AT_VERTEX
 {
-	POINT	*p;
+	FT_POINT	*p;
 	TRI	**tris;
 	int	num_tris;
 };
@@ -925,13 +925,13 @@ EXPORT	void	omit_vertex_in_plane_fit(void)
 }		/*end omit_vertex_in_plane_fit*/
 
 EXPORT  void plane_fit_normal3d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor)
 {
 	INTERFACE    *intfc = hs->interface;
-	POINT        *pp;
+	FT_POINT        *pp;
 	TRI          *tri;
 	int          n, i, v;
 	double        pbar[3], lambda[3];
@@ -994,14 +994,14 @@ EXPORT  void plane_fit_normal3d(
 /*tris1 and tris2 must come from set_tri_list_around_point */
 EXPORT  void plane_fit_normal3d_along_wall(
 	double		   *nor,
-	POINT		   *p,
+	FT_POINT		   *p,
 	TRI		   **tris1,
 	int		   nt1,
 	TRI		   **tris2,
 	int		   nt2)
 
 {
-	POINT        *pp;
+	FT_POINT        *pp;
 	int          n,i,j, v;
 	double        pbar[3], lambda[3], dv[3], lenv;
 	double        *pts[MAX_PTS]; 
@@ -1058,7 +1058,7 @@ EXPORT  void plane_fit_normal3d_along_wall(
 
 /*ARGSUSED*/
 EXPORT  void area_weighted_normal3d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor)
@@ -1087,7 +1087,7 @@ EXPORT  void area_weighted_normal3d(
 
 
 EXPORT	int	tri_list_computed_by_normal(
-	POINT     *p,
+	FT_POINT     *p,
 	TRI       *tri,
 	TRI       ***ptris,
 	INTERFACE *intfc)
@@ -1104,16 +1104,16 @@ EXPORT	int	tri_list_computed_by_normal(
 }		/*end tri_list_computed_by_normal*/
 
 EXPORT	void	PointArrayRing1(
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	int *npts1,
-	POINT **pts1)
+	FT_POINT **pts1)
 {
 	INTERFACE *intfc = hs->interface;
 	TRI *t,*tri = Tri_of_hse(hse);
 	int i,j,nt;
-	POINT *pp;
+	FT_POINT *pp;
 	boolean pp_in_list;
 
 	nt = set_tri_list_around_point(p,tri,&Tri_list_at_vertex.tris,intfc);
@@ -1137,17 +1137,17 @@ EXPORT	void	PointArrayRing1(
 
 	
 EXPORT	void	PointArrayRing2(
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	int *npts1,
 	int *npts2,
-	POINT **pts1,
-	POINT **pts2)
+	FT_POINT **pts1,
+	FT_POINT **pts2)
 {
 	INTERFACE *intfc = hs->interface;
 	int i,j,k,l,nt;
-	POINT *pp;
+	FT_POINT *pp;
 	TRI *t;
 	boolean pp_in_lists;
 
@@ -1217,7 +1217,7 @@ void	tecplot_tris(const char*, TRI **, int);
 
 /*ARGSUSED*/
 EXPORT  void sine_weighted_normal3d(
-	POINT		   *p,
+	FT_POINT		   *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF	   *hs,
 	double		   *nor)
@@ -1256,7 +1256,7 @@ EXPORT  void sine_weighted_normal3d(
 }		/*end sine_weighted_normal3d*/
 
 EXPORT  void set_normal_from_tris(
-	POINT        *p,
+	FT_POINT        *p,
 	TRI          **tris,
 	int          nt,
 	double        *nor)
@@ -1266,7 +1266,7 @@ EXPORT  void set_normal_from_tris(
 
 
 LOCAL   void set_nel_max_normal(
-        POINT        *p,
+        FT_POINT        *p,
 	TRI          **tris,
 	int          nt,
 	double        *nor)
@@ -1277,7 +1277,7 @@ LOCAL   void set_nel_max_normal(
 	double   wm0[3],wm1[3],tmp_wm0,tmp_wm1;
 	const double   *tnor;
 	TRI     *tri;
-	POINT   *pn0,*pn1;
+	FT_POINT   *pn0,*pn1;
 	
 	nor[0] = nor[1] = nor[2] =0;
         for(i = 0; i < nt; ++i)
@@ -1584,9 +1584,9 @@ EXPORT	double	length_of_tri_side(
 }		/*end length_of_tri_side*/
 
 EXPORT 	int two_points_share_side(
-	POINT	  *p1,
+	FT_POINT	  *p1,
 	TRI	  *tri1,
-	POINT     *p2,
+	FT_POINT     *p2,
 	INTERFACE *intfc)
 {
 	TRI       **tris;
@@ -1630,10 +1630,10 @@ EXPORT	boolean	robust_cross_bonds(
 	double		*tcr1,
 	double		*tcr2,
 	RECT_GRID	*gr,
-	POINT		*p)
+	FT_POINT		*p)
 {
-	POINT		*p1s = b1->start,	*p1e = b1->end;
-	POINT		*p2s = b2->start,	*p2e = b2->end;
+	FT_POINT		*p1s = b1->start,	*p1e = b1->end;
+	FT_POINT		*p2s = b2->start,	*p2e = b2->end;
 	double		b1sx = Coords(p1s)[0],	b1sy = Coords(p1s)[1];
 	double		b1ex = Coords(p1e)[0],	b1ey = Coords(p1e)[1];
 	double		b2sx = Coords(p2s)[0],	b2sy = Coords(p2s)[1];
@@ -1907,10 +1907,10 @@ EXPORT	boolean	robust_cross_bonds(
 	double		*tcr1,
 	double		*tcr2,
 	RECT_GRID	*gr,
-	POINT		*p)
+	FT_POINT		*p)
 {
-	POINT		*p1s = b1->start,	*p1e = b1->end;
-	POINT		*p2s = b2->start,	*p2e = b2->end;
+	FT_POINT		*p1s = b1->start,	*p1e = b1->end;
+	FT_POINT		*p2s = b2->start,	*p2e = b2->end;
 	double		b1sx = Coords(p1s)[0],	b1sy = Coords(p1s)[1];
 	double		b1ex = Coords(p1e)[0],	b1ey = Coords(p1e)[1];
 	double		b2sx = Coords(p2s)[0],	b2sy = Coords(p2s)[1];
@@ -2143,7 +2143,7 @@ LOCAL	void set_cross_position(
 	double		x2,
 	double		y2,
 	int		on_b2,
-	POINT		*pt)
+	FT_POINT		*pt)
 {
 	if (on_b1 == YES && on_b2 == NO)
 	{
@@ -2166,7 +2166,7 @@ EXPORT	int robust_extend_bond_to_cross_bond(
 	BOND		*b2,
 	double		*tcr1,
 	double		*tcr2,
-	POINT		*pc,
+	FT_POINT		*pc,
 	double		*h,
 	int		dim)
 {
@@ -2367,10 +2367,10 @@ EXPORT	int robust_extend_bonds_to_cross(
 	BOND		*b2,
 	ORIENTATION	c2_orient,
 	int		on_b2,
-	POINT		*oldp,
+	FT_POINT		*oldp,
 	double		*tcr1,
 	double		*tcr2,
-	POINT		*p,
+	FT_POINT		*p,
 	RECT_GRID	*gr)
 {
 	double		hx = (double)(gr->h[0]);
@@ -2520,10 +2520,10 @@ EXPORT	int robust_extend_bonds_to_cross(
 
 EXPORT int robust_cross_bond_circle(
 	BOND		*bond,
-	POINT		*pcenter,
+	FT_POINT		*pcenter,
 	double		Rsq,
 	double		*tcr,
-	POINT		*p)
+	FT_POINT		*p)
 {
 	double		ax = (double) (Coords(bond->start)[0] -
 	        		       Coords(pcenter)[0]);
@@ -2760,7 +2760,7 @@ EXPORT	int intersect_bond_with_curve_segment(
 	BOND		*b2,
 	O_CURVE		*oc,
 	BOND		**bint,
-	POINT		*pint,
+	FT_POINT		*pint,
 	RECT_GRID	*gr)
 {
 	double		tcr1, tcr2;
@@ -3189,7 +3189,7 @@ LOCAL int eval_vander_bivar(double*,int,double*,int*,int,double*,int,int);
  *******************************************************************/
 
 EXPORT boolean WLSP_compute_normal2d(
-        POINT           *p,
+        FT_POINT           *p,
         HYPER_SURF_ELEMENT      *hse,
         HYPER_SURF              *hs)
 {
@@ -3197,7 +3197,7 @@ EXPORT boolean WLSP_compute_normal2d(
         CURVE           *c = Curve_of_hs(hs);
         BOND            *b = Bond_of_hse(hse);
         double normal[MAXD];
-	static POINT	**pts;
+	static FT_POINT	**pts;
         static double **ngbpts;
         int i,num_pts = 5;
 
@@ -3206,7 +3206,7 @@ EXPORT boolean WLSP_compute_normal2d(
 
 	if (ngbpts == NULL)
 	{
-	    uni_array(&pts,num_pts,sizeof(POINT*));
+	    uni_array(&pts,num_pts,sizeof(FT_POINT*));
 	    bi_array(&ngbpts,num_pts,2,FLOAT);
 	}
 
@@ -4072,12 +4072,12 @@ LOCAL int eval_vander_bivar(
 
 /*This function is particularly for normal of first order */
 EXPORT  boolean  WLSP_compute_normal3d0(
-        POINT              *p,
+        FT_POINT              *p,
         HYPER_SURF_ELEMENT *hse,
         HYPER_SURF         *hs)
 {
         TRI *tri,**tris;
-        POINT *pc,*pp; /*current point */
+        FT_POINT *pc,*pp; /*current point */
         int np1,np2,i,j,nt,num;
         double nor_f[3],norm=0; /*normal of tri*/
         const double  *fnor;
@@ -4116,14 +4116,14 @@ EXPORT  boolean  WLSP_compute_normal3d0(
 
 /*This function is particularly for normal of second order */
 EXPORT boolean WLSP_compute_normal3d(
-        POINT              *p,
+        FT_POINT              *p,
         HYPER_SURF_ELEMENT *hse,
         HYPER_SURF         *hs)
 {
         TRI **tris;
-        POINT *pts_ring1[MAX_RING2_PTS];
-        POINT *pts_ring2[MAX_RING2_PTS];
-        POINT *pc,*pt;
+        FT_POINT *pts_ring1[MAX_RING2_PTS];
+        FT_POINT *pts_ring2[MAX_RING2_PTS];
+        FT_POINT *pc,*pt;
         int np1,np2;
         int i,j;
 
@@ -4489,7 +4489,7 @@ LOCAL int safeqr(
 }	/* end safeqr */
 
 EXPORT	void PointAndFirstRingTris(
-	POINT *p,
+	FT_POINT *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF *hs,
 	int *nt,
@@ -4512,7 +4512,7 @@ EXPORT	void	TriAndFirstRing(
 	INTERFACE *intfc = hs->interface;
 	TRI *t,*tri = Tri_of_hse(hse);
 	int i,j,n;
-	POINT *pp;
+	FT_POINT *pp;
 	boolean tri_in_list;
 
 	*nt = 0;
@@ -4543,10 +4543,10 @@ EXPORT	void	TriAndFirstTwoRings(
 	INTERFACE *intfc = hs->interface;
 	TRI *t,*tri = Tri_of_hse(hse);
 	int i,j,k,n,np1;
-	POINT *p0,*p1;
+	FT_POINT *p0,*p1;
 	boolean tri_in_list;
 	boolean p_in_list;
-	POINT *pts[30];
+	FT_POINT *pts[30];
 
 	*nt = np1 = 0;
 	tris[(*nt)++] = tri;

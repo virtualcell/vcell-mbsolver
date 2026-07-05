@@ -76,7 +76,7 @@ LOCAL   int crossings_in_direction3d(CRXING**,int*,GRID_DIRECTION,INTERFACE*);
 
 LIB_LOCAL boolean is_interior_vertex(
 	TRI       *t,
-	POINT     *p,
+	FT_POINT     *p,
 	TRI       **t_begin,
 	INTERFACE *intfc)
 {
@@ -167,7 +167,7 @@ EXPORT	void ArrayOfCurvePoints(
 EXPORT	void ArrayOfIntfcPoints(INTERFACE *intfc, double *coords)
 {
 	int i, n, dim = intfc->dim;
-	POINT	*p;
+	FT_POINT	*p;
 	HYPER_SURF_ELEMENT *phse;
 	HYPER_SURF	   *phs;
 	
@@ -226,7 +226,7 @@ EXPORT	void ArrayOfSurfTris(
 	int *vertices_index)
 {
 	int ic, n, i, j;
-	POINT *p;
+	FT_POINT *p;
 	
 	TRI *tri;
 	
@@ -311,7 +311,7 @@ EXPORT  void ArrayOfIntfcTris(
 {
 	TRI *tri;
 	SURFACE **s;
-	POINT *p;
+	FT_POINT *p;
 	HYPER_SURF_ELEMENT *hse;
 	HYPER_SURF *hs;
 	int i,n,ic;
@@ -609,8 +609,8 @@ EXPORT	COMPONENT *GridIntfcComp(
 **************************************************************************/
 
 EXPORT	boolean IntfcGetPointChain(
-	POINT *pc,		/* center of the chain */
-	POINT **pts,		/* memory already allocated */
+	FT_POINT *pc,		/* center of the chain */
+	FT_POINT **pts,		/* memory already allocated */
 	int num_pts)
 {
 	CURVE *c = Curve_of_hs(pc->hs);

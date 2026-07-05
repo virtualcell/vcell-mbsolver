@@ -44,7 +44,7 @@ LOCAL	CURVE	*merge_propagated_curves(O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,
 LOCAL	boolean	test_ocurves_for_cross(O_CURVE*,O_CURVE*,CROSS*,CROSS**,
 				       Front*,POINTER,double);
 LOCAL	void	connect_curves_at_new_node(NODE**,O_CURVE**,BOND**,double*,
-					   POINT*,Front*);
+					   FT_POINT*,Front*);
 LOCAL	void	ensure_node_crosses_bdry(Front*,RP_NODE*,double);
 LOCAL 	void 	f_replace_null_curves_in_family(O_CURVE_FAMILY**,RPROBLEM*);
 
@@ -475,7 +475,7 @@ LOCAL	boolean test_ocurves_for_cross(
 {
 	CROSS	  *cr;
 	BOND	  *crb1, *crb2;
-	POINT	  *pcr;
+	FT_POINT	  *pcr;
 	NODE_FLAG flag;
 	double	  s1, s2;
 	int	  dim = front->interf->dim;
@@ -559,7 +559,7 @@ LOCAL	CURVE *merge_propagated_curves(
 	RPROBLEM	*rp,
 	double		dt)
 {
-	POINT		*p1, *p2;
+	FT_POINT		*p1, *p2;
 	INTERFACE	*intfc = newc1->curve->interface;
 	CURVE		*cur;
 	boolean		sav_interp = interpolate_intfc_states(intfc);
@@ -649,7 +649,7 @@ EXPORT	int join_propagated_curves(
 {
 	BOND	  *crb[2];
 	NODE_FLAG flag;
-	POINT	  *pcr;
+	FT_POINT	  *pcr;
 	double	  t_cr[2];
 	double	  dt = rp->dt;
 
@@ -798,7 +798,7 @@ LOCAL void connect_curves_at_new_node(
 	O_CURVE		**sh,
 	BOND		**crb,
 	double		*s,
-	POINT		*pcr,
+	FT_POINT		*pcr,
 	Front		*front)
 {
 	int		i;

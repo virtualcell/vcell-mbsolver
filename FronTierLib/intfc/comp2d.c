@@ -55,11 +55,11 @@ LOCAL	boolean	find_on_front_block_range2d(double,double,int,int,
 LOCAL	boolean	on_front_block2d(int,int,const COMPONENT*,int,INTERFACE*,
 	                         USE_BOUNDARIES,HYPER_SURF*);
 LOCAL	boolean	set_bond_and_curve_list_pointers(struct Table*,int,int);
-LOCAL	double	i_sd2d(double,double,BOND*,POINT**,double*,SIDE*);
+LOCAL	double	i_sd2d(double,double,BOND*,FT_POINT**,double*,SIDE*);
 LOCAL	SIDE	check_closest_point_is_node(double*,SIDE,HYPER_SURF*,COMPONENT,
 					    COMPONENT,COMPONENT,USE_BOUNDARIES,
 					    INTERFACE*);
-LOCAL 	SIDE 	convex_side(POINT*,BOND*,CURVE*,SIDE);
+LOCAL 	SIDE 	convex_side(FT_POINT*,BOND*,CURVE*,SIDE);
 LOCAL	void	fill_bond_and_curve_lists(int**,BOND****,CURVE****,INTERFACE*);
 LOCAL	void	mark_end_of_bond(void);
 LOCAL	void	set_off_front_comp2d(COMPONENT**,INTERFACE*);
@@ -76,7 +76,7 @@ LOCAL	void	store_bond(int,int,int**,COMPONENT**);
 *	the bond b_closest to this position if called from the
 *	nearest_interface_point functions.
 */
-LOCAL	POINT	*p_closest = NULL;
+LOCAL	FT_POINT	*p_closest = NULL;
 LOCAL	BOND	*b_closest = NULL;
 LOCAL	CURVE	*c_closest = NULL;
 LOCAL	double	t_last;	/* Parameter t on last call to shortest_distance2d */
@@ -146,7 +146,7 @@ LIB_LOCAL COMPONENT component2d(
 	double		*coords,
 	INTERFACE	*intfc)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	BOND		**b;
 	CURVE		**c;
 	SIDE		side;	       /* Side of interface bond -
@@ -309,7 +309,7 @@ LIB_LOCAL boolean nearest_interface_point2d(
 {
     	const COMPONENT *eq_comps;
 	int             n_eq;
-	POINT        *p;
+	FT_POINT        *p;
 	BOND         **b;
 	CURVE        **c;
 	RECT_GRID    *gr;
@@ -772,7 +772,7 @@ LIB_LOCAL boolean nearest_similar_interface_point2d(
 	HYPER_SURF_ELEMENT **phse,
 	HYPER_SURF	**phs)
 {
-	POINT    *p;
+	FT_POINT    *p;
 	BOND     **b;
 	CURVE    **c;
 	SIDE	 side;	       /* Side of interface bond -
@@ -952,7 +952,7 @@ LIB_LOCAL COMPONENT long_component2d(
 	double		*coords,
 	INTERFACE	*intfc)
 {
-	POINT    *p;
+	FT_POINT    *p;
 	BOND     *b;
 	CURVE    **c;
 	SIDE	side;	       /* Side of interface bond -
@@ -1124,7 +1124,7 @@ LIB_LOCAL boolean long_nearest_interface_point2d(
 {
     	const COMPONENT *eq_comps;
 	int             n_eq;
-	POINT    *p;
+	FT_POINT    *p;
 	BOND     *b;
 	CURVE    **c;
 	SIDE	 side;	       /* Side of interface bond -
@@ -1339,7 +1339,7 @@ LIB_LOCAL boolean long_nearest_similar_interface_point2d(
 	HYPER_SURF_ELEMENT **phse,
 	HYPER_SURF	**phs)
 {
-	POINT    *p;
+	FT_POINT    *p;
 	BOND     *b;
 	CURVE    **c;
 	SIDE	side;	       /* Side of interface bond -
@@ -1465,11 +1465,11 @@ LOCAL	double	i_sd2d(
 	double	x,
 	double  y,
 	BOND	*b,
-	POINT	**p,
+	FT_POINT	**p,
 	double	*norm_dist,
 	SIDE	*side)
 {
-    	POINT		*ps = b->start, *pe = b->end;
+    	FT_POINT		*ps = b->start, *pe = b->end;
 	double           *crds_s = Coords(ps); 
 	double           *crds_e = Coords(pe); 
 	double		x1 = crds_s[0];
@@ -1526,7 +1526,7 @@ LOCAL	double	i_sd2d(
 EXPORT double shortest_distance2d(
 	double		*coords,
 	BOND		*b,
-	POINT		**p,
+	FT_POINT		**p,
 	double		*norm_dist,
 	SIDE		*side)
 {
@@ -2478,7 +2478,7 @@ LOCAL	COMPONENT	find_compon2d(
 {
     	BOND         **b;
 	CURVE        **c;
-	POINT	     *p;
+	FT_POINT	     *p;
 	SIDE	     side;	    /* Side of interface bond - 
 				     * either NEGATIVE_SIDE(=left)
 				     * or POSITIVE_SIDE(=right)
@@ -2569,7 +2569,7 @@ LOCAL	COMPONENT	find_compon2d(
 
 	/*
 	 * Possibly correct side_closest, b_closest, c_closest when p_closest
-	 * is a POINT (and so might be the position of a NODE).
+	 * is a FT_POINT (and so might be the position of a NODE).
 	 */
 	side_closest = check_closest_point_is_node(coords,side_closest,NULL,
 						   NO_COMP,NO_COMP,NO_COMP,
@@ -2664,7 +2664,7 @@ LOCAL void show_BOND_list(
 
 
 LOCAL SIDE convex_side(
-	POINT *p_closest,
+	FT_POINT *p_closest,
 	BOND *b_closest,
 	CURVE *c_cosest,
 	SIDE side)
@@ -2770,7 +2770,7 @@ LIB_LOCAL boolean nearest_interface_point_within_range2d(
 {
     	const COMPONENT *eq_comps;
 	int             n_eq;
-	POINT        *p;
+	FT_POINT        *p;
 	BOND         **b;
 	CURVE        **c;
 	RECT_GRID    *gr;

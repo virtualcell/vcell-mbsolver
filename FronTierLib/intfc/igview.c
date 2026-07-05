@@ -263,7 +263,7 @@ EXPORT  void tecplot_show_tris(
 	int		num_tris,
 	FILE		*file)
 {
-	POINT 	*p;
+	FT_POINT 	*p;
 	int 	i,j;
 	
 	if(num_tris == 0)
@@ -294,7 +294,7 @@ EXPORT	void	tecplot_blk_intfc_plot(
 {
 	int 	ind, i, j, k,num_tris=0,count=0;
 	TRI 	*tri;
-	POINT	*p;
+	FT_POINT	*p;
 	FILE 	*file=NULL;
 	static int ntri;
 	char	s[256];
@@ -402,7 +402,7 @@ EXPORT	void	tecplot_tris(
 	int        num_tris)
 {
 	int 	j, k;
-	POINT	*p;
+	FT_POINT	*p;
 	FILE 	*file=NULL;
 	char	s[256];
 	
@@ -518,7 +518,7 @@ EXPORT  void    tecplot_curve(
 {
 	int	i;
 	BOND	*b;
-	POINT	*p;
+	FT_POINT	*p;
 
 	if (bname != NULL)/*direct call */
 	{
@@ -697,7 +697,7 @@ EXPORT  void    tecplot_surface(
 		SURFACE		*s)
 {
 	TRI	*tri;
-	POINT	*p;
+	FT_POINT	*p;
 	int	i,npts,ntri,num_tris;
 
 	if (bname != NULL)/*direct call */
@@ -794,7 +794,7 @@ LOCAL  void    tecplot_surface_special(
 		SURFACE		*s)
 {
 	TRI	*tri;
-	POINT	*p;
+	FT_POINT	*p;
 	int	i,npts,ntri,num_tris;
 
 	if (bname != NULL)/*direct call */
@@ -972,7 +972,7 @@ LOCAL	void	tecplot_plot_surfaces(
 	SURFACE_COLOR color2)
 {
 	FILE	          *file;
-	POINT             *p;
+	FT_POINT             *p;
 	SURFACE	          **s;
 	TRI	          *tri;
 	boolean              plot_surf,plot_tri;
@@ -1183,12 +1183,12 @@ EXPORT void geomview_interface_plot(
 
 EXPORT	void gview_point_tri_rings(
 	const char *filename,         
-	POINT *p)
+	FT_POINT *p)
 {
 	FILE *file = fopen(filename,"w");
 	INTERFACE *intfc = p->hs->interface;
 	TRI **ptris;
-	POINT *pp,*pts[20];
+	FT_POINT *pp,*pts[20];
 	int i,j,k,np1,nt,nt1,nt2,num_bonds;
 	TRI *tris1[20],*tris2[40],*t;
 	boolean pp_in_list,tri_in_list;
@@ -1324,7 +1324,7 @@ LOCAL	void	gview_plot_surfaces(
 	SURFACE_COLOR color2)
 {
 	FILE	          *file;
-	POINT             *p;
+	FT_POINT             *p;
 	SURFACE	          **s;
 	TRI	          *tri;
 	boolean              plot_surf,plot_tri;
@@ -1484,7 +1484,7 @@ EXPORT	void	set_tri_list_bounding_box(
 	boolean  preset,
 	boolean  cube)
 {
-    	const POINT *p;
+    	const FT_POINT *p;
 	int   i, j, k;
 
 	if (!preset)
@@ -1532,14 +1532,14 @@ EXPORT	void	set_tri_list_bounding_box(
 }		/*end set_tri_list_boundary_box*/
 
 EXPORT	void	set_point_list_bounding_box(
-	POINT **pt,
+	FT_POINT **pt,
 	int   npt,
 	double *BBL,
 	double *BBU,
 	boolean  preset,
 	boolean  cube)
 {
-	const POINT *p;
+	const FT_POINT *p;
 	int i, j;
 
 	if (!preset)
@@ -1643,7 +1643,7 @@ EXPORT	void	gview_plot_triangle_list(
 	const double *BBU)
 {
 	FILE              *file;
-	POINT             **p;
+	FT_POINT             **p;
 	double             red, green, blue;
 	double             D, x;
 	int               nt, i, j;
@@ -1704,7 +1704,7 @@ EXPORT	void	gview_plot_triangle_list(
 EXPORT	void	gview_plot_polyline(
 	const char  *dname,
 	const char  *name,
-	POINT       **v,
+	FT_POINT       **v,
 	int 	    nv,
 	boolean        closed,
 	double       red,
@@ -1752,7 +1752,7 @@ EXPORT	void	gview_plot_polyline(
 EXPORT	void	gview_plot_vertices(
 	const char  *dname,
 	const char  *name,
-	POINT       **v,
+	FT_POINT       **v,
 	int 	    nv,
 	const double *BBL,
 	const double *BBU)
@@ -2032,7 +2032,7 @@ LOCAL   void    gview_plot_curves(
 	int	      width)
 {
         FILE              *file;
-        POINT             *ps, *pe;
+        FT_POINT             *ps, *pe;
         CURVE             **c;
         BOND              *b;
         static const char *indent = "    ";
@@ -2098,7 +2098,7 @@ EXPORT  void    gview_plot_curve(
 	int	      width)
 {
         FILE              *file;
-        POINT             *ps,*pe;
+        FT_POINT             *ps,*pe;
         BOND              *b;
 	BOND_TRI          **btris;
 	INTERFACE         *intfc = c->interface;
@@ -2272,7 +2272,7 @@ EXPORT	void	gview_local_surface(
 	double         radius)
 {
 	FILE       *file;
-	POINT	   *p;
+	FT_POINT	   *p;
 	TRI	   *tri;
 	static const char *indent = "    ";
 	char   	   path[256];
@@ -2396,7 +2396,7 @@ EXPORT	void	gview_surface(
 	SURFACE_COLOR color)
 {
 	FILE 	   *file;
-	POINT	   *p;
+	FT_POINT	   *p;
 	TRI	   *tri;
 	static const char *indent = "    ";
 	char	   path[256];
@@ -2504,7 +2504,7 @@ EXPORT void gview_plot_tri_list(
 	int        i,j;
 	char       fname[256];
 	FILE       *file;
-	POINT      *p;
+	FT_POINT      *p;
 
 	if (create_directory(dname,YES) == FUNCTION_FAILED)
 	{
@@ -2558,7 +2558,7 @@ EXPORT void gview_plot_tri_and_point_list(
 	int               i,j;
 	char              fname[256];
 	FILE              *file;
-	POINT             *p;
+	FT_POINT             *p;
 
 	if (create_directory(dname,YES) == FUNCTION_FAILED)
 	{
@@ -2612,7 +2612,7 @@ EXPORT void gview_plot_c_curve(
 {
 	C_BOND            *cb;
 	FILE	          *file;
-	POINT	          *p;
+	FT_POINT	          *p;
 	TRI               *tri;
 	char	          fname[256];
 	const char        *color;
@@ -2759,7 +2759,7 @@ LOCAL   void gview_plot_color_surfaces(
         boolean          bdry)
 {
         FILE              *file;
-        POINT             *p;
+        FT_POINT             *p;
         SURFACE           **s;
         TRI               *tri;
         boolean              plot_surf;
@@ -3463,7 +3463,7 @@ LOCAL	void	vtk_plot_surfaces(
 	int 	      step)
 {
 	FILE	          *file;
-	POINT             *p;
+	FT_POINT             *p;
 	SURFACE	          **s;
 	TRI	          *tri;
 	boolean              plot_surf;
@@ -3769,7 +3769,7 @@ LOCAL   void    vtk_plot_curves2d(
 	int 	      step)
 {
         FILE              *file;
-        POINT             *ps, *pe;
+        FT_POINT             *ps, *pe;
         CURVE             **c;
         BOND              *b;
         static const char *indent = "    ";
@@ -3994,7 +3994,7 @@ LOCAL   void    vtk_plot_curves3d(
 	int 	      step)
 {
         FILE              *file;
-        POINT             *ps, *pe;
+        FT_POINT             *ps, *pe;
         CURVE             **c;
         BOND              *b;
         static const char *indent = "    ";
@@ -4365,7 +4365,7 @@ LOCAL	void	cgns_plot_surfaces(
 	int 	      step)
 {
 	FILE	          *file;
-	POINT             *p;
+	FT_POINT             *p;
 	SURFACE	          **s;
 	TRI	          *tri;
 	boolean              plot_surf;
@@ -4555,7 +4555,7 @@ LOCAL   void    cgns_plot_curves(
 	int 	      step)
 {
         FILE              *file;
-        POINT             *ps, *pe;
+        FT_POINT             *ps, *pe;
         CURVE             **c;
         BOND              *b;
         static const char *indent = "    ";
@@ -5335,7 +5335,7 @@ EXPORT void sdl_interface_plot(
 	FILE *sdl_file;
 	SURFACE **s;
 	int i;
-	POINT *p;
+	FT_POINT *p;
 	TRI *tri;
 
 	if (intfc->dim != 3) return;

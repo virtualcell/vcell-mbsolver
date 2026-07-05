@@ -73,7 +73,7 @@ IMPORT	int	split_curves_at_bdry_cross(CROSS*,Front*,ORIENTATION,
 					   CURVE**,CURVE**,COMPONENT*,
 					   COMPONENT*,int,RPROBLEM*);
 IMPORT	void	classify_bdry_crosses(CROSS*,int*);
-IMPORT	void	f_impose_bc(POINT*,BOND*,CURVE*,double*,Front*,boolean,boolean);
+IMPORT	void	f_impose_bc(FT_POINT*,BOND*,CURVE*,double*,Front*,boolean,boolean);
 IMPORT	void	map_phys_cur_states_to_bdry_cur(CURVE*,ORIENTATION,SIDE,
 						CURVE*,ORIENTATION,SIDE,
 						int,int,INTERFACE*,Front*);
@@ -131,41 +131,41 @@ IMPORT	boolean	rst_cor_after_split_curve(CURVE*,CURVE**);
 
 	/* fcrosscur.c*/
 IMPORT	boolean	intersection_of_two_o_curves(O_CURVE*,O_CURVE*,O_CURVE*,
-					     O_CURVE*,BOND**,BOND**,POINT**,
+					     O_CURVE*,BOND**,BOND**,FT_POINT**,
 					     double*,double*,Front*,POINTER,
 					     double,NODE_FLAG);
-IMPORT	int	check_cross(double,BOND*,O_CURVE*,double,BOND*,O_CURVE*,POINT*,
+IMPORT	int	check_cross(double,BOND*,O_CURVE*,double,BOND*,O_CURVE*,FT_POINT*,
 			    double*,double*,int);
 IMPORT	int	crossing_of_a_propagated_curve_and_circle(O_CURVE*,O_CURVE*,
-				double,POINT*,POINT*,BOND**,double*,Front*,
+				double,FT_POINT*,FT_POINT*,BOND**,double*,Front*,
 				POINTER,RPROBLEM**,double,double*,NODE_FLAG);
 IMPORT	int	crossing_of_two_propagated_curves(O_CURVE*,O_CURVE*,O_CURVE*,
-				O_CURVE*,POINT*,BOND**,BOND**,double*,double*,
+				O_CURVE*,FT_POINT*,BOND**,BOND**,double*,double*,
 				Front*,POINTER,RPROBLEM**,double,double*,
 				NODE_FLAG);
-IMPORT	int	set_node_velocity(POINT*,POINT*,NODE*,O_CURVE*,O_CURVE*,
+IMPORT	int	set_node_velocity(FT_POINT*,FT_POINT*,NODE*,O_CURVE*,O_CURVE*,
 				  double*,double*,Front*,double,double*);
-IMPORT	void	reverse_states_at_point(POINT*,Front*);
-IMPORT	void	init_curve_for_crossing(POINT*,POINT*,BOND*,O_CURVE*,
+IMPORT	void	reverse_states_at_point(FT_POINT*,Front*);
+IMPORT	void	init_curve_for_crossing(FT_POINT*,FT_POINT*,BOND*,O_CURVE*,
 					O_CURVE*,NODE**,BOND**,Front*,
 					POINTER,double,double*,NODE_FLAG);
 IMPORT	void	set_vel_of_crossing_node(BOND*,BOND*,BOND*,BOND*,int,int,
 					 NODE*,NODE*,double,Front*);
-IMPORT	void	set_virtual_bond_at_node(POINT*,BOND*,CURVE*,ORIENTATION,Front*,
+IMPORT	void	set_virtual_bond_at_node(FT_POINT*,BOND*,CURVE*,ORIENTATION,Front*,
 					 int,NODE_FLAG);
 
 	/* fcrossext.c*/
 IMPORT	int	cross_or_extend_to_cross_two_propagated_curves(O_CURVE*,
-				O_CURVE*,O_CURVE*,O_CURVE*,POINT**,BOND**,
+				O_CURVE*,O_CURVE*,O_CURVE*,FT_POINT**,BOND**,
 				BOND**,double*,double*,Front*,POINTER,
 				RPROBLEM**,double,double*,NODE_FLAG,boolean*);
 IMPORT	int	D_extend_crossing_of_two_propagated_curves(O_CURVE*,O_CURVE*,
 				O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,COMPONENT,
-				COMPONENT,POINT*,BOND**,BOND**,double*,double*,
+				COMPONENT,FT_POINT*,BOND**,BOND**,double*,double*,
 				Front*,POINTER,RPROBLEM**,double,double*,
 				NODE_FLAG);
 IMPORT	int	H_extend_crossing_of_two_propagated_curves(O_CURVE*,O_CURVE*,
-				O_CURVE*,O_CURVE*,COMPONENT,COMPONENT,POINT*,
+				O_CURVE*,O_CURVE*,COMPONENT,COMPONENT,FT_POINT*,
 				BOND**,BOND**,double*,double*,Front*,POINTER,
 				RPROBLEM**,double,double*,NODE_FLAG);
 IMPORT	void	find_bonds_for_extension_direction(BOND*,O_CURVE*,O_CURVE*,
@@ -174,24 +174,24 @@ IMPORT	void	set_use_circle_D_extend(boolean);
 IMPORT	void	set_use_normal_D_extend(boolean);
 
 	/* fcrstatus.c*/
-IMPORT	int	find_D_extend_status(O_CURVE*,O_CURVE*,POINT*,BOND*,BOND*,
-				     POINT*,Front*,POINTER,double,double*);
-IMPORT	int	find_H_extend_status(O_CURVE*,O_CURVE*,POINT*,O_CURVE*,
-				     O_CURVE*,double*,int,BOND*,POINT*,Front*,
+IMPORT	int	find_D_extend_status(O_CURVE*,O_CURVE*,FT_POINT*,BOND*,BOND*,
+				     FT_POINT*,Front*,POINTER,double,double*);
+IMPORT	int	find_H_extend_status(O_CURVE*,O_CURVE*,FT_POINT*,O_CURVE*,
+				     O_CURVE*,double*,int,BOND*,FT_POINT*,Front*,
 				     POINTER,double,double*);
-IMPORT	int	find_circle_cross_status(O_CURVE*,O_CURVE*,POINT*,double,
-					 POINT*,Front*,double*);
+IMPORT	int	find_circle_cross_status(O_CURVE*,O_CURVE*,FT_POINT*,double,
+					 FT_POINT*,Front*,double*);
 IMPORT	int	find_cross_or_extend_to_cross_status(int,O_CURVE*,O_CURVE*,
-				O_CURVE*,O_CURVE*,POINT*,POINT*,BOND*,BOND*,
-				BOND*,BOND*,POINT*,NODE**,NODE**,Front*,
+				O_CURVE*,O_CURVE*,FT_POINT*,FT_POINT*,BOND*,BOND*,
+				BOND*,BOND*,FT_POINT*,NODE**,NODE**,Front*,
 				POINTER,double,double*);
 IMPORT	int	find_cross_status(int,O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,
-				  POINT*,POINT*,BOND*,BOND*,POINT*,NODE**,
+				  FT_POINT*,FT_POINT*,BOND*,BOND*,FT_POINT*,NODE**,
 				  NODE**,Front*,POINTER,double,double*);
-IMPORT	int	robust_circle_cross_trace(POINT*,POINT*,POINT*,POINT*,
-					  double,double*,POINT*);
-IMPORT	int	robust_cross_trace(RECT_GRID*,POINT*,POINT*,BOND*,BOND*,
-				   double*,POINT*);
+IMPORT	int	robust_circle_cross_trace(FT_POINT*,FT_POINT*,FT_POINT*,FT_POINT*,
+					  double,double*,FT_POINT*);
+IMPORT	int	robust_cross_trace(RECT_GRID*,FT_POINT*,FT_POINT*,BOND*,BOND*,
+				   double*,FT_POINT*);
 IMPORT	void	set_prop_status_for_pseudo_cross_node(O_CURVE*,O_CURVE*,
 				                      O_CURVE*,O_CURVE*,
 						      Front*,POINTER,double,
@@ -206,7 +206,7 @@ IMPORT	boolean rebuild_intfc_at_crossings3d(Front*);
 IMPORT	boolean rebuild_intfc_at_crossings3d2(Front*);
 IMPORT  boolean check_extension_of_surface_global(SURFACE*);
 IMPORT  boolean check_normal_on_intfc(INTERFACE*);
-IMPORT	boolean check_degenerated_loop(TRI**,int*,POINT**,int);
+IMPORT	boolean check_degenerated_loop(TRI**,int*,FT_POINT**,int);
 
 	/*fgb3dutil.c */
 IMPORT	void	adjust_crossings(int*,int*,INTERFACE*);
@@ -232,8 +232,8 @@ IMPORT  void	set_crx_storage_for_reconstruction(INTERFACE*,VOLUME_FRAC*);
 IMPORT	void	free_crx_storage(INTERFACE*);
 IMPORT	void	linear_interp_coefs_three_pts(double*,double*,double*,double*,double*);
 IMPORT	boolean	track_comp_through_crxings3d(int*,int*,int*,INTERFACE*,CRX_TYPE);
-IMPORT	void    interpolate_crx_pt_states_on_tri(INTERFACE*,POINT*,TRI*,SURFACE*);
-IMPORT	void    interpolate_crx_pt_states_on_edge(INTERFACE*,POINT*,TRI*,
+IMPORT	void    interpolate_crx_pt_states_on_tri(INTERFACE*,FT_POINT*,TRI*,SURFACE*);
+IMPORT	void    interpolate_crx_pt_states_on_edge(INTERFACE*,FT_POINT*,TRI*,
                                 SURFACE*,int);
 IMPORT  void    check_surface_curve(SURFACE *);
 IMPORT  void    check_intfc_curve_connect(INTERFACE *);
@@ -242,7 +242,7 @@ IMPORT  void    check_intfc_curve_connect(INTERFACE *);
 IMPORT  boolean  is_wall_side(TRI*,int);
 IMPORT  TRI*  Tri_on_side_along_wall(int*,TRI*,int);
 IMPORT  boolean  is_wall_vertex(TRI*,int);
-IMPORT  int   tri_list_along_wall(POINT*,TRI*,TRI***,INTERFACE*);
+IMPORT  int   tri_list_along_wall(FT_POINT*,TRI*,TRI***,INTERFACE*);
 IMPORT	int   check_wall_crx_orient(INTERFACE *, int *, int *);
 IMPORT  boolean  edge_index_of_face(int *,int,int,int,GRID_DIRECTION,int*);
 IMPORT  boolean  vertex_index_of_face(int *,int,int,int,GRID_DIRECTION,int*);
@@ -272,7 +272,7 @@ IMPORT	void	f_set_redistribution_defaults(INIT_DATA*);
 IMPORT	void	init_front(INIT_DATA*,Front*);
 IMPORT  void    initial_front_redistribute(Front*,const IO_TYPE*);
 IMPORT	void	init_front_states(Front*,INIT_DATA*,
-				  void (*)(POINT*,HYPER_SURF_ELEMENT*,
+				  void (*)(FT_POINT*,HYPER_SURF_ELEMENT*,
 				           HYPER_SURF*,Locstate,Locstate,
 					   INIT_DATA*));
 IMPORT	void	set_dflt_cur_redist_params(Front*);
@@ -286,9 +286,9 @@ IMPORT	HYPER_SURF_BDRY	*f_make_hypersurface_boundary(void);
 IMPORT	HYPER_SURF      *f_make_hypersurface(COMPONENT,COMPONENT);
 IMPORT	INTERFACE       *f_copy_interface(INTERFACE*);
 IMPORT	INTERFACE       *f_receive_interface(int);
-IMPORT	POINT	*f_Point(double*);
-IMPORT	POINT	*f_Static_point(INTERFACE*);
-IMPORT	POINT	*f_copy_point(POINT*);
+IMPORT	FT_POINT	*f_Point(double*);
+IMPORT	FT_POINT	*f_Static_point(INTERFACE*);
+IMPORT	FT_POINT	*f_copy_point(FT_POINT*);
 IMPORT	boolean	copy_intfc_states(void);
 IMPORT	boolean f_merge_hs_flags(HYPER_SURF*,HYPER_SURF*);
 IMPORT	int	add_bstate_to_list(BOUNDARY_STATE*,INTERFACE*,int);
@@ -309,7 +309,7 @@ IMPORT	void	f_read_print_boundary_state_data(INIT_DATA*,const IO_TYPE*,
                                                  INTERFACE*,int);
 IMPORT	void	f_reconstruct_interface_pointers(INTERFACE*,struct Table *,
 						 POINTER*,POINTER*);
-IMPORT	void	f_reconstruct_point_pointers(POINT*,INTERFACE*,INTERFACE*,
+IMPORT	void	f_reconstruct_point_pointers(FT_POINT*,INTERFACE*,INTERFACE*,
 					     POINTER*,POINTER*,int);
 IMPORT	void	f_user_copy_hyper_surf(HYPER_SURF*,HYPER_SURF*);
 IMPORT	void	f_user_fprint_interface(FILE*,INTERFACE*);
@@ -329,15 +329,15 @@ IMPORT  boolean    use_wall_edge(void);
 IMPORT	CURVE	*f_copy_curve(CURVE*,NODE*,NODE*);
 IMPORT	CURVE	*f_make_curve(COMPONENT,COMPONENT,NODE*,NODE*);
 IMPORT	NODE	*f_copy_node(NODE*);
-IMPORT	NODE	*f_make_node(POINT*);
+IMPORT	NODE	*f_make_node(FT_POINT*);
 IMPORT	boolean	interpolate_states_at_split_curve_node(void);
 IMPORT	boolean	f_delete_end_of_bond(BOND*,CURVE*);
 IMPORT	boolean	f_delete_node(NODE*);
 IMPORT	boolean	f_delete_start_of_bond(BOND*,CURVE*);
-IMPORT	boolean	f_insert_point_in_bond(POINT*,BOND*,CURVE*);
+IMPORT	boolean	f_insert_point_in_bond(FT_POINT*,BOND*,CURVE*);
 IMPORT	boolean	f_user_join_curves(CURVE*,CURVE*,CURVE*);
 IMPORT	boolean	f_user_read_print_curve(CURVE*,const IO_TYPE*,boolean);
-IMPORT	boolean	f_user_split_curve(int,POINT*,BOND*,CURVE*,CURVE**);
+IMPORT	boolean	f_user_split_curve(int,FT_POINT*,BOND*,CURVE*,CURVE**);
 IMPORT	int	f_delete_curve(CURVE*);
 IMPORT	int	f_user_read_node(NODE*);
 IMPORT	void	f_reconstruct_bond_pointers(BOND*,INTERFACE*,INTERFACE*,
@@ -353,15 +353,15 @@ IMPORT	void	f_user_read_print_node(NODE*,const IO_TYPE*,boolean);
 IMPORT	void	set_interpolate_states_at_split_curve_node(boolean);
 /*#bjet2 */
 IMPORT SURFACE *f_detach_one_surface(SURFACE *);
-IMPORT	POINT	*f_make_point(double*,COMPONENT,COMPONENT);
+IMPORT	FT_POINT	*f_make_point(double*,COMPONENT,COMPONENT);
 IMPORT	void	test_for_mono_comp_curves(INTERFACE*);
 IMPORT	BOND_TRI *f_link_tri_to_bond(BOND_TRI*,TRI*,SURFACE*,BOND*,CURVE*);
-IMPORT	C_BOND	*f_CBond(C_BOND*,POINT*,POINT*,TRI*,TRI*);
+IMPORT	C_BOND	*f_CBond(C_BOND*,FT_POINT*,FT_POINT*,TRI*,TRI*);
 IMPORT	SURFACE	*f_join_surfaces(CURVE*);
 IMPORT	SURFACE	*f_make_surface(COMPONENT,COMPONENT,CURVE**,CURVE**);
 IMPORT	SURFACE	*f_copy_surface(SURFACE*,CURVE**,CURVE**,boolean);
-IMPORT	boolean	f_insert_point_in_tri(POINT*,TRI*,SURFACE*);
-IMPORT	boolean	f_insert_point_in_tri_side(POINT*,int,TRI*,SURFACE*);
+IMPORT	boolean	f_insert_point_in_tri(FT_POINT*,TRI*,SURFACE*);
+IMPORT	boolean	f_insert_point_in_tri_side(FT_POINT*,int,TRI*,SURFACE*);
 IMPORT	int	f_delete_surface(SURFACE*);
 IMPORT	void 	f_reverse_bond(BOND*);
 IMPORT	void 	f_reorder_curve_link_list(CURVE*);
@@ -386,47 +386,47 @@ IMPORT	void	reset_fixed_node_states(NODE*,Front*);
 IMPORT	void	assign_states_on_passive_curves_at_node(NODE*);
 
 	/* fnodesub.c*/
-IMPORT	void	find_tangent_to_curve(POINT*,BOND*,CURVE*,ORIENTATION,
+IMPORT	void	find_tangent_to_curve(FT_POINT*,BOND*,CURVE*,ORIENTATION,
 				      double*,Front*);
-IMPORT	void	bond_secant_to_curve(POINT*,BOND*,CURVE*,ORIENTATION,BOND*,
+IMPORT	void	bond_secant_to_curve(FT_POINT*,BOND*,CURVE*,ORIENTATION,BOND*,
 				     Front*,double);
-IMPORT	void	find_secant_to_curve(POINT*,BOND*,CURVE*,ORIENTATION,double*,
+IMPORT	void	find_secant_to_curve(FT_POINT*,BOND*,CURVE*,ORIENTATION,double*,
 				     Front*,double);
 IMPORT	CURVE	*find_physical_curve_at_node(NODE*,ORIENTATION*);
-IMPORT	SIDE	find_propagation_side(O_CURVE*,POINT*,SIDE,Front*);
+IMPORT	SIDE	find_propagation_side(O_CURVE*,FT_POINT*,SIDE,Front*);
 IMPORT	boolean	delete_redundant_node(NODE*,CROSS*,RPROBLEM*,Front*);
 IMPORT	boolean	f_check_delete_redundant_node(NODE*,CURVE*,CURVE*);
 IMPORT	int	bdry_node_type(int);
 IMPORT	ANGLE_DIRECTION	f_find_i_to_prop_dir(Front*,POINTER,NODE*,CURVE*,
 					     ORIENTATION,double,
-					     COMPONENT*,POINT*,double*);
+					     COMPONENT*,FT_POINT*,double*);
 IMPORT	int	modify_B_node(NODE*,NODE*,O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,
 			      O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,
-			      O_CURVE*,POINT*,BOND*,BOND*,ANGLE_DIRECTION,
+			      O_CURVE*,FT_POINT*,BOND*,BOND*,ANGLE_DIRECTION,
 			      double,double,RPROBLEM**,Front*,POINTER,
 			      double,double*,NODE_FLAG);
 IMPORT	int	velocity_satisfies_CFL(NODE*,double,double*,Front*);
-IMPORT	void	assign_interacting_states(POINT*,CURVE*,ORIENTATION,Front*,
+IMPORT	void	assign_interacting_states(FT_POINT*,CURVE*,ORIENTATION,Front*,
 					  Locstate,Locstate);
-IMPORT	void	cut_curve(POINT*,BOND*,CURVE*,ORIENTATION,
+IMPORT	void	cut_curve(FT_POINT*,BOND*,CURVE*,ORIENTATION,
 			  Front*,Locstate,Locstate);
-IMPORT	void	find_propagation_orientation(Front*,POINTER,NODE*,NODE*,POINT*,
+IMPORT	void	find_propagation_orientation(Front*,POINTER,NODE*,NODE*,FT_POINT*,
 					     O_CURVE*,double,ANGLE_DIRECTION*,
 					     O_CURVE*,O_CURVE*,O_CURVE*,
 					     O_CURVE*,SIDE*,SIDE*,
 					     COMPONENT*,COMPONENT*);
-IMPORT	void	find_tangent_to_propagated_curve(POINT*,BOND*,O_CURVE*,
+IMPORT	void	find_tangent_to_propagated_curve(FT_POINT*,BOND*,O_CURVE*,
 						 O_CURVE*,double*,Front*,
 						 POINTER,double);
 IMPORT	void	init_redundant_node_for_deletion(NODE*,NODE*,Front*,
 						 POINTER,double);
-IMPORT	void	insert_point_adjacent_to_node(POINT*,CURVE*,ORIENTATION);
+IMPORT	void	insert_point_adjacent_to_node(FT_POINT*,CURVE*,ORIENTATION);
 IMPORT	void	propagated_tangent_bond_at_node(BOND*,CURVE*,ORIENTATION,Front*,
 						POINTER,double);
-IMPORT	void	shift_node(POINT*,BOND*,CURVE*,ORIENTATION,
+IMPORT	void	shift_node(FT_POINT*,BOND*,CURVE*,ORIENTATION,
 			   CURVE*,ORIENTATION,NODE*,Front*,
 			   Locstate,Locstate,Locstate,Locstate);
-IMPORT	void	shift_node_past(POINT*,BOND*,CURVE*,ORIENTATION,
+IMPORT	void	shift_node_past(FT_POINT*,BOND*,CURVE*,ORIENTATION,
 				CURVE*,ORIENTATION,ANGLE_DIRECTION,NODE*,
 				Front*,NODE_FLAG,Locstate,Locstate,
 				Locstate,Locstate);
@@ -481,7 +481,7 @@ IMPORT	const char *node_status_as_string(int);
 IMPORT	void	f_curve_propagate2d(Front*,POINTER,CURVE*,CURVE*,double);
 IMPORT	void	f_tan_curve_propagate(Front*,Front*,INTERFACE*,CURVE*,
 				CURVE*,double);
-IMPORT	void	oblique_propagate_at_node(Front*,POINTER,POINT*,O_CURVE*,
+IMPORT	void	oblique_propagate_at_node(Front*,POINTER,FT_POINT*,O_CURVE*,
 			 	O_CURVE*,double*,double);
 IMPORT	void	set_no_tan_propagate(CURVE *);
 IMPORT	void	f_second_order_intfc_propagate(Front*,POINTER,INTERFACE*,
@@ -493,26 +493,26 @@ IMPORT  void    fill_stencil_in_direction(Front*,Tan_stencil*,int,int,
 IMPORT	void	set_weight_for_tri_interpolation(double*,TRI*,double*,double*,
 	                        INTERFACE*);
 IMPORT  void    f_surface_propagate(Front*,Front*,POINTER,double,double*);
-IMPORT  void    fourth_order_point_propagate(Front*,POINTER, POINT*, POINT*,
+IMPORT  void    fourth_order_point_propagate(Front*,POINTER, FT_POINT*, FT_POINT*,
 		                HYPER_SURF_ELEMENT*,HYPER_SURF*,double,double*);
-IMPORT  void    second_order_point_propagate(Front*,POINTER, POINT*, POINT*,
+IMPORT  void    second_order_point_propagate(Front*,POINTER, FT_POINT*, FT_POINT*,
 		                HYPER_SURF_ELEMENT*,HYPER_SURF*,double,double*);
-IMPORT  void    first_order_point_propagate(Front*,POINTER, POINT*, POINT*,
+IMPORT  void    first_order_point_propagate(Front*,POINTER, FT_POINT*, FT_POINT*,
 		                HYPER_SURF_ELEMENT*,HYPER_SURF*,double,double*);
 IMPORT	void    find_position_along_wall(double*,TN*,double,const Tparams*,
 				Front*);
 IMPORT  void    print_TN(TN*);
 IMPORT  void    print_Tparams(const char*, Tparams*);
-IMPORT	boolean	f_tan_point_propagate(Front*,POINT*,POINT*, 
+IMPORT	boolean	f_tan_point_propagate(Front*,FT_POINT*,FT_POINT*,
 				HYPER_SURF_ELEMENT*,HYPER_SURF*,double,int);
-IMPORT  boolean set_up_tangent_params(Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT  boolean set_up_tangent_params(Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
                                 HYPER_SURF*,Tparams*);
-IMPORT	boolean set_up_wall_tangent_params(Tparams*,POINT*,BOND*,CURVE*,double*,
+IMPORT	boolean set_up_wall_tangent_params(Tparams*,FT_POINT*,BOND*,CURVE*,double*,
 				SURFACE**,TRI**,INTERFACE*,Front*);
 IMPORT	boolean fill_tan_stencil_along_wall(Tan_stencil*,Front*,const Tparams*,
 				TRI**,int);
 IMPORT  boolean set_up_tangent_stencil(Front*,Tan_stencil*,const Tparams*,
-                                POINT*,double);
+                                FT_POINT*,double);
 
 	/* fvelo.c*/
 /*	Initialization of velocity field params */
@@ -528,29 +528,29 @@ IMPORT 	void 	init_burgers_params(POINTER*,int);
 IMPORT  void    init_bipolar_params(POINTER*,int);
 IMPORT  void    init_vortex_params(POINTER*,int);
 /*	Functions of velocity field */
-IMPORT 	int 	translation_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	translation_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT 	int 	radial_motion_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	radial_motion_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT 	int 	shear_motion_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	shear_motion_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
                         HYPER_SURF*,double*);
-IMPORT 	int 	sine_motion_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	sine_motion_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT 	int 	circular_rotation_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	circular_rotation_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT 	int 	normal_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	normal_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT 	int 	curvature_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	curvature_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT 	int 	flame_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	flame_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT 	int 	burgers_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT 	int 	burgers_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 			HYPER_SURF*,double*);
-IMPORT  int     bipolar_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT  int     bipolar_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
                         HYPER_SURF*,double*);
-IMPORT  int     vortex_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT  int     vortex_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 		                        HYPER_SURF*,double*);
-IMPORT  int     double_vortex_vel(POINTER,Front*,POINT*,HYPER_SURF_ELEMENT*,
+IMPORT  int     double_vortex_vel(POINTER,Front*,FT_POINT*,HYPER_SURF_ELEMENT*,
 		                        HYPER_SURF*,double*);
 
 	/*	fredist.c*/
@@ -580,12 +580,12 @@ IMPORT	int	redistribute3d(Front*,boolean,boolean);
 IMPORT	int     recon_repeat();
 IMPORT	boolean	surface_redistribute(Front*,boolean*);
 IMPORT	void    set_repeat(int);
-IMPORT	boolean    compute_smooth_para(SMOOTH_PARA*,POINT*,TRI*,SURFACE*,
+IMPORT	boolean    compute_smooth_para(SMOOTH_PARA*,FT_POINT*,TRI*,SURFACE*,
 				SMOOTH_TOL*);
-IMPORT  boolean    point_outside_open_bdry(int*,double*,POINT*,INTERFACE*);
+IMPORT  boolean    point_outside_open_bdry(int*,double*,FT_POINT*,INTERFACE*);
 IMPORT	void	smooth_curve(CURVE*);
 IMPORT	void 	triangle_height_vec(double*,double*,double*,double*);
-IMPORT	boolean    compute_average_point(SMOOTH_PARA*,POINT*,TRI*,SURFACE*,
+IMPORT	boolean    compute_average_point(SMOOTH_PARA*,FT_POINT*,TRI*,SURFACE*,
 					SMOOTH_TOL*);
 IMPORT	double	min_null_pair_angle(double*,double*,double*,double*);
 IMPORT	void	tecplot_interface_in_ball(const char*,INTERFACE*);
@@ -738,25 +738,25 @@ IMPORT	boolean	f_consistent_interface(INTERFACE*);
 	/* fstate2d.c */
 IMPORT	void	set_states_by_interpolation(CURVE*,BOND*,BOND*,SIDE,Locstate,
 					    Locstate,size_t);
-IMPORT	void	states_at_distance_along_curve(POINT*,BOND*,CURVE*,ORIENTATION,
+IMPORT	void	states_at_distance_along_curve(FT_POINT*,BOND*,CURVE*,ORIENTATION,
 					       double,int,Locstate*,Locstate*,
 					       HYPER_SURF**,
 					       HYPER_SURF_ELEMENT**,
-					       double*,POINT**,Front*);
+					       double*,FT_POINT**,Front*);
 
 	/* fsub.c*/
 IMPORT	Tan_stencil	*alloc_tan_stencil(Front*,int);
 IMPORT	MAX_FRONT_SPEED	*f_alloc_MaxFrontSpeed(MAX_FRONT_SPEED*,INTERFACE*,
                                                size_t);
-IMPORT	POINT	*f_average_points(boolean,POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
-			               POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*);
+IMPORT	FT_POINT	*f_average_points(boolean,FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+			               FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*);
 IMPORT	double	f_max_front_time_step(Front*,double*);
 IMPORT	int	syncronize_time_step_status(int,PP_GRID*);
 IMPORT	void	assign_interface_and_free_front(Front*,Front*);
 IMPORT	void	delete_passive_boundaries(INTERFACE*);
 IMPORT	void	f_copy_into_front(Front*,Front*);
 IMPORT	void	f_initialize_max_front_speed(Front*);
-IMPORT	void	f_principal_tangent(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+IMPORT	void	f_principal_tangent(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 				    double*,double*);
 IMPORT	void	f_set_default_front_parameters(INIT_DATA*,Front*);
 IMPORT	void	f_set_max_front_speed(int,double,Locstate,double*,Front*);
@@ -767,24 +767,24 @@ IMPORT	double	length_of_scalar_wave(Front*);
 IMPORT	ANGLE_DIRECTION	c1_to_c2_direction(O_CURVE*,O_CURVE*);
 IMPORT	double	angle_from_c1_to_c2_at_common_node(CURVE*,ORIENTATION,
 						   CURVE*,ORIENTATION,Front*);
-IMPORT	double	f_mean_curvature_at_point2d(POINT*,HYPER_SURF_ELEMENT*,
+IMPORT	double	f_mean_curvature_at_point2d(FT_POINT*,HYPER_SURF_ELEMENT*,
 					    HYPER_SURF*,Front*);
-IMPORT	double	f_mean_curvature_at_point3d(POINT*,HYPER_SURF_ELEMENT*,
+IMPORT	double	f_mean_curvature_at_point3d(FT_POINT*,HYPER_SURF_ELEMENT*,
 					    HYPER_SURF*,Front*);
-IMPORT	double	f_wlsp_curvature(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,Front*);
+IMPORT	double	f_wlsp_curvature(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,Front*);
 
 /*#bjet2 */
 IMPORT  void    set_full_average(boolean);
 
 	/* ftop.c*/
 IMPORT	boolean	f_is_subdomain_boundary(HYPER_SURF*);
-IMPORT	void	f_reflect_point(POINT*,double*,double*,INTERFACE*);
+IMPORT	void	f_reflect_point(FT_POINT*,double*,double*,INTERFACE*);
 IMPORT	void	f_fset_hyper_surf_color(FILE*,HYPER_SURF*);
 IMPORT	int	synchronize_untangle_status(int);
 IMPORT	void	f_invert_curve(CURVE*);
 IMPORT	void	f_reverse_curve(CURVE*);
-IMPORT	boolean	f_untrack_point(POINT*,COMPONENT,Front*);
-IMPORT	CURVE	*f_attach_curve_to_node(CURVE*,POINT*,BOND*,NODE*);
+IMPORT	boolean	f_untrack_point(FT_POINT*,COMPONENT,Front*);
+IMPORT	CURVE	*f_attach_curve_to_node(CURVE*,FT_POINT*,BOND*,NODE*);
 IMPORT	O_CURVE_FAMILY	*find_loop(CURVE*,ORIENTATION,ANGLE_DIRECTION);
 IMPORT	boolean	f_delete_point_adjacent_to_node(Front*,CURVE*,ORIENTATION);
 IMPORT	boolean	intfc_delete_fold_back_bonds(Front*);
@@ -850,9 +850,9 @@ IMPORT	boolean 	merge_hs_flags(HYPER_SURF*,HYPER_SURF*);
 IMPORT	boolean	tri_interpolate_intfc_states(INTERFACE*,double,double,double,
 					     double*,Locstate,double*,Locstate,
 					     double*,Locstate,Locstate);
-IMPORT	void	GetFrontCurvature(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+IMPORT	void	GetFrontCurvature(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 					double*,Front*);
-IMPORT	double	mean_curvature_at_point(POINT*,HYPER_SURF_ELEMENT*,
+IMPORT	double	mean_curvature_at_point(FT_POINT*,HYPER_SURF_ELEMENT*,
 					HYPER_SURF*,Front*);
 IMPORT	boolean	nearest_intfc_state(double*,COMPONENT,INTERFACE*,Locstate,
 				    double*,HYPER_SURF**);
@@ -869,7 +869,7 @@ IMPORT	void	fprint_state_data(FILE*,Locstate,INTERFACE*);
 IMPORT	void	fprint_wave_type(FILE*,const char*,int,const char*,INTERFACE*);
 IMPORT	void	free_rp_node(RP_NODE*,RPROBLEM*);
 IMPORT	void	init_rp_nodes(RPROBLEM*);
-IMPORT	void	normal(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,double*,Front*);
+IMPORT	void	normal(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,double*,Front*);
 IMPORT	void	print_intfc_state(Locstate,INTERFACE*);
 IMPORT	void	print_rp_node(RP_NODE*,RPROBLEM*);
 IMPORT	void	print_rproblem(RPROBLEM*);
@@ -880,12 +880,12 @@ IMPORT	void	set_rp_statistics(RPROBLEM*);
 IMPORT	void	set_normal_function(const char*,NORMAL_FUNCTION*,INTERFACE*);
 IMPORT	void	set_tangent_function(const char *s,TANGENT_FUNCTION*,
                                      INTERFACE*);
-IMPORT	void	slsr(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+IMPORT	void	slsr(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 		     Locstate*,Locstate*);
 IMPORT	void	state_along_hypersurface_element(COMPONENT,double*,
 						 HYPER_SURF_ELEMENT*,
 						 HYPER_SURF*,Locstate);
-IMPORT	void	tangent(POINT*,BOND*,CURVE*,double*,Front*);
+IMPORT	void	tangent(FT_POINT*,BOND*,CURVE*,double*,Front*);
 IMPORT	void	user_print_rp_node(RP_NODE*,RPROBLEM*);
 IMPORT	void	user_print_rproblem(RPROBLEM*);
 IMPORT	void	user_free_rp_node(RP_NODE*,RPROBLEM*);
@@ -938,8 +938,8 @@ IMPORT  double FrontLinIntrp(double*,INTRP_CELL*,boolean);
 IMPORT  double FrontBilinIntrp(double*,INTRP_CELL*,boolean);
 IMPORT	boolean FrontGetRectCellIntrpCoeffs(double*,RECT_GRID*,int*,double*);
 IMPORT HYPER_SURF *BoundaryHyperSurf(INTERFACE*,int,int,int);
-IMPORT Tan_stencil **FrontGetTanStencils(Front*,POINT*,int);
-IMPORT boolean FrontGetPointChain(POINT*,POINT**,int);
+IMPORT Tan_stencil **FrontGetTanStencils(Front*,FT_POINT*,int);
+IMPORT boolean FrontGetPointChain(FT_POINT*,FT_POINT**,int);
 IMPORT void FrontPreAdvance(Front*);
 IMPORT boolean FrontReflectPointViaNeumannBdry(double*,double*,double*,
 		COMPONENT,HYPER_SURF*,Front*);

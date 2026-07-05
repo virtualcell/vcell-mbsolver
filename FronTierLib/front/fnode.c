@@ -86,7 +86,7 @@ EXPORT	int fixed_node_propagate(
 	O_NODE		*o_ond;
 	CURVE		*oldc, *newc;
 	BOND		*oldb;
-	POINT		*o_posn, *n_posn;
+	FT_POINT		*o_posn, *n_posn;
 	Locstate	lst, rst;
 	double		V[MAXD];
 	int		i, dim = fr->rect_grid->dim;
@@ -288,7 +288,7 @@ EXPORT int closed_node_propagate(
 	double		dt)
 {
 	CURVE		*oldc, *newc;
-	POINT		*np;
+	FT_POINT		*np;
 	Locstate	lst, rst;
 	double		V[MAXD];
 	size_t 		szst = fr->sizest;
@@ -364,7 +364,7 @@ LOCAL int free_end_node_propagate(
 {
         BOND            *oldb;
         CURVE           *oldc, *newc;
-        POINT           *np;
+        FT_POINT           *np;
         Locstate        lst, rst;
         double           V[MAXD];
         size_t          szst = fr->sizest;
@@ -474,8 +474,8 @@ EXPORT int B_node_propagate(
 						   newn posn*/
 	SIDE		inc_side;               /* side of cahead defined by
 						   cphys */
-	static POINT	*pc = NULL;		/* crossing point */
-	static POINT	*newp = NULL;		/* new node propagation point */
+	static FT_POINT	*pc = NULL;		/* crossing point */
+	static FT_POINT	*newp = NULL;		/* new node propagation point */
 	boolean opposite_dir_tried = NO;
 	i_to_prop_dir = ANGLE_DIRECTION_NOT_SET;
 	
@@ -731,7 +731,7 @@ fixed_node_loop:
 	    comp = component(crds,intfc);
 	    if (is_excluded_comp(comp,intfc))
 	    {
-	    	void	(*save_impose_bc)(POINT*,BOND*,CURVE*,double*,Front*,
+	    	void	(*save_impose_bc)(FT_POINT*,BOND*,CURVE*,double*,Front*,
 					  boolean,boolean);
 
 #if defined(DEBUG_NODE_PROPAGATE)
@@ -991,7 +991,7 @@ EXPORT	int pp_node_propagate(
 	O_NODE		On, Nn;
 	O_NODE		*old_on, *new_on;
 	O_NODE		*old_oppon, *new_oppon;
-	POINT		*p;
+	FT_POINT		*p;
 	double		*op, *np, *oop, *nop;
 	double		V[MAXD];
 	double		od[MAXD], nd[MAXD];
@@ -1039,7 +1039,7 @@ EXPORT	int pp_node_propagate(
 	    new_on->num_c = num_c = old_on->num_c;
 	    new_on->nc     = (CURVE **) Store(num_c * sizeof(CURVE *));
 	    new_on->nopp   = (NODE **)  Store(num_c * sizeof(NODE *));
-	    new_on->pt     = (POINT **) Store(num_c * sizeof(POINT *));
+	    new_on->pt     = (FT_POINT **) Store(num_c * sizeof(FT_POINT *));
 	    new_on->ang    = NULL;
 	    new_on->orient = (ORIENTATION *)    Store(num_c * INT);
 	    for (i = 0;  i < old_on->num_c;  ++i)

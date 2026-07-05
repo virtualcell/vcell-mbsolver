@@ -44,18 +44,18 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 	/* LOCAL Function Prototypes */
 #if defined(DEBUG_CROSSING)
-LOCAL	void	debug_print_improper_cross(POINT*,double,double,BOND*,CURVE*,
+LOCAL	void	debug_print_improper_cross(FT_POINT*,double,double,BOND*,CURVE*,
 					   BOND*,CURVE*,double*,double*,Front*);
 #endif /* defined(DEBUG_CROSSING) */
 LOCAL	int	found_crossing_of_a_propagated_curve_and_circle(BOND**,BOND*,
                                                                 BOND*,O_CURVE*,
-								POINT*,double,
+								FT_POINT*,double,
 								Front*);
 LOCAL	int	found_crossing_of_two_propagated_curves(BOND**,BOND**,BOND*,
                                                         BOND*,BOND*,BOND*,
 							NODE*,NODE*,O_CURVE*,
 							O_CURVE*,O_CURVE*,
-							O_CURVE*,POINT*,POINT*,
+							O_CURVE*,FT_POINT*,FT_POINT*,
 							double,double,double*,
 							double*,double,double*,
 							Front*);
@@ -70,19 +70,19 @@ LOCAL	boolean	leave_intersection_of_two_o_curves(boolean,O_CURVE*,O_CURVE*,
 						   NODE*,NODE*);
 LOCAL	int	no_crossing_of_two_propagated_curves(int,O_CURVE*,O_CURVE*,
                                                      O_CURVE*,O_CURVE*,
-						     POINT*,POINT*,BOND*,BOND*,
+						     FT_POINT*,FT_POINT*,BOND*,BOND*,
 						     BOND*,BOND*,NODE*,NODE*,
-						     POINT*,Front*,POINTER,
+						     FT_POINT*,Front*,POINTER,
 						     double,double*,RPROBLEM**);
 LOCAL	void	no_cross_of_propagated_curve_and_circle(int,O_CURVE*,O_CURVE*,
-	                                                BOND*,POINT*,POINT*,
-							POINT*,double,double,
+	                                                BOND*,FT_POINT*,FT_POINT*,
+							FT_POINT*,double,double,
 							double*,Front*,POINTER,
 							RPROBLEM**);
 LOCAL	void	set_vel_of_circle_crossing_node(BOND*,ORIENTATION,
 						BOND*,ORIENTATION,NODE*,
 						double,double,int);
-LOCAL	void	set_virtual_opp_node(POINT*,O_CURVE*,O_CURVE*,NODE**,BOND**,
+LOCAL	void	set_virtual_opp_node(FT_POINT*,O_CURVE*,O_CURVE*,NODE**,BOND**,
 				     Front*,POINTER,double);
 
 /*
@@ -99,7 +99,7 @@ EXPORT int crossing_of_two_propagated_curves(
 	O_CURVE		*newc1,
 	O_CURVE		*oldc2,
 	O_CURVE		*newc2,
-	POINT		*pc,		/* crossing point */
+	FT_POINT		*pc,		/* crossing point */
 	BOND		**newb1cr,	/* the crossing bond on newc1 */
 	BOND		**newb2cr,	/* the crossing bond on newc2 */
 	double		*s1,		/* fract dist on bond to cross */
@@ -304,15 +304,15 @@ LOCAL	int no_crossing_of_two_propagated_curves(
 	O_CURVE	 *oldc2,
 	O_CURVE	 *newc1,
 	O_CURVE	 *newc2,
-	POINT	 *p1_opp,
-	POINT	 *p2_opp,
+	FT_POINT	 *p1_opp,
+	FT_POINT	 *p2_opp,
 	BOND	 *b1virtual,
 	BOND	 *b2virtual,
 	BOND     *oppb1,
 	BOND     *oppb2,
 	NODE     *oppn1,
 	NODE     *oppn2,
-	POINT	 *pc,
+	FT_POINT	 *pc,
 	Front	 *fr,
 	POINTER	 wave,
 	double	 dt,
@@ -512,7 +512,7 @@ EXPORT int crossing_of_a_propagated_curve_and_circle(
 	int		cr_stat = NO_CROSS;
 	int		status = ERROR_NODE;
 	int		i, dim = fr->rect_grid->dim;
-	static	POINT	*p = NULL, *p_opp = NULL;
+	static	FT_POINT	*p = NULL, *p_opp = NULL;
 
 	debug_print("circle_crossing",
 		"Entered crossing_of_a_propagated_curve_and_circle()\n");
@@ -780,7 +780,7 @@ EXPORT	boolean intersection_of_two_o_curves(
 	O_CURVE		*oldc2,
 	BOND		**crossb1,
 	BOND		**crossb2,
-	POINT		**pcr,
+	FT_POINT		**pcr,
 	double		*s1,
 	double		*s2,
 	Front		*fr,
@@ -799,7 +799,7 @@ EXPORT	boolean intersection_of_two_o_curves(
 	int		wt2 = wave_type(newc2->curve);
 	int		i, dim = gr->dim;
 	static	BOND	*bdir1 = NULL, *bdir2 = NULL;
-	static	POINT	*pc = NULL, *p1 = NULL, *p2 = NULL,
+	static	FT_POINT	*pc = NULL, *p1 = NULL, *p2 = NULL,
 	                *pmid = NULL, *p1_opp = NULL, *p2_opp = NULL;
 	int		on_b1,on_b2;
 
@@ -1206,8 +1206,8 @@ LOCAL	boolean leave_intersection_of_two_o_curves(
 */
 
 EXPORT void init_curve_for_crossing(
-	POINT		*p,
-	POINT		*p_opp,
+	FT_POINT		*p,
+	FT_POINT		*p_opp,
 	BOND		*bvirtual,
 	O_CURVE		*oldc,
 	O_CURVE		*newc,
@@ -1272,7 +1272,7 @@ EXPORT void init_curve_for_crossing(
 
 /*ARGSUSED*/
 EXPORT void set_virtual_bond_at_node(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	ORIENTATION	orient,
@@ -1319,7 +1319,7 @@ EXPORT void set_virtual_bond_at_node(
 */
 
 LOCAL void set_virtual_opp_node(
-	POINT		*p,
+	FT_POINT		*p,
 	O_CURVE		*oldc,
 	O_CURVE		*newc,
 	NODE		**opposite_node,
@@ -1389,7 +1389,7 @@ EXPORT void set_vel_of_crossing_node(
 	Front		*fr)
 {
 	RECT_GRID	*gr = fr->rect_grid;
-	POINT		p;
+	FT_POINT		p;
 	double		s1,s2;
 	double		d1[MAXD], d2[MAXD];
 	double		s1_hold[MAXD], s2_hold[MAXD];
@@ -1526,8 +1526,8 @@ EXPORT void set_vel_of_crossing_node(
 
 
 EXPORT	int set_node_velocity(
-	POINT		*newp,
-	POINT		*oldp,
+	FT_POINT		*newp,
+	FT_POINT		*oldp,
 	NODE		*newn,
 	O_CURVE		*oldc1,
 	O_CURVE		*oldc2,
@@ -1597,7 +1597,7 @@ EXPORT	int set_node_velocity(
 }		/*end set_node_velocity*/
 
 EXPORT	void reverse_states_at_point(
-	POINT		*p,
+	FT_POINT		*p,
 	Front		*fr)
 {
 	static Locstate	stmp = NULL;
@@ -1618,7 +1618,7 @@ EXPORT	int check_cross(
 	double	 s2,
 	BOND	*b2,
 	O_CURVE	*c2,
-	POINT	*pc,
+	FT_POINT	*pc,
 	double	*L,
 	double	*U,
 	int	 dim)
@@ -1675,7 +1675,7 @@ EXPORT	int check_cross(
 
 #if defined(DEBUG_CROSSING)
 LOCAL	void debug_print_improper_cross(
-	POINT		*pc,
+	FT_POINT		*pc,
 	double		s1,
 	double		s2,
 	BOND		*newb1cr,

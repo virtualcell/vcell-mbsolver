@@ -627,7 +627,7 @@ LOCAL  void  tecplot_tri_queue(
 {
 	POINTER_Q 	*q;
 	TRI_SURF 	*t_surf;
-	POINT		*p;
+	FT_POINT		*p;
 	TRI 		*tri;
 	int		k, i, cnt = 0;
  
@@ -688,7 +688,7 @@ LOCAL  void  tri_queue_test(
 {
 	POINTER_Q 	*q;
 	TRI_SURF 	*t_surf;
-	POINT		*p;
+	FT_POINT		*p;
 	TRI 		*tri;
 	int		k, i;
 	double		tst_pt[3] = {  0.0,     0.8985,                 1.47066};
@@ -774,7 +774,7 @@ LOCAL  boolean redistribute_surface_o1(
 	TRI_REDIST_PARAMS tri_params)
 {
 	INTERFACE *intfc;
-	POINT	  *midp;
+	FT_POINT	  *midp;
 	POINTER_Q *insert_queue, *delete_queue;
 	TRI	  *tri, *oppt;
 	boolean      status;
@@ -1028,7 +1028,7 @@ LOCAL boolean delete_min_side_of_tri(
 {
 	TRI	*nbtri, *t, *nbt, **tmp_tris;
 	TRI	*new_tris[500], *in_tris[200], *tris[2][100];
-	POINT	*p[4], *pt, *pmid, *plist[2][100];
+	FT_POINT	*p[4], *pt, *pmid, *plist[2][100];
 	int	i, j, k, nt, np[2], nside, ntris[2];
 	boolean	rm_flag;
 	static	int	cnt = 0;

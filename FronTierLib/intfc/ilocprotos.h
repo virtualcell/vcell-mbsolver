@@ -52,13 +52,13 @@ IMPORT	int construct_bdry_blk(BLK_CRX*,BLK_TRI*);
 
 /*	intfc.c*/
 IMPORT	CURVE	*i_read_curve(INTERFACE*,int);
-IMPORT	POINT	*i_read_print_point(INTERFACE*,const IO_TYPE*,boolean);
+IMPORT	FT_POINT	*i_read_print_point(INTERFACE*,const IO_TYPE*,boolean);
 IMPORT	NODE	*i_read_node(INTERFACE*,int);
-IMPORT	POINT	*i_read_point(INTERFACE*,int);
+IMPORT	FT_POINT	*i_read_point(INTERFACE*,int);
 IMPORT	boolean	next_hypersurface2d(INTERFACE*,HYPER_SURF**);
-IMPORT  boolean next_point1d(INTERFACE*,POINT**,
+IMPORT  boolean next_point1d(INTERFACE*,FT_POINT**,
 			  HYPER_SURF_ELEMENT**,HYPER_SURF**);
-IMPORT  boolean next_point2d(INTERFACE*,POINT**,
+IMPORT  boolean next_point2d(INTERFACE*,FT_POINT**,
 		       HYPER_SURF_ELEMENT**,HYPER_SURF**);
 IMPORT	int	i_read_print_intfc_rect_grids(const IO_TYPE*,INTERFACE*,REMAP*);
 IMPORT	int	winding_number(double*,double*,int);
@@ -67,7 +67,7 @@ IMPORT	void	i_fprint_boundary_type(FILE*,const char*,int,const char*,
                                        INTERFACE*);
 IMPORT	void	i_fprint_curve(FILE*,CURVE*);
 IMPORT	void	i_fprint_intfc_rect_grids(FILE*,INTERFACE*);
-IMPORT	void	i_fprint_point(FILE*,POINT*);
+IMPORT	void	i_fprint_point(FILE*,FT_POINT*);
 IMPORT	void	i_fprint_node(FILE*,NODE*);
 IMPORT	void	print_table(struct Table*);
 IMPORT	void	print_table_list(void);
@@ -191,7 +191,7 @@ IMPORT	void	show_COMP_3d(FILE*,INTERFACE*);
 IMPORT	SURFACE *read_print_surface(INTERFACE*,const IO_TYPE*,int,
                                     INTERFACE_ADDRESSES*,boolean);
 IMPORT	boolean	next_hypersurface3d(INTERFACE*,HYPER_SURF**);
-IMPORT	boolean	next_point3d(INTERFACE*,POINT**,HYPER_SURF_ELEMENT**,
+IMPORT	boolean	next_point3d(INTERFACE*,FT_POINT**,HYPER_SURF_ELEMENT**,
 			     HYPER_SURF**);
 IMPORT	void	copy_all_surfaces(INTERFACE*,INTERFACE*);
 IMPORT	void	fprint_tri(FILE*,TRI*,INTERFACE*);
@@ -210,7 +210,7 @@ IMPORT	boolean	i_intersections3d(INTERFACE*,CROSS**,const boolean);
 IMPORT	void	i_print_crossing_elements3d(CROSS*,INTERFACE*);
 
 /*	map.c*/
-IMPORT	boolean	is_interior_vertex(TRI*,POINT*,TRI**,INTERFACE*);
+IMPORT	boolean	is_interior_vertex(TRI*,FT_POINT*,TRI**,INTERFACE*);
 
 /*	setb3d.c*/
 

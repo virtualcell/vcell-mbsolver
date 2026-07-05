@@ -277,7 +277,7 @@ EXPORT	void i_reconstruct_interface_pointers(
 	struct Table	*ntbl = nintfc->table;
 	int		nchks = otbl->num_chunks;
 #if defined(ONED)
-	POINT		**pp;
+	FT_POINT		**pp;
 #endif /* defined(ONED) */
 	CURVE		**c;
 	NODE		**n;
@@ -307,7 +307,7 @@ EXPORT	void i_reconstruct_interface_pointers(
 
 	nintfc->num_points = ointfc->num_points;
 #if defined(ONED)
-	nintfc->points = (POINT **)new_address(nintfc,
+	nintfc->points = (FT_POINT **)new_address(nintfc,
 					       ointfc->points,ocad,ncad,nchks);
 #endif /* defined(ONED) */
 	nintfc->nodes = (NODE **)new_address(nintfc,
@@ -326,7 +326,7 @@ EXPORT	void i_reconstruct_interface_pointers(
 	/*for 3d code nintfc->points = NULL */
 	for (pp = nintfc->points; pp && *pp; pp++)
 	{
-		*pp = (POINT *)new_address(nintfc,
+		*pp = (FT_POINT *)new_address(nintfc,
 					   *pp,ocad,ncad,nchks);
 		reconstruct_point_pointers(*pp,nintfc,ointfc,ocad,ncad,nchks);
 	}
@@ -356,7 +356,7 @@ EXPORT	void i_reconstruct_interface_pointers(
 
 /*ARGSUSED*/
 EXPORT	void i_reconstruct_point_pointers(
-	POINT		*p,
+	FT_POINT		*p,
 	INTERFACE	*nintfc,
 	INTERFACE	*ointfc,
 	POINTER		*ocad,
@@ -387,7 +387,7 @@ EXPORT	void i_reconstruct_node_pointers(
 
 	n->interface = nintfc;
 	n->obj = n;
-	n->posn = (POINT *)new_address(nintfc,n->posn,ocad,ncad,nchks);
+	n->posn = (FT_POINT *)new_address(nintfc,n->posn,ocad,ncad,nchks);
 	reconstruct_point_pointers(n->posn,nintfc,ointfc,ocad,ncad,nchks);
 	n->in_curves = (CURVE **)new_address(nintfc,n->in_curves,
 					     ocad,ncad,nchks);
@@ -426,8 +426,8 @@ EXPORT	void i_reconstruct_bond_pointers(
 
 	b->next = (BOND *)new_address(nintfc,b->next,ocad,ncad,nchks);
 	b->prev = (BOND *)new_address(nintfc,b->prev,ocad,ncad,nchks);
-	b->start = (POINT *)new_address(nintfc,b->start,ocad,ncad,nchks);
-	b->end = (POINT *)new_address(nintfc,b->end,ocad,ncad,nchks);
+	b->start = (FT_POINT *)new_address(nintfc,b->start,ocad,ncad,nchks);
+	b->end = (FT_POINT *)new_address(nintfc,b->end,ocad,ncad,nchks);
 
 #if defined(THREED)
 	
@@ -577,11 +577,11 @@ LIB_LOCAL	void i_reconstruct_tri_pointers(
 	int		nchks)
 {
 	Point_of_tri(t)[0] =
-	    (POINT *)new_address(nintfc,Point_of_tri(t)[0],ocad,ncad,nchks);
+	    (FT_POINT *)new_address(nintfc,Point_of_tri(t)[0],ocad,ncad,nchks);
 	Point_of_tri(t)[1] =
-	    (POINT *)new_address(nintfc,Point_of_tri(t)[1],ocad,ncad,nchks);
+	    (FT_POINT *)new_address(nintfc,Point_of_tri(t)[1],ocad,ncad,nchks);
 	Point_of_tri(t)[2] =
-	    (POINT *)new_address(nintfc,Point_of_tri(t)[2],ocad,ncad,nchks);
+	    (FT_POINT *)new_address(nintfc,Point_of_tri(t)[2],ocad,ncad,nchks);
 	reconstruct_point_pointers(Point_of_tri(t)[0],
 				   nintfc,ointfc,ocad,ncad,nchks);
 	reconstruct_point_pointers(Point_of_tri(t)[1],

@@ -35,7 +35,7 @@ namespace {
 				//#undef INSERT
 		}
 	} boundaryTypeMap; 
-	typedef void (*PropFunc)(struct _Front*,POINTER,POINT*,POINT*, HYPER_SURF_ELEMENT*,HYPER_SURF*,double,double*);
+	typedef void (*PropFunc)(struct _Front*,POINTER,FT_POINT*,FT_POINT*, HYPER_SURF_ELEMENT*,HYPER_SURF*,double,double*);
 	struct PropagateTypeMap : public Dictionary<PropFunc> {
 		PropagateTypeMap( )  
 			:Dictionary<PropFunc>("propagate") {
@@ -75,7 +75,7 @@ namespace {
 	}
 }
 
-static void retrievePoints_2d(Front * front, vector<POINT*>& points, std::ostream & log) 
+static void retrievePoints_2d(Front * front, vector<FT_POINT*>& points, std::ostream & log)
 {
 	CURVE** curves = front->interf->curves;
 	if (curves == NULL) 
@@ -92,7 +92,7 @@ static void retrievePoints_2d(Front * front, vector<POINT*>& points, std::ostrea
 		}
 		for (BOND* bond = curve->first; bond != NULL; bond = bond->next)
 		{
-			POINT* p = bond->start;
+			FT_POINT* p = bond->start;
 			if (p != NULL)
 			{
 				points.push_back(p);
@@ -101,7 +101,7 @@ static void retrievePoints_2d(Front * front, vector<POINT*>& points, std::ostrea
 
 		if (!curve->last && !curve->last->end)
 		{
-			POINT* p = curve->last->end;
+			FT_POINT* p = curve->last->end;
 			points.push_back(p);
 		}
 		++ numCurves;
@@ -109,7 +109,7 @@ static void retrievePoints_2d(Front * front, vector<POINT*>& points, std::ostrea
 	log << "# interior curves = " <<  numCurves << std::endl;
 }
 
-void retrievePoints_3d(Front *front, vector<POINT*>& points, std::ostream &log) 
+void retrievePoints_3d(Front *front, vector<FT_POINT*>& points, std::ostream &log)
 {
 	if (front->interf->surfaces == NULL)
 	{
@@ -120,7 +120,7 @@ void retrievePoints_3d(Front *front, vector<POINT*>& points, std::ostream &log)
 	for (int i = 0; i < numSurfaces; i ++)
 	{
 		SURFACE* s = front->interf->surfaces[i];
-		POINT		*p;
+		FT_POINT		*p;
 		for (TRI* tri = first_tri(s); !at_end_of_tri_list(tri,s); tri = tri->next)
 		{
 			Index_of_point(Point_of_tri(tri)[0]) =
@@ -145,7 +145,7 @@ void retrievePoints_3d(Front *front, vector<POINT*>& points, std::ostream &log)
 
 int retrievePoints(Front * front,std::unique_ptr<double> & matrix, std::ostream &log)
 {
-	vector<POINT*> points;
+	vector<FT_POINT*> points;
 	int dim = front->rect_grid->dim;
 	if (dim == 2)
 	{
@@ -157,9 +157,9 @@ int retrievePoints(Front * front,std::unique_ptr<double> & matrix, std::ostream 
 	}
 	matrix.reset( new double[points.size() * dim] );
 	int cnt = 0;
-	for (vector<POINT*>::iterator iter = points.begin(); iter < points.end(); ++ iter)
+	for (vector<FT_POINT*>::iterator iter = points.begin(); iter < points.end(); ++ iter)
 	{
-		POINT* p = *iter;
+		FT_POINT* p = *iter;
 		double* coords = Frontier::Coords(p);
 		memcpy(matrix.get( ) + cnt * dim, Frontier::Coords(p), dim * sizeof(double));
 		++ cnt;
@@ -183,7 +183,7 @@ double level_func(POINTER func_params, double *coords)
 	return dist;
 }
 
-int velo_func(POINTER params, Front *front, POINT *p, HYPER_SURF_ELEMENT *hse,
+int velo_func(POINTER params, Front *front, FT_POINT *p, HYPER_SURF_ELEMENT *hse,
 			  HYPER_SURF *hs, double *vel)
 {	
 	double* coords = Frontier::Coords(p);

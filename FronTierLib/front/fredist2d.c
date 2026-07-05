@@ -41,7 +41,7 @@ LOCAL	boolean  attach_sink_nodes(Front*);
 LOCAL	boolean  check_for_intersections(INTERFACE*,CROSS**,const boolean);
 LOCAL	boolean  vector_wave_interaction(CROSS*);
 LOCAL	boolean  too_many_tangled_points(CROSS*,double*,int);
-LOCAL	boolean  outside_reflecting_bdry(POINT*,INTERFACE*);
+LOCAL	boolean  outside_reflecting_bdry(FT_POINT*,INTERFACE*);
 LOCAL 	boolean  topologically_close_crosses(CROSS*,CROSS*);
 LOCAL	double redistribution_spacing(BOND*,CURVE*,double,Front*);
 LOCAL	void  prepare_to_leave_redistribute2d(INTERFACE**);
@@ -1681,7 +1681,7 @@ EXPORT int join_curves_at_closed_nodes(
 }		/*end join_curves_at_closed_nodes*/
 
 LOCAL	boolean	outside_reflecting_bdry(
-	POINT 	  *p,
+	FT_POINT 	  *p,
 	INTERFACE *intfc)
 {
 	RECT_GRID *gr = computational_grid(intfc);

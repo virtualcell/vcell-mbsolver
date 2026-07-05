@@ -44,7 +44,7 @@ LOCAL	int  count_grid_intfc_crossings1d(INTERFACE*);
 LOCAL	int  count_grid_intfc_crossings2d(INTERFACE*);
 LOCAL	int  set_grid_intfc_components3d(INTERFACE*,INTERFACE*);
 LOCAL	int  set_untracked_components(INTERFACE*,INTERFACE*);
-LOCAL   int  add_crx_to_list1d(INTERFACE*,int,POINT*,int);
+LOCAL   int  add_crx_to_list1d(INTERFACE*,int,FT_POINT*,int);
 LOCAL	void show_grid_components2d(int*,int*,int,INTERFACE*);
 LOCAL	void show_grid_components3d(int*,int*,int,INTERFACE*);
 LOCAL	void print_side_crx_list(INTERFACE*,char,int,int*);
@@ -80,7 +80,7 @@ LOCAL	int set_grid_intfc_components1d(
 	double        *edges;
 	int	     xmax = gr->gmax[0];
 	int	     ix;
-	POINT	     **p, *pt;
+	FT_POINT	     **p, *pt;
 	Table	     *T = table_of_interface(grid_intfc);
 	COMPONENT    *comps = T->components;
 
@@ -1021,12 +1021,12 @@ LOCAL	void print_side_crx_list(
 
 	/* LOCAL Function Declarations */
 LOCAL	int	add_crx_to_list2d(INTERFACE*,int*,int,CROSSING_DIRECTION,
-				  POINT*,CURVE*,int*);
+				  FT_POINT*,CURVE*,int*);
 LOCAL	int	find_index_of_node(NODE*,INTERFACE*);
 LOCAL	int	grid_crossings_on_segment(INTERFACE*,double,double,double,double,
 					  int,int,int,int,double,double,double,
 					  double,CURVE*,int*,int*,RECT_GRID*,
-					  int*,POINT**);
+					  int*,FT_POINT**);
 LOCAL	int	shift_from_cell_edge(double*,int,RECT_GRID*,double);
 LOCAL	void	count_crossings(INTERFACE*,double,double,double,double,int,int,int,
 			 int,double,double,double,double,CURVE*,int*,RECT_GRID*);
@@ -1036,7 +1036,7 @@ LOCAL   int insert_grid_intfc_crossings1d(
         INTERFACE       *grid_intfc)
 {
         RECT_GRID       *rgr = &topological_grid(grid_intfc);
-        register POINT  **p;
+        register FT_POINT  **p;
         int             ic[MAXD];
         int             status;
         int             n_crx;
@@ -1094,7 +1094,7 @@ LOCAL	int insert_grid_intfc_crossings2d(
 	int		ix1,ix2,iy1,iy2;
 	double		max_lenx,max_leny;
 	int   		n_new_intfc_points = 0;
-	POINT		*new_intfc_points[50];	
+	FT_POINT		*new_intfc_points[50];
 	int		*gmax = rgr->gmax;
 				/*POTENTIAL BUG, static array size*/
 
@@ -1402,10 +1402,10 @@ LOCAL	int grid_crossings_on_segment(
 	int		*fcoc,
 	RECT_GRID	*rgr,
 	int		*n_new_intfc_points,
-	POINT		**new_intfc_points)
+	FT_POINT		**new_intfc_points)
 {
 	register int	ix, iy;
-	register POINT	*p_h, *p_v;
+	register FT_POINT	*p_h, *p_v;
 
 	double	           p3[MAXD], x_h, y_h, x_v, y_v;
 	double	           coords_h[MAXD], coords_v[MAXD];
@@ -1814,7 +1814,7 @@ LOCAL	int add_crx_to_list2d(
 	int		   *n_crx,
 	int		   msk,
 	CROSSING_DIRECTION dir,
-	POINT		   *p,
+	FT_POINT		   *p,
 	CURVE		   *cur,
 	int		   *First_cross_on_curve)
 {
@@ -2296,7 +2296,7 @@ LOCAL   int count_grid_intfc_crossings1d(
         INTERFACE       *grid_intfc)
 {
         RECT_GRID       *rgr = &topological_grid(grid_intfc);
-        register POINT  **p;
+        register FT_POINT  **p;
         int             ic[MAXD];
         Table           *T = table_of_interface(grid_intfc);
         int             n_crx = 0;
@@ -2333,7 +2333,7 @@ LOCAL   int count_grid_intfc_crossings1d(
 LOCAL   int add_crx_to_list1d(
         INTERFACE       *grid_intfc,
         int             n_crx,
-        POINT           *p,
+        FT_POINT           *p,
         int             ix)
 {
         register CRXING *cross;
@@ -2396,7 +2396,7 @@ EXPORT void adjust_grid_intfc_points(INTERFACE *intfc)
 	RECT_GRID *gr = &topological_grid(intfc);
 	double *L = gr->L;
 	double *h = gr->h;
-	POINT *p;
+	FT_POINT *p;
         HYPER_SURF *hs;
         HYPER_SURF_ELEMENT *hse;
 	int icoords[MAXD];

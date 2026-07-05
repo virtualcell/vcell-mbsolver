@@ -49,9 +49,9 @@ LOCAL	C_CURVE	**sort_cross_curves(C_CURVE**,INTERFACE*);
 LOCAL	boolean	next_adjacent(C_BOND*,C_BOND*);
 LOCAL	boolean	plane_segments_cross(double*,double*,double*,double*);
 LOCAL	boolean	prev_adjacent(C_BOND*,C_BOND*);
-LOCAL	boolean    same_cb_pt(POINT*,POINT*);
-LOCAL	void	substitute_a_point(POINT*,TRI*,int,INTERFACE*);
-LOCAL	void    substitute_a_point_on_surface(POINT*,POINT*,TRI*,TRI***,
+LOCAL	boolean    same_cb_pt(FT_POINT*,FT_POINT*);
+LOCAL	void	substitute_a_point(FT_POINT*,TRI*,int,INTERFACE*);
+LOCAL	void    substitute_a_point_on_surface(FT_POINT*,FT_POINT*,TRI*,TRI***,
 	                                      INTERFACE*);
 LOCAL	void	show_crossing_tris(const char*,TRI*,TRI*,C_BOND*,INTERFACE*);
 
@@ -469,7 +469,7 @@ LOCAL C_BOND *test_cross(
 	INTERFACE *intfc)
 {
 	C_BOND      *new_cb,**cbs;
-	POINT       *q[3]; 
+	FT_POINT       *q[3];
 	double  	    line[MAXD];     /* intersection line of t0, t1 planes */
 	const double *tnor;
 
@@ -534,7 +534,7 @@ LOCAL C_BOND *test_cross(
 	num_com_vertex = 0;
 	for (i = 0; i < 3; ++i)
 	{
-	    POINT *p = Point_of_tri(t0)[i];
+	    FT_POINT *p = Point_of_tri(t0)[i];
 		
 	    p_of_t0[i] = Coords(p);
 	    for (j = 0; j < 3; ++j)
@@ -1232,7 +1232,7 @@ LOCAL C_BOND *test_coplanar_cross(
 	INTERFACE *intfc)
 {
 	C_BOND      *cb;
-	POINT       *pt, *ps, *pe, **pt0, **pt1;
+	FT_POINT       *pt, *ps, *pe, **pt0, **pt1;
 	double       *p[6], pbar[3], lambda[3], *r[3], r0[3], r1[3], r2[3];
 	double       p0[3], p1[3], v0[6], v1[6], ds[3], dn[3];
 	double       nor[3], nor0[3], nor1[3];
@@ -1477,8 +1477,8 @@ LOCAL	boolean plane_segments_cross(
 
 EXPORT	C_BOND	*i_CBond(
 	C_BOND *cb,
-	POINT  *start,
-	POINT  *end,
+	FT_POINT  *start,
+	FT_POINT  *end,
 	TRI    *t1,
 	TRI    *t2)
 {
@@ -1727,7 +1727,7 @@ LOCAL   boolean  prev_adjacent(
 	C_BOND *head)
 {
 	C_SURF      cs_tmp;
-	POINT       *p_tmp;
+	FT_POINT       *p_tmp;
 	TRI         *t_tmp;
 	C_SURF_FLAG flag_tmp;
 
@@ -1797,7 +1797,7 @@ LOCAL   boolean  next_adjacent(
 	C_BOND *tail)
 {
 	C_SURF      cs_tmp;
-	POINT       *p_tmp;
+	FT_POINT       *p_tmp;
 	TRI         *t_tmp;
 	C_SURF_FLAG flag_tmp;
 
@@ -1850,8 +1850,8 @@ LOCAL   boolean  next_adjacent(
 }		/*end next_adjacent*/
 
 LOCAL	boolean same_cb_pt(
-	POINT *p1,
-	POINT *p2)
+	FT_POINT *p1,
+	FT_POINT *p2)
 {
 	if (p1 == p2)
 	    return YES;
@@ -1871,12 +1871,12 @@ LOCAL	boolean same_cb_pt(
 */
 
 LOCAL  void  substitute_a_point(
-	POINT     *p,
+	FT_POINT     *p,
 	TRI       *tri,
 	int       index,
 	INTERFACE *intfc)
 {
-	POINT  		*old_p;
+	FT_POINT  		*old_p;
 	BOND_TRI 	**bt;
 	TRI 		*t_begin, *t, **tri_list = NULL, **tl;
 	boolean		break_bt;
@@ -1991,8 +1991,8 @@ LOCAL  void  substitute_a_point(
 */
 
 LOCAL  void  substitute_a_point_on_surface(
-	POINT     *p,
-	POINT     *old_p,
+	FT_POINT     *p,
+	FT_POINT     *old_p,
 	TRI       *t,
 	TRI       ***tri_list,
 	INTERFACE *intfc)

@@ -52,9 +52,9 @@ LOCAL	boolean	matchable_comps(COMPONENT,COMPONENT,INTERFACE*);
 
 /*ARGSUSED*/
 EXPORT boolean points_in_strict_order(
-	POINT		*p1,
+	FT_POINT		*p1,
 	BOND		*b1,
-	POINT		*p2,
+	FT_POINT		*p2,
 	BOND		*b2,
 	int		dim)
 {
@@ -96,7 +96,7 @@ EXPORT boolean bonds_in_strict_order(
 
 /*ARGSUSED*/
 EXPORT void set_point_of_bond(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	ORIENTATION	orient,
 	int		dim)
@@ -114,7 +114,7 @@ EXPORT void set_point_of_bond(
 EXPORT	void invert_bond(
 	BOND		*b)
 {
-	POINT		*ptmp;
+	FT_POINT		*ptmp;
 	BOND		*btmp;
 
 	ptmp = b->start;	b->start = b->end;	b->end = ptmp;
@@ -359,7 +359,7 @@ EXPORT CURVE *adjacent_curve(
 	NODE	   *n = Node_of(curve,c_orient);
 	CURVE	   **c,*ans = NULL;
 	BOND	   *b = Bond_at_node(curve,c_orient);
-	POINT	   *p;
+	FT_POINT	   *p;
 	COMPONENT  test_comp;
 	double	   t1[MAXD], t2[MAXD];
 	double	   sin12,cos12,oldsin12,oldcos12;
@@ -520,7 +520,7 @@ LIB_LOCAL 	CURVE *adjacent_curve_along_surface(
 	CURVE		**c, *ans;
 	CURVE		**curves;
 	BOND		*b;
-	POINT		*p;
+	FT_POINT		*p;
 	double		t1[MAXD], t2[MAXD], v[MAXD];
 	int		i, j;
 	ORIENTATION	orient;
@@ -931,7 +931,7 @@ EXPORT	int num_points_on_curve(
 	
 EXPORT	CURVE *i_attach_curve_to_node(
 	CURVE		*c1,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	NODE		*n)
 {
@@ -1127,7 +1127,7 @@ EXPORT int num_curves_at_node(
 */
 
 EXPORT void i_cut_curve(
-	POINT           *newp,
+	FT_POINT           *newp,
 	BOND            *bcut,
 	CURVE           *c,
 	ORIENTATION     orient)
@@ -1257,7 +1257,7 @@ EXPORT O_NODE *make_onode(
 
 	onode->nc     = (CURVE **) Store(num_curves * sizeof(CURVE *));
 	onode->nopp   = (NODE **)  Store(num_curves * sizeof(NODE *));
-	onode->pt     = (POINT **) Store(num_curves * sizeof(POINT *));
+	onode->pt     = (FT_POINT **) Store(num_curves * sizeof(FT_POINT *));
 	onode->ang    = (double *)  Store(num_curves * FLOAT);
 	onode->orient = (ORIENTATION *)    Store(num_curves * INT);
 
@@ -1285,7 +1285,7 @@ EXPORT	void print_onode_list(
 EXPORT	void print_onode(
 	O_NODE		*on)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	int		i, dim;
 
 	if (on == NULL)
@@ -1339,7 +1339,7 @@ LIB_LOCAL void set_curves_at_onode(
 	double		a;
 	double		*np;
 	NODE		*m;
-	POINT		*p;
+	FT_POINT		*p;
 	CURVE		*c1;
 	ORIENTATION	orient;
 	int		num_curves;
@@ -1407,8 +1407,8 @@ LIB_LOCAL void set_curves_at_onode(
 */
 
 EXPORT	int intersect_ray_with_sector(
-	POINT		*pt0,
-	POINT		*pt1,
+	FT_POINT		*pt0,
+	FT_POINT		*pt1,
 	double		*t0,
 	double		**t1,
 	double		*coords,
@@ -1524,14 +1524,14 @@ EXPORT	int intersect_ray_with_sector(
 */
 /*TODO: Upgrade to 3D (...ray_with_hypersurface) */
 EXPORT	int intersect_ray_with_curve(
-	POINT		*pt,
+	FT_POINT		*pt,
 	double		*v,
 	BOND		*bs,
 	BOND		*be,
 	CURVE		*c,
 	ORIENTATION	c_orient,
 	BOND		**bint,
-	POINT		*pint)
+	FT_POINT		*pint)
 {
 	BOND		*bb;
 	double		s, t, tmin;
@@ -2056,7 +2056,7 @@ EXPORT	void plot_interface(
 EXPORT  void invert_tri(
         TRI *tri)
 {
-        POINT *ptmp;
+        FT_POINT *ptmp;
         TRI_NEIGHBOR nb_tmp;
         ptmp = Point_of_tri(tri)[1];
         Point_of_tri(tri)[1] = Point_of_tri(tri)[2];

@@ -66,7 +66,7 @@ LOCAL	void	move_node(NODE*,double*);
 */
 
 EXPORT	void find_tangent_to_curve(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	ORIENTATION	orient,
@@ -159,7 +159,7 @@ EXPORT	void find_tangent_to_curve(
  	|| (orient == NEGATIVE_ORIENTATION && p == b->end))
 
 EXPORT void bond_secant_to_curve(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	ORIENTATION	orient,
@@ -363,7 +363,7 @@ no_continuation:
 */
 
 EXPORT	void find_secant_to_curve(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c,
 	ORIENTATION	orient,
@@ -475,7 +475,7 @@ EXPORT void find_propagation_orientation(
 	POINTER		wave,
 	NODE		*oldn,
 	NODE		*newn,
-	POINT           *newp,
+	FT_POINT           *newp,
 	O_CURVE		*oldcinc,
 	double		dt,
 	ANGLE_DIRECTION	*i_to_prop_dir,
@@ -495,7 +495,7 @@ EXPORT void find_propagation_orientation(
 
 	if (newp == NULL)
 	{
-	    static POINT *newp_store = NULL;
+	    static FT_POINT *newp_store = NULL;
 	    if (newp_store == NULL)
 	        newp_store = Static_point(fr->interf);
 	    newp = newp_store;
@@ -564,7 +564,7 @@ EXPORT void find_propagation_orientation(
 
 EXPORT	SIDE	find_propagation_side(
 	O_CURVE *cahead,
-	POINT   *newp,
+	FT_POINT   *newp,
 	SIDE    inc_side,
 	Front   *fr)
 {
@@ -595,7 +595,7 @@ EXPORT ANGLE_DIRECTION f_find_i_to_prop_dir(
 	ORIENTATION	c_orient,
 	double		dt,
 	COMPONENT	*ahead_comp,
-	POINT		*newp,
+	FT_POINT		*newp,
 	double		*V)
 {
 	double		nor[MAXD], dp[MAXD];
@@ -676,7 +676,7 @@ EXPORT	CURVE *find_physical_curve_at_node(
 
 
 EXPORT void cut_curve(
-	POINT		*newp,
+	FT_POINT		*newp,
 	BOND		*bcut,
 	CURVE		*c,
 	ORIENTATION	orient,
@@ -786,7 +786,7 @@ EXPORT void cut_curve(
 
 
 EXPORT void shift_node(
-	POINT		*newp,
+	FT_POINT		*newp,
 	BOND		*bshift,
 	CURVE		*c1,
 	ORIENTATION	c1_orient,
@@ -801,8 +801,8 @@ EXPORT void shift_node(
 {
 	double		*h = fr->rect_grid->h;
 	double		min_sc_sep = MIN_SC_SEP(fr->interf);
-	POINT		*oldp,*transfer_point;
-	POINT		*p1, *p2;
+	FT_POINT		*oldp,*transfer_point;
+	FT_POINT		*p1, *p2;
 	BOND		*b1,*b2,*bshift_follower;
 	INTERFACE	*save_intfc;
 	INTERFACE	*intfc = c2->interface;
@@ -1027,7 +1027,7 @@ EXPORT void shift_node(
 */
 
 EXPORT void shift_node_past(
-	POINT		*newp,
+	FT_POINT		*newp,
 	BOND		*bshift,
 	CURVE		*c1,
 	ORIENTATION	c1_orient,
@@ -1050,7 +1050,7 @@ EXPORT void shift_node_past(
 	CURVE		*adjc;
 	ORIENTATION	adjc_orient;
 	BOND		*b;
-	POINT		*endpt_nextbc;
+	FT_POINT		*endpt_nextbc;
 	COMPONENT	exterior_c1_comp;
 	double		*h = fr->rect_grid->h;
 	double		min_sc_sep = MIN_SC_SEP(fr->interf);
@@ -1453,7 +1453,7 @@ EXPORT	int	bdry_node_type(
 */
 
 EXPORT void assign_interacting_states(
-	POINT		*p,
+	FT_POINT		*p,
 	CURVE		*c,
 	ORIENTATION	orient,
 	Front		*fr,
@@ -1461,7 +1461,7 @@ EXPORT void assign_interacting_states(
 	Locstate	right_st)
 {
 	BOND		*b;
-	POINT		*bpoint;
+	FT_POINT		*bpoint;
 	ORIENTATION	opp_orient = Opposite_orient(orient);
 	
 	debug_print("assign_interacting_states",
@@ -1535,7 +1535,7 @@ EXPORT void assign_interacting_states(
 */
 
 EXPORT void insert_point_adjacent_to_node(
-	POINT		*p,
+	FT_POINT		*p,
 	CURVE		*c,
 	ORIENTATION	c_orient)
 {
@@ -1789,7 +1789,7 @@ EXPORT boolean f_check_delete_redundant_node(
 */
 
 EXPORT	void find_tangent_to_propagated_curve(
-	POINT		*newp,
+	FT_POINT		*newp,
 	BOND		*newb,
 	O_CURVE		*oldc,
 	O_CURVE		*newc,
@@ -1799,7 +1799,7 @@ EXPORT	void find_tangent_to_propagated_curve(
 	double		dt)
 {
 	BOND		*bindex, *follower;
-	POINT		*end_pt;
+	FT_POINT		*end_pt;
 	double		scaled_length;
 	double		*h = fr->rect_grid->h;
 	double		V[MAXD];
@@ -1821,7 +1821,7 @@ EXPORT	void find_tangent_to_propagated_curve(
 	if ((follower == NULL) && 
 	    (propagation_status(Opp_node_of_o_curve(newc)) != PROPAGATED_NODE))
 	{
-	    static	POINT	*ptmp = NULL;
+	    static	FT_POINT	*ptmp = NULL;
 		
 	    if (ptmp == NULL)
 	        ptmp = Static_point(fr->interf);
@@ -1873,7 +1873,7 @@ EXPORT	void propagated_tangent_bond_at_node(
 	RECT_GRID	*gr = fr->rect_grid;
 	double		*h = gr->h;
 	double		V[MAXD],psave[MAXD],scaled_length;
-	POINT		*oldp = Node_of(curve,curve_orient)->posn;
+	FT_POINT		*oldp = Node_of(curve,curve_orient)->posn;
 	BOND		*oldb = Bond_at_node(curve,curve_orient);
 	int		i, dim = gr->dim;
 
@@ -1959,7 +1959,7 @@ EXPORT	int modify_B_node(
 	O_CURVE		*newcbehind,
 	O_CURVE		*oldcbprop,
 	O_CURVE		*newcbprop,
-	POINT		*pc,
+	FT_POINT		*pc,
 	BOND		*crossbphys,
 	BOND		*crossbahead,
 	ANGLE_DIRECTION	i_to_prop_dir,
@@ -1977,7 +1977,7 @@ EXPORT	int modify_B_node(
 	double		V[MAXD];
 	static Locstate	left_st_a = NULL, right_st_a = NULL;
 	static Locstate	left_st_p = NULL, right_st_p = NULL;
-	static POINT	*p2 = NULL;
+	static FT_POINT	*p2 = NULL;
 
 	debug_print("B_node","Entered modify_B_node()\n");
 	if (p2 == NULL) 

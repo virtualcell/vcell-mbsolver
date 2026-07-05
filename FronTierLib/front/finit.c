@@ -56,14 +56,14 @@ LOCAL	void	init_redistribution_frequency(INIT_DATA*);
 LOCAL	void	set_redistribution_frequency(INIT_DATA*,Front*);
 
 LOCAL void	init_1d_front_states(Front*,INIT_DATA*,
-				     void(*)(POINT*,HYPER_SURF_ELEMENT*,
+				     void(*)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					     HYPER_SURF*,Locstate,Locstate,
 					     INIT_DATA*));
 
 LOCAL	void	f_init_curve_redistribution_parameters(INIT_DATA*,Front*);
 LOCAL	void	f_prompt_for_curve_redist_options(INIT_DATA*);
 LOCAL 	void	init_2d_front_states(Front*,INIT_DATA*,
-				     void (*)(POINT*,HYPER_SURF_ELEMENT*,
+				     void (*)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					      HYPER_SURF*,Locstate,Locstate,
 					      INIT_DATA*));
 LOCAL 	void    set_boundary_node_type(NODE*,INTERFACE*);
@@ -73,7 +73,7 @@ LOCAL 	void 	FT_InitIntfc3d(Front*,LEVEL_FUNC_PACK*);
 
 LOCAL	void	f_init_surface_redistribution_parameters(INIT_DATA*,Front*);
 LOCAL	void    init_3d_front_states(Front*,INIT_DATA*,
-				     void (*)(POINT*,HYPER_SURF_ELEMENT*,
+				     void (*)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					      HYPER_SURF*,Locstate,Locstate,
 					      INIT_DATA*));
 LOCAL	void	f_prompt_for_surface_redist_options(INIT_DATA*);
@@ -1431,7 +1431,7 @@ LOCAL void f_init_surface_redistribution_parameters(
 EXPORT void init_front_states(
 	Front		*front,
 	INIT_DATA	*init,
-	void		(*front_initializer)(POINT*,HYPER_SURF_ELEMENT*,
+	void		(*front_initializer)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					     HYPER_SURF*,Locstate,Locstate,
 					     INIT_DATA*))
 {
@@ -1455,11 +1455,11 @@ EXPORT void init_front_states(
 LOCAL void init_1d_front_states(
 	Front		*front,
 	INIT_DATA	*init,
-	void		(*front_initializer)(POINT*,HYPER_SURF_ELEMENT*,
+	void		(*front_initializer)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					     HYPER_SURF*,Locstate,Locstate,
 					     INIT_DATA*))
 {
-	POINT		**p;
+	FT_POINT		**p;
 	INTERFACE	*intfc = front->interf;
 
 	debug_print("init","Entered init_1d_front_states()\n");
@@ -1484,7 +1484,7 @@ LOCAL void init_1d_front_states(
 LOCAL void init_2d_front_states(
 	Front		*front,
 	INIT_DATA	*init,
-	void		(*front_initializer)(POINT*,HYPER_SURF_ELEMENT*,
+	void		(*front_initializer)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					     HYPER_SURF*,Locstate,Locstate,
 					     INIT_DATA*))
 {
@@ -1531,11 +1531,11 @@ LOCAL void init_2d_front_states(
 LOCAL void init_3d_front_states(
 	Front		*front,
 	INIT_DATA	*init,
-	void		(*front_initializer)(POINT*,HYPER_SURF_ELEMENT*,
+	void		(*front_initializer)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					     HYPER_SURF*,Locstate,Locstate,
 					     INIT_DATA*))
 {
-	POINT		*p;
+	FT_POINT		*p;
 	CURVE		**c;
 	HYPER_SURF_ELEMENT *hse;
 	HYPER_SURF	*hs;
@@ -1780,7 +1780,7 @@ LOCAL   void FT_InitIntfc1d(
 	RECT_GRID *gr = front->rect_grid;
 	INTERFACE *intfc = front->interf;
         double **points = level_func_pack->point_array;
-        POINT *p;
+        FT_POINT *p;
         const double eps = 10.0*MACH_EPS;
 
 	if (level_func_pack->num_points == 1 &&

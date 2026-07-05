@@ -17,14 +17,14 @@ typedef  struct {
 typedef  struct {
 	TRI		**tris;
 	int		*sides;
-	POINT		**pts;
+	FT_POINT		**pts;
 	int		n_sides;
 	double		*tnor;
 	ORIENTATION	orient;
 	int		max_side;
 }	NULL_LOOP;
 
-LOCAL	boolean	apply_pt_constraint(POINT*,POINT*,POINT*,TRI*);
+LOCAL	boolean	apply_pt_constraint(FT_POINT*,FT_POINT*,FT_POINT*,TRI*);
 LOCAL  	boolean    null_side_tris_loop(NULL_LOOP*,TRI*,int,ORIENTATION);
 LOCAL	int 	compare_tri_sort(const void*,const void*);
 
@@ -40,7 +40,7 @@ EXPORT	void	centroid_of_tri(
 	TRI	*tri)
 {
 	int	i, j;
-	POINT	**p = Point_of_tri(tri);
+	FT_POINT	**p = Point_of_tri(tri);
 	
 	for(j=0; j<3; j++)
 	    cen[j] = 0.0;
@@ -58,7 +58,7 @@ EXPORT	boolean point_in_crx_tri(
         double *p,
 	TRI   *tri)
 {
-	POINT		**pt;
+	FT_POINT		**pt;
         int		i;
 	const double	*n;
 	double		v[3], norm[3], D;
@@ -142,7 +142,7 @@ EXPORT  boolean two_tris_share_side(
 	int side)
 {
         int	i;
-	POINT	**p1, **p2;
+	FT_POINT	**p1, **p2;
 
 	p1 = Point_of_tri(tri1);
 	p2 = Point_of_tri(tri2);
@@ -161,7 +161,7 @@ EXPORT	boolean two_tris_share_pts(
 	int side)
 {
 	int	i;
-	POINT	**p1, **p2;
+	FT_POINT	**p1, **p2;
 
 	p1 = Point_of_tri(tri1);
 	p2 = Point_of_tri(tri2);
@@ -179,7 +179,7 @@ EXPORT	boolean tris_with_pt_inside(
 	TRI *tri2,
 	int side)
 {
-	POINT	**p;
+	FT_POINT	**p;
 
 	p = Point_of_tri(tri2);
 	if( point_in_crx_tri(Coords(p[Next_m3(side)]), tri1) ||
@@ -364,7 +364,7 @@ EXPORT	boolean	test_tris_intersection(
 	double		n[3], plane[4];
 	double		ps1[3], pe1[3], ps2[3], pe2[3], pi[3];
 	double		de1, ds2, de2;
-	POINT		*p;
+	FT_POINT		*p;
 
 	/*(1) test if two tris are adjacent. */
 	for(i=0; i<3; i++)
@@ -1457,7 +1457,7 @@ EXPORT	boolean sep_common_point_from_loop(
 	int	i,j,k,kt,nt, n_nbtris;
 	int	num_tri_lists;
 	double	tcen[3], cen[3];
-	POINT	*p, *newp;
+	FT_POINT	*p, *newp;
 	TRI	*tri, *tri_in, **tri_lists[MAX_TRI_LISTS], **ptris;
 	boolean	sep_comm_flag; 
 	/*if there are seperated tri_lists, sep_comm_flag will be YES; */
@@ -1649,7 +1649,7 @@ EXPORT	boolean sep_common_point_from_loop(
 	return sep_comm_flag;
 }
 
-boolean	sep_common_edge_from_loop(TRI**,TRI**,int*,POINT**,int,INTERFACE*);
+boolean	sep_common_edge_from_loop(TRI**,TRI**,int*,FT_POINT**,int,INTERFACE*);
 
 /*assume the point on the ending of null sides are not boundary points */
 /*tris form a loop and it is called after sep_common_point_from_loop. */
@@ -1657,14 +1657,14 @@ EXPORT	boolean sep_common_edge_from_loop(
 	TRI		**new_tris,
 	TRI		**tris,
 	int		*sides,
-	POINT		**pts,
+	FT_POINT		**pts,
 	int		num_tris,
 	INTERFACE	*intfc)
 {
 	int	i, j, k, kt;
 	int	iv, iv1, iv2, nt;
 	double	*pc;
-	POINT	*p, *pt, *p0, *ptmp;
+	FT_POINT	*p, *pt, *p0, *ptmp;
 	TRI	*tri, *tri1, *tri2, **ptris;
 
 	DEBUG_ENTER(sep_common_edge_from_loop)
@@ -1781,7 +1781,7 @@ EXPORT	int	sep_common_edge_from_tris(
 {
 	int		i,k;
 	TRI		*tri, **null_tris, *new_null_tris[2];
-	POINT		**pts;
+	FT_POINT		**pts;
 	NULL_LOOP	null_loop;
 	double		*tnor;
 	int		*null_sides, num_null_tris;
@@ -1953,16 +1953,16 @@ LOCAL	boolean	add_to_tri_pairs(
 }
 
 LOCAL  boolean  check_adjecant_constrain(
-	POINT	*p0,
-	POINT	*p1,
-	POINT	*p2,
-	POINT	*p3, 
+	FT_POINT	*p0,
+	FT_POINT	*p1,
+	FT_POINT	*p2,
+	FT_POINT	*p3,
 	TRI	**new_tris, 
 	int	num_new_tris)
 {
 	int	i, j;
 	TRI	*tri;
-	POINT	*pt, *ptn;
+	FT_POINT	*pt, *ptn;
 	boolean	status_in, status_out;
 
 	status_in = NO;
@@ -2006,7 +2006,7 @@ LOCAL	boolean	make_tri_pairs_with_constraint(
 	TRI	*in_tri, *out_tri;
 	int	in_side, out_side, num_new, i;
 	SURFACE	*surf;
-	POINT	*p0, *p1, *p2, *p3;
+	FT_POINT	*p0, *p1, *p2, *p3;
 
 	out_tri = tri_pair->tri1;
 	out_side = tri_pair->side1;
@@ -2180,13 +2180,13 @@ LOCAL	boolean null_side_tris_loop(
 	int		start_side,
 	ORIENTATION	orient)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	int		i, j, side, num_sides;
 	TRI		*next_tri = start;
 	double		v1[3],v2[3],cprod[3];
 	static TRI	**null_tris = NULL;
 	static int	*null_sides =  NULL;
-	static POINT	**pts;
+	static FT_POINT	**pts;
 	static double	normal[3];
 
 	DEBUG_ENTER(null_side_tris_loop)
@@ -2195,7 +2195,7 @@ LOCAL	boolean null_side_tris_loop(
 	{
 	    uni_array(&null_tris,MAX_NULL_SIDE_LOOP,sizeof(TRI*));
 	    uni_array(&null_sides,MAX_NULL_SIDE_LOOP,INT);
-	    uni_array(&pts,MAX_NULL_SIDE_LOOP,sizeof(POINT*));
+	    uni_array(&pts,MAX_NULL_SIDE_LOOP,sizeof(FT_POINT*));
 	}
 
 	next_tri = start;
@@ -2296,7 +2296,7 @@ EXPORT	boolean	seal_degenerated_null_loop(
 	NULL_LOOP	*null_loop)
 {
 	TRI		*new_tri, **tris;
-	POINT		**pts;
+	FT_POINT		**pts;
 	SURFACE		*surf;
 	int		num_tris;
 
@@ -2395,7 +2395,7 @@ EXPORT	void  seal_null_loop_in_center(
 	int		i, j, side;
 	int		n_sides, *null_sides;
 	double		avep[3];
-	POINT		*midp, *pt, *ptn, **pts;
+	FT_POINT		*midp, *pt, *ptn, **pts;
 	TRI		*tri, *new_tri, *new_tri1, *prev_tri, **null_tris;
 	SURFACE		*surf;
 
@@ -2470,9 +2470,9 @@ EXPORT	void  seal_null_loop_in_center(
 
 
 LOCAL	boolean	apply_pt_constraint(
-	POINT	*p0,
-	POINT	*p1,
-	POINT	*p2,
+	FT_POINT	*p0,
+	FT_POINT	*p1,
+	FT_POINT	*p2,
 	TRI	*tri)
 {
 	double		d0, d1, d2, dmin;
@@ -2520,7 +2520,7 @@ LOCAL	void	seal_null_loop_with_triangulation(
 	int		i, side, nside, i_base, i_in;
 	int		num_null_sides, new_num_null_sides, *null_sides;
 	double		dist, min_dist;
-	POINT		*p0, *p1, *p2;
+	FT_POINT		*p0, *p1, *p2;
 	TRI		*base_tri, *in_tri, *new_tri, **null_tris;
 	SURFACE		*surf;
 
@@ -2606,7 +2606,7 @@ LOCAL	void	seal_null_loop_with_triangulation(
 
 
 #define  LOOP_SMOOTH_PARA	100
-boolean	compute_smooth_para(SMOOTH_PARA*,POINT*,TRI*,SURFACE*,SMOOTH_TOL*);
+boolean	compute_smooth_para(SMOOTH_PARA*,FT_POINT*,TRI*,SURFACE*,SMOOTH_TOL*);
 void	compute_point_smooth(SMOOTH_PARA*,SMOOTH_TOL*,INTERFACE*);
 	
 EXPORT	void  smooth_null_tris_loop(
@@ -2615,7 +2615,7 @@ EXPORT	void  smooth_null_tris_loop(
 	int		i, j, num;
 	int		*null_sides, num_null_sides;
 	TRI		*tri, **null_tris;
-	POINT		*p, **pts;
+	FT_POINT		*p, **pts;
 	SURFACE		*s;
 	SMOOTH_PARA	smooth_que[LOOP_SMOOTH_PARA];
 	SMOOTH_TOL	stol;
@@ -2671,7 +2671,7 @@ EXPORT	int	seal_all_loops_wo_constraint(
 	boolean		seal_deg)
 {
 	TRI		**null_tris, *tri;
-	POINT		**pts;
+	FT_POINT		**pts;
 	int		num_tris, *null_sides;
 	double		*tnor;
 	NULL_LOOP	null_loop;
@@ -2748,7 +2748,7 @@ EXPORT	int	seal_all_loops_wo_constraint(
 
 
 EXPORT	boolean	check_valid_point(
-	POINT		*p,
+	FT_POINT		*p,
 	TRI		*tri_in,
 	TRI		**tris,
 	int		nt,
@@ -2756,7 +2756,7 @@ EXPORT	boolean	check_valid_point(
 {
 	int	k, m, n, np, ntris;
 	TRI	*tri, **ptris;
-	POINT	*plist[50];
+	FT_POINT	*plist[50];
 
 	ntris = set_tri_list_around_point(p,tri_in,&ptris,intfc);
 
@@ -2812,7 +2812,7 @@ EXPORT	boolean	check_valid_tris(
 	INTERFACE	*intfc)
 {
 	int	i, j;
-	POINT	*p;
+	FT_POINT	*p;
 	boolean	status;
 
 	status = YES;
@@ -2848,7 +2848,7 @@ EXPORT	boolean	check_valid_intfc(
 	INTERFACE	*intfc)
 {
 	int			ix, iy, iz, nt, ip[3];
-	POINT			*p;
+	FT_POINT			*p;
 	TRI			**tris;
 	HYPER_SURF              *hs;
         HYPER_SURF_ELEMENT      *hse;
@@ -2897,7 +2897,7 @@ EXPORT	void	compute_point_smooth(
 	SMOOTH_TOL	*stol,
 	INTERFACE	*intfc)
 {
-	POINT	*p = smooth_para->pt;
+	FT_POINT	*p = smooth_para->pt;
 	TRI	*tri = smooth_para->tri, **ptris;
 	double	alpha = stol->alpha;
 	double	avep[3];

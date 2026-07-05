@@ -916,7 +916,7 @@ LOCAL   void  tecplot_tri_queue(
 {
         POINTER_Q 	*q;
 	TRI_SURF 	*t_surf;
-	POINT		*p;
+	FT_POINT		*p;
 	TRI 		*tri;
 	int		k, i, cnt = 0;
  
@@ -977,7 +977,7 @@ LOCAL   void  tri_queue_test(
 {
         POINTER_Q 	*q;
 	TRI_SURF 	*t_surf;
-	POINT		*p;
+	FT_POINT		*p;
 	TRI 		*tri;
 	int		k, i;
 	double		tst_pt[3] = {  0.0,     0.8985,                 1.47066};
@@ -1029,7 +1029,7 @@ EXPORT  boolean redistribute_surface_o2(
 	HYPER_SURF_ELEMENT *hse;
 
 	INTERFACE *intfc;
-	POINT	  *midp, *p;
+	FT_POINT	  *midp, *p;
 	POINTER_Q *insert_queue, *delete_queue;
 	TRI	  *tri, *oppt;
 	boolean      status;
@@ -1285,7 +1285,7 @@ LOCAL   boolean delete_min_side_of_tri_o2(
 {
 	TRI	*nbtri, *t, *nbt, **tmp_tris;
 	TRI	*new_tris[500], *in_tris[200], *tris[2][100];
-	POINT	*p[4], *pt, *pmid, *plist[2][100];
+	FT_POINT	*p[4], *pt, *pmid, *plist[2][100];
 	int	i, j, k, nt, np[2], nside, ntris[2];
 	boolean	rm_flag;
 	static	int	cnt = 0;
@@ -1618,9 +1618,9 @@ void  quadratic_mid_point_on_edge3d(
 	int ring)
 {
             int np1, np2, npts1, npts2;
-	    POINT *pts1[MAX_RING_PTS], *pts2[MAX_RING_PTS];
+	    FT_POINT *pts1[MAX_RING_PTS], *pts2[MAX_RING_PTS];
 	    double ngbpts1[MAX_RING_PTS][3], ngbpts2[MAX_RING_PTS][3];
-	    POINT *p;
+	    FT_POINT *p;
 	    double nrms1[MAX_RING_PTS][3],nrms2[MAX_RING_PTS][3];
 	    int i;
 

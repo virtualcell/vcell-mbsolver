@@ -762,7 +762,7 @@ LOCAL	int construct_comp2_blk2d(
 	CURVE 	  *c = blk_crx->blk_info->curves[0];
 	COMPONENT left_c  = negative_component(c);
 	COMPONENT right_c = positive_component(c);
-	POINT	  *p1,*p2;
+	FT_POINT	  *p1,*p2;
 
 	if (blk_crx->nv[0] == 1)
 	{
@@ -922,7 +922,7 @@ EXPORT 	CURVE *prompt_make_linear_curve(
 {
 	INTERFACE       *infc;
 	double coords1[2],coords2[2],coords[2];
-	POINT *p1,*p2;
+	FT_POINT *p1,*p2;
 	NODE *ns,*ne;
 	CURVE *curve;
 	COMPONENT left_c,right_c;

@@ -68,7 +68,7 @@ EXPORT boolean i_set_boundary1d(
 	int		outside;	/* Component Number of Exterior */
 	double		*L = gr->VL;
 	double		*U = gr->VU;
-	POINT		*pt, *pointl, *pointr;
+	FT_POINT		*pt, *pointl, *pointr;
 
 	DEBUG_ENTER(i_set_boundary1d)
 

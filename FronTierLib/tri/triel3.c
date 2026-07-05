@@ -30,7 +30,7 @@ struct _RING_POINT
 	union
 	{
 	    double *coords;	/* coordinates of position */
-	    POINT *pt;	/* Point at ring point */
+	    FT_POINT *pt;	/* Point at ring point */
 	} position;
 	double		 angle, min_angle;
 	LIN_EL_FACE_TYPE side;
@@ -154,8 +154,8 @@ LOCAL	boolean	find_tri_curve_from_curve(TRI_CURVE*,CURVE*,TRI_CURVE**);
 LOCAL	boolean	insert_curve_in_xylist(CURVE*,ORIENTATION,CUT_A_PIECE*);
 LOCAL	boolean	inside_polygon(CURVE*,XY*,XY*);
 LOCAL	boolean	is_a_hole(CURVE**,TRI_CURVE*,XY*,XY*);
-LOCAL	boolean	is_cross(POINT*,POINT*,BOND*,int);
-LOCAL	boolean	is_cross_in_inserted_curve(POINT*, POINT*, INTERFACE*);
+LOCAL	boolean	is_cross(FT_POINT*,FT_POINT*,BOND*,int);
+LOCAL	boolean	is_cross_in_inserted_curve(FT_POINT*, FT_POINT*, INTERFACE*);
 LOCAL	boolean	is_intersect_with_other_edge(RING_POINT*,RING_POINT*,int,double);
 LOCAL	boolean	make_hole_cut(NODE*,NODE*,COMPONENT,COMPONENT,
 			      TRI_CURVE**,TRI_GRID*);
@@ -1295,7 +1295,7 @@ LOCAL 	boolean insert_curve_in_xylist(
 	CUT_A_PIECE	*cpiece)
 {
 	BOND		*b;
-	POINT		*p;
+	FT_POINT		*p;
 	XY		*pxy;
 	XY		*xy_start = (XY *)cpiece->xy_start;
 	XY		*xy_end = (XY *)cpiece->xy_end;
@@ -2078,7 +2078,7 @@ LOCAL RING_POINT *insert_blk_curve_in_ring(
 	TRI_GRID	*ntg)
 {
 	BOND		*b;
-	POINT		*p;
+	FT_POINT		*p;
 	CURVE		*c;
 	RING_POINT	*first_ring;
 	Locstate	st;
@@ -2504,8 +2504,8 @@ LOCAL  boolean set_nodes_for_make_hole_cut(
 */
 
 LOCAL	boolean is_cross_in_inserted_curve(
-	POINT		*p1,
-	POINT		*p2,
+	FT_POINT		*p1,
+	FT_POINT		*p2,
 	INTERFACE	*blk_intfc)
 {
 	int		dim = blk_intfc->dim;
@@ -2562,8 +2562,8 @@ LOCAL	boolean is_cross_in_inserted_curve(
 */ 
 
 LOCAL	boolean is_cross(
-	POINT		*p1,
-	POINT		*p2,
+	FT_POINT		*p1,
+	FT_POINT		*p2,
 	BOND		*b,
 	int		dim)
 {
@@ -3002,11 +3002,11 @@ LOCAL boolean is_intersect_with_other_edge(
 	double		ls)
 {
 	RING_POINT	*ring;
-	POINT		cross_point;
+	FT_POINT		cross_point;
 	int		i;
 	static	BOND	b1, b2;
-	static	POINT	P1, P2, P3, P4;
-	static	POINT	*p1 = &P1, *p2 = &P2, *p3 = &P3, *p4 = &P4;
+	static	FT_POINT	P1, P2, P3, P4;
+	static	FT_POINT	*p1 = &P1, *p2 = &P2, *p3 = &P3, *p4 = &P4;
 	static	boolean	first = YES;
 
 	if (first == YES)

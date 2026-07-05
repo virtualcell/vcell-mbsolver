@@ -38,7 +38,7 @@ LOCAL 	void 	f_second_order_intfc_propagate2d(Front*,POINTER,INTERFACE*,
 LOCAL 	void 	f_second_order_intfc_propagate3d(Front*,POINTER,INTERFACE*,
 				INTERFACE*,double);
 LOCAL	void 	set_propagation_bounds(Front*,double*,double*);
-LOCAL	boolean	out_of_bound(POINT*,double*,double*,int);
+LOCAL	boolean	out_of_bound(FT_POINT*,double*,double*,int);
 
 /*
 *			f_tan_curve_propagate():
@@ -243,19 +243,19 @@ EXPORT	void f_tan_curve_propagate(
 EXPORT void oblique_propagate_at_node(
 	Front		*fr,
 	POINTER		wave,
-	POINT		*newp,
+	FT_POINT		*newp,
 	O_CURVE		*oldc,
 	O_CURVE		*newc,
 	double		*nor,
 	double		dt)
 {
 	BOND		*oldb;
-	POINT		*oldn_posn, *oldp;
+	FT_POINT		*oldn_posn, *oldp;
 	double		save[MAXD], dposn[MAXD];
 	double		len, t[MAXD];
 	double		V[MAXD];
 	int		i, dim = fr->rect_grid->dim;
-	void		(*save_impose_bc)(POINT*,BOND*,CURVE*,double*,Front*,
+	void		(*save_impose_bc)(FT_POINT*,BOND*,CURVE*,double*,Front*,
 					  boolean,boolean);
 
 	oldb = Bond_at_node_of_o_curve(oldc);
@@ -397,7 +397,7 @@ LOCAL	void 	set_propagation_bounds(
 }	/* end set_propagation_bounds */
 
 LOCAL	boolean	out_of_bound(
-	POINT *p,
+	FT_POINT *p,
 	double *L,
 	double *U,
 	int dim)
@@ -448,7 +448,7 @@ LOCAL void f_second_order_intfc_propagate2d(
         HYPER_SURF_ELEMENT      *oldhse, *tmphse, *newhse;
 	CURVE              	**oldc, **tmpc, **newc;
         BOND      		*oldb, *tmpb, *newb;
-        POINT                   *oldp, *tmpp, *newp;
+        FT_POINT                   *oldp, *tmpp, *newp;
 	int		i;
 	double		V[MAXD];
 
@@ -527,7 +527,7 @@ LOCAL void f_second_order_intfc_propagate3d(
 	INTERFACE	*tmp_intfc;
 	HYPER_SURF              *oldhs, *tmphs, *newhs;
         HYPER_SURF_ELEMENT      *oldhse, *tmphse, *newhse;
-        POINT                   *oldp, *tmpp, *newp;
+        FT_POINT                   *oldp, *tmpp, *newp;
 	int		i;
 	double		V[MAXD];
 	printf("Entering f_second_order_intfc_propagate3d()\n");

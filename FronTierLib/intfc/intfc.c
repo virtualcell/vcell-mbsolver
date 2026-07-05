@@ -45,7 +45,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *		NODE		Curve intersections occur at nodes.
 *		CURVE		Non-intersecting curves join nodes.
 *		COMPONENT	Label for a connected domain (component)
-*		POINT		A Geometrical Point.
+*		FT_POINT		A Geometrical Point.
 *		BOND		Joins a pair of points.
 *
 *
@@ -74,26 +74,26 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *		fprint_curve()		Outputs a Formatted CURVE.
 *		is_closed_curve		Checks if a CURVE is closed.
 *
-*		Point()			Allocates a POINT in current INTERFACE.
-*		average_points		Computes the mean of two POINTS
-*		copy_point()		Copies a POINT to current INTERFACE.
-*		separation()		Computes separation of two POINTS.
+*		Point()			Allocates a FT_POINT in current INTERFACE.
+*		average_points		Computes the mean of two FT_POINTS
+*		copy_point()		Copies a FT_POINT to current INTERFACE.
+*		separation()		Computes separation of two FT_POINTS.
 *
 *		Bond()			Allocates a BOND in current INTERFACE.
 *		bond_length()		Gives the length of a BOND that has been
 *					constructed with Bond().
 *		
 *
-*		insert_point_in_bond()	Inserts a POINT in middle of a BOND.
-*		delete_start_of_bond()	Deletes POINT at start of BOND.
+*		insert_point_in_bond()	Inserts a FT_POINT in middle of a BOND.
+*		delete_start_of_bond()	Deletes FT_POINT at start of BOND.
 *
 *
 *		next_curve()		Finds next CURVE on an INTERFACE.
 *		next_bond()		Finds next BOND on an INTERFACE.
-*		next_point()		Finds next POINT on an INTERFACE.
+*		next_point()		Finds next FT_POINT on an INTERFACE.
 *
 *
-*		split_curve()		Splits a CURVE at a POINT into 2 CURVES
+*		split_curve()		Splits a CURVE at a FT_POINT into 2 CURVES
 *		join_curves()		Joins CURVES at a common NODE.
 *		intersections()		Determines Intersections of INTERFACE.
 *
@@ -131,7 +131,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *	of the mutually-recursive data structures INTERFACE,
 *	NODE and CURVE given in file int.h.
 *
-*		A NODE is basically a POINT, describing its location
+*		A NODE is basically a FT_POINT, describing its location
 *	along with sets of CURVES which begin and end at that node
 *	- we call these the  in_curves and  out_curves  of the
 *	NODE.
@@ -145,7 +145,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *	either side of it (because of the non_intersecting requirement).
 *
 *
-*		A POINT is the basic geometrical object - an x,y
+*		A FT_POINT is the basic geometrical object - an x,y
 *	coordinate pair describing a position in the plane.
 *
 *
@@ -161,7 +161,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *	linear.   Thus a curve is represented as a linked list of
 *	linear BONDS.   
 *
-*		A BOND connects two POINTS, its start and end, by
+*		A BOND connects two FT_POINTS, its start and end, by
 *	a line segment, and in addition has pointers to both the
 *	preceding and following bonds.
 *
@@ -197,7 +197,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *	to use this strategy.   
 *
 *
-*		POINTS are created using  Point(), and are then added 
+*		FT_POINTS are created using  Point(), and are then added
 *	to CURVES using  insert_point_in_bond().
 *
 *		The routine  read_interface()  provides an automated way 
@@ -211,7 +211,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *	make_node(), delete_node(), make_curve(), delete_curve(),
 *	insert_point_in_bond(), delete_start_of_bond().   When
 *	working on an INTERFACE, the routine  next_point()  is
-*	a convenient way to step through the POINTS of the INTERFACE
+*	a convenient way to step through the FT_POINTS of the INTERFACE
 *	one by one.   next_point() may be used simultaneously on
 *	any number of INTERFACES.
 *
@@ -229,7 +229,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *
 *		The routines  split_curve()  and  join_curves()  can
 *	be used to perform surgery on an INTERFACE.   split_curve()
-*	splits a CURVE at an internal POINT into two CURVES with a 
+*	splits a CURVE at an internal FT_POINT into two CURVES with a
 *	common NODE.   join_curves()  joins a pair of CURVES which
 *	have a common NODE to form a single CURVE.   Both routines
 *	allow the COMPONENT specifications on the sides of the
@@ -258,11 +258,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *	in which case no action is taken.  An example of the usage
 *	is illustrated below.
 *
-*	struct _MY_POINT { POINT pt; double distance;};
+*	struct _MY_POINT { FT_POINT pt; double distance;};
 *	then we set size_point in the I_INTERFACE structure to
 *	sizeof(struct _MY_POINT);
 *
-*	EXPORT void my_user_Point(POINT *p)
+*	EXPORT void my_user_Point(FT_POINT *p)
 *	{
 *		((struct _MY_POINT *) p)->distance =
 *				hypot(Coords(p)[0],Coords(p)[1]);
@@ -276,7 +276,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 *	The routines that create and modify INTERFACES all use a 
 *	common storage_allocator.   There are no restrictions 
 *	anywhere in the code on the number or sizes of INTERFACES, 
-*	NODES, CURVES, BONDS or POINTS.   If the storage allocator
+*	NODES, CURVES, BONDS or FT_POINTS.   If the storage allocator
 *	runs out of space at some point, the routine that called
 *	it will return an error value, generally 0 or a NULL
 *	pointer as appropriate.   The low-level storage allocator
@@ -344,15 +344,15 @@ LOCAL	void	ReturnChunksToFreeList(struct Chunk*,struct Chunk*);
 LOCAL	void	ReturnTableToFreeList(struct Table*);
 LOCAL	void	fprint_hypersurface_boundaries(FILE*,HYPER_SURF_BDRY**);
 LOCAL	void	free_interface_addresses_structure(INTERFACE_ADDRESSES*);
-LOCAL 	CURVE	**split_curve2d(POINT*,BOND*,CURVE*,
+LOCAL 	CURVE	**split_curve2d(FT_POINT*,BOND*,CURVE*,
 			      COMPONENT,COMPONENT,COMPONENT,COMPONENT);
-LOCAL 	CURVE	**split_curve3d(POINT*,BOND*,CURVE*,
+LOCAL 	CURVE	**split_curve3d(FT_POINT*,BOND*,CURVE*,
 			      COMPONENT,COMPONENT,COMPONENT,COMPONENT);
 LOCAL	boolean	collapse_tri_on_side(TRI*,SURFACE*,int);
 LOCAL	boolean	is_tangled_polygon(const REAL*,int);
 LOCAL	boolean	reset_tris_at_deleted_bond(BOND_TRI*,ORIENTATION,BOND_TRI*);
 LOCAL	boolean	single_tri_surface_on_bond(BOND*);
-LOCAL	void	split_tris_at_split_bond(POINT*,BOND*,CURVE*);
+LOCAL	void	split_tris_at_split_bond(FT_POINT*,BOND*,CURVE*);
 
 
 
@@ -508,7 +508,7 @@ EXPORT INTERFACE *i_copy_interface(
 
 	if (dim == 1)
 	{
-	    POINT **pp;
+	    FT_POINT **pp;
 
 	    if ((pp = intfc->points) != NULL)
 	        while (*pp) (void)
@@ -625,11 +625,11 @@ EXPORT INTERFACE *read_interface(void)
 
 
 /*ARGSUSED*/
-LIB_LOCAL	POINT *i_read_point(
+LIB_LOCAL	FT_POINT *i_read_point(
 	INTERFACE	*intfc,
 	int		i)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	COMPONENT	left = 0, right = 0;
 	double		coords[MAXD];
 
@@ -1045,7 +1045,7 @@ LOCAL	void	free_interface_addresses_structure(
 	zero_scalar(iaddr,sizeof(INTERFACE_ADDRESSES));
 }		/*end free_interface_addresses_structure*/
 
-LIB_LOCAL	POINT *i_read_print_point(
+LIB_LOCAL	FT_POINT *i_read_print_point(
 	INTERFACE     *intfc,
 	const IO_TYPE *io_type,
 	boolean          overlay)
@@ -1053,7 +1053,7 @@ LIB_LOCAL	POINT *i_read_print_point(
 	FILE	  *file = io_type->file;
 	char      bdry[20];
 	COMPONENT left = NO_COMP, right = NO_COMP;
-	POINT	  *point;
+	FT_POINT	  *point;
 	double	  coords[MAXD];
 	int	  c;
 	int	  i, dim;
@@ -1450,7 +1450,7 @@ EXPORT void i_fprint_interface(
 	{
 	case 1:
 	{
-	    POINT		**pt;
+	    FT_POINT		**pt;
 
 	    (void) fprintf(file,"%d Points:\n",infc->num_points);
 	    if ((pt = infc->points) != NULL)
@@ -1662,7 +1662,7 @@ EXPORT int i_delete_interface(
 
 
 EXPORT NODE *i_make_node(
-	POINT		*p)
+	FT_POINT		*p)
 {
 	NODE		*newnod;
 	size_t		size_node;
@@ -1765,7 +1765,7 @@ EXPORT boolean i_delete_node(
 */
 
 EXPORT NODE *node_of_point(
-	POINT		*point,
+	FT_POINT		*point,
 	INTERFACE	*intfc)
 {
 	NODE		**n;
@@ -2340,7 +2340,7 @@ LIB_LOCAL void i_fprint_curve(
 	CURVE		*curve)
 {
 	BOND		*bond;
-	POINT		*p;
+	FT_POINT		*p;
 	int		i, dim;
 	int		k;
 	const char	*endchar;
@@ -2461,7 +2461,7 @@ LIB_LOCAL void i_fprint_curve(
 }		/*end i_fprint_curve*/
 
 EXPORT boolean  change_node_of_closed_curve(
-	POINT	 *p,
+	FT_POINT	 *p,
 	CURVE    *c)
 {
 	NODE	    *n;
@@ -2555,7 +2555,7 @@ EXPORT boolean  change_node_of_closed_curve(
 */
 
 EXPORT CURVE **split_curve(
-	POINT	  *p,
+	FT_POINT	  *p,
 	BOND	  *bond,
 	CURVE	  *curve,
 	COMPONENT ncomp1,
@@ -2578,7 +2578,7 @@ EXPORT CURVE **split_curve(
 
 /*ARGSUSED*/
 LOCAL  CURVE **split_curve2d(
-	POINT	  *p,
+	FT_POINT	  *p,
 	BOND	  *bond,
 	CURVE	  *curve,
 	COMPONENT ncomp1,
@@ -2737,7 +2737,7 @@ LOCAL  CURVE **split_curve2d(
 
 
 LOCAL  CURVE **split_curve3d(
-	POINT	  *p,
+	FT_POINT	  *p,
 	BOND	  *bond,
 	CURVE	  *curve,
 	COMPONENT ncomp1,
@@ -3169,8 +3169,8 @@ EXPORT CURVE *join_curves(
 */
 
 EXPORT BOND *i_Bond(
-	POINT		*p1,
-	POINT		*p2)
+	FT_POINT		*p1,
+	FT_POINT		*p2)
 {
 	BOND		*b;
 
@@ -3207,13 +3207,13 @@ EXPORT BOND *i_Bond(
 *       Returns a pointer to the new point, or NULL on error.
 */
 
-EXPORT POINT *i_make_point(
+EXPORT FT_POINT *i_make_point(
 	double		*coords,
 	COMPONENT	neg_comp,
 	COMPONENT	pos_comp)
 {
-	POINT *newpoint;
-	POINT **p, *antep;
+	FT_POINT *newpoint;
+	FT_POINT **p, *antep;
 	int   i;
 
 	if (cur_intfc->dim != 1)
@@ -3262,15 +3262,15 @@ EXPORT POINT *i_make_point(
 *	Returns a pointer to the allocated POINT or NULL if no space.
 */
 
-EXPORT POINT *i_Point(
+EXPORT FT_POINT *i_Point(
 	double		*coords)
 {
-	POINT		*p;
+	FT_POINT		*p;
 	int		j;
 	size_t		size_point;
 
 	size_point = i_user_interface(cur_intfc).size_point;
-	p = (POINT *)store(size_point);
+	p = (FT_POINT *)store(size_point);
 	if (p == NULL)
 	    return NULL;
 	if (coords != NULL)
@@ -3304,10 +3304,10 @@ EXPORT POINT *i_Point(
 */
 
 /* ARGSUSED */
-EXPORT POINT *i_Static_point(
+EXPORT FT_POINT *i_Static_point(
 	INTERFACE	*intfc)
 {
-	POINT		*static_alloced_point = NULL;
+	FT_POINT		*static_alloced_point = NULL;
 	size_t		size_point = 0;
 
 	size_point = i_user_interface(intfc).size_point;
@@ -3328,10 +3328,10 @@ EXPORT POINT *i_Static_point(
 *	Returns a pointer to the new point, or NULL on error.
 */
 
-EXPORT POINT *i_copy_point(
-	POINT		*p)
+EXPORT FT_POINT *i_copy_point(
+	FT_POINT		*p)
 {
-	POINT		*newp;
+	FT_POINT		*newp;
 	int		i;
 
 	if (p == NULL)
@@ -3365,16 +3365,16 @@ EXPORT POINT *i_copy_point(
 *	triangle normals, and other possible stored quantities.
 */
 
-EXPORT	POINT *i_average_points(
+EXPORT	FT_POINT *i_average_points(
 	boolean               newpoint,
-	POINT		   *p1,
+	FT_POINT		   *p1,
 	HYPER_SURF_ELEMENT *hse1,
 	HYPER_SURF	   *hs1,
-	POINT		   *p2,
+	FT_POINT		   *p2,
 	HYPER_SURF_ELEMENT *hse2,
 	HYPER_SURF	   *hs2)
 {
-	POINT     *pmid;
+	FT_POINT     *pmid;
 	INTERFACE *intfc;
 	double     mid[3];
 	int	  i, dim;
@@ -3403,7 +3403,7 @@ EXPORT	POINT *i_average_points(
 	    HYPER_SURF         *hs;
 	    HYPER_SURF_ELEMENT *hse;
 	    NODE               *n;
-	    POINT              *p;
+	    FT_POINT              *p;
 
 	    for (i = 0; i < 2; ++i)
 	    {
@@ -3472,7 +3472,7 @@ EXPORT	POINT *i_average_points(
 	{
 	  TRI                *tri;
 	  HYPER_SURF_ELEMENT *hse;
-	  POINT              *p;
+	  FT_POINT              *p;
 	  int                nt, j;
 	  TRI                **tt;
 	  static int         max_num_tris = 0;
@@ -3618,11 +3618,11 @@ EXPORT	POINT *i_average_points(
  
  
 EXPORT int i_delete_point(
-	POINT		*point)
+	FT_POINT		*point)
 {
  
 	INTERFACE *intfc;
-	POINT	  **p;
+	FT_POINT	  **p;
 	int       n;
 	boolean	  status;
 
@@ -3684,7 +3684,7 @@ EXPORT int i_delete_point(
  
 LIB_LOCAL void i_fprint_point(
 	FILE		*file,
-	POINT		*point)
+	FT_POINT		*point)
 {
 	int		dim;
  
@@ -3738,7 +3738,7 @@ LIB_LOCAL void i_fprint_point(
 */
 
 EXPORT boolean i_insert_point_in_bond(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c)
 {
@@ -3782,15 +3782,15 @@ EXPORT boolean i_insert_point_in_bond(
 */
 
 LOCAL	void split_tris_at_split_bond(
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	CURVE		*c)
 {
 	BOND	  *newb;
 	BOND_TRI  **btris;
 	TRI	  *t, *nt, *at;
-	POINT	  *ps, *pe;
-	POINT	  *p0, *p1, *p2;
+	FT_POINT	  *ps, *pe;
+	FT_POINT	  *p0, *p1, *p2;
 	POINTER	  n01, n12, n20;
 	SURFACE	  *surf;
 	INTERFACE *intfc = c->interface;
@@ -4047,14 +4047,14 @@ LOCAL	boolean	reset_tris_at_deleted_bond(
 	BOND_TRI        *btri_adj)
 {
 	BOND	         *b = btri->bond;
-	POINT            *pb = Point_of_bond(b,orient);
+	FT_POINT            *pb = Point_of_bond(b,orient);
 	SURFACE          *s = btri->surface;
 	TRI              *tri = btri->tri;
 	TRI              **tris;
 	int              i, nt, nv;
 	int              side;
 	static BOND_TRI  **nb_bond_tri = NULL;
-	static POINT     **v = NULL;
+	static FT_POINT     **v = NULL;
 	static TRI       **nb_tri = NULL;
 	static TRI       **oldtris = NULL;
 	static int       max_n_t = 0;
@@ -4072,7 +4072,7 @@ LOCAL	boolean	reset_tris_at_deleted_bond(
 	    if (nb_tri != NULL)
 		free(nb_tri);
 	    max_n_t = 2*nt;
-	    uni_array(&v,max_n_t+1,sizeof(POINT*));
+	    uni_array(&v,max_n_t+1,sizeof(FT_POINT*));
 	    uni_array(&nb_bond_tri,max_n_t+1,sizeof(BOND_TRI*));
 	    uni_array(&nb_tri,max_n_t+1,sizeof(TRI*));
 	    uni_array(&oldtris,max_n_t+1,sizeof(TRI*));
@@ -4171,9 +4171,9 @@ LOCAL	boolean	reset_tris_at_deleted_bond(
 */
 
 EXPORT	boolean	retriangulate_polygon(
-	POINT       **v,
+	FT_POINT       **v,
 	int         nv,
-	POINT       **internal_v,
+	FT_POINT       **internal_v,
 	int         ninternal_v,
 	const double *tnor,
 	TRI         **oldtris,
@@ -4193,7 +4193,7 @@ EXPORT	boolean	retriangulate_polygon(
 	int                  sd, v1, v2;
 	int                  i0, i1, i2;
 	int                  k1, k2;
-	static POINT         **pts = NULL;
+	static FT_POINT         **pts = NULL;
 	static boolean          first = YES;
 	static const double   **p = NULL;
 	static double         **r = NULL;
@@ -4308,7 +4308,7 @@ EXPORT	boolean	retriangulate_polygon(
 		free(in.segmentlist);
 	    max_n_v = 2*(nv + ninternal_v);
 	    uni_array(&p,max_n_v,sizeof(double*));
-	    uni_array(&pts,max_n_v,sizeof(POINT*));
+	    uni_array(&pts,max_n_v,sizeof(FT_POINT*));
 	    in.size_pointlist = (size_t)2*(max_n_v);
 	    uni_array(&in.pointlist,in.size_pointlist,FLOAT);
 	    in.size_segmentlist = (size_t)2*(max_n_v);
@@ -4470,7 +4470,7 @@ EXPORT	boolean	retriangulate_polygon(
 		if (nb_bond_tri && nb_bond_tri[sd])
 		{
 		  BOND *b = nb_bond_tri[sd]->bond;
-		  POINT *ps = b->start, *pe = b->end;
+		  FT_POINT *ps = b->start, *pe = b->end;
 		  if ((ps == pts[v1]) && (pe == pts[v2]))
 		  {
 		    if (reversed)
@@ -4831,7 +4831,7 @@ LIB_LOCAL int	winding_number(
 }		/*end winding_number*/
 
 EXPORT	boolean	delete_vertex_of_tri(
-	POINT   *pt,
+	FT_POINT   *pt,
 	TRI	*tri,
 	SURFACE *s)
 {
@@ -4841,7 +4841,7 @@ EXPORT	boolean	delete_vertex_of_tri(
 	int             i, k, nt;
 	int             side;
 	static BOND_TRI **nb_bond_tri = NULL;
-	static POINT    **v = NULL;
+	static FT_POINT    **v = NULL;
 	static TRI      **nb_tri = NULL;
 	static TRI      **oldtris;
 	static int      max_n_t = 0;
@@ -4902,7 +4902,7 @@ EXPORT	boolean	delete_vertex_of_tri(
 	    if (oldtris != NULL)
 		free(oldtris);
 	    max_n_t = 2*nt;
-	    uni_array(&v,max_n_t,sizeof(POINT*));
+	    uni_array(&v,max_n_t,sizeof(FT_POINT*));
 	    uni_array(&nb_bond_tri,max_n_t,sizeof(BOND_TRI*));
 	    uni_array(&nb_tri,max_n_t,sizeof(TRI*));
 	    uni_array(&oldtris,max_n_t+1,sizeof(TRI*));
@@ -4986,7 +4986,7 @@ EXPORT boolean flip_diagonal(
 	BOND_TRI     *bt;
 	TRI          *otri;
 	TRI_NEIGHBOR Nbr[3], ONbr[3];
-	POINT        *pt1, *pt2;
+	FT_POINT        *pt1, *pt2;
 	int          i, nside, pside;
 	int          oside, noside, poside;
 	boolean         bdry[3], obdry[3];
@@ -5072,7 +5072,7 @@ EXPORT	boolean delete_side_of_tri(
 	BOND      *b;
 	CURVE     *c;
 	INTERFACE *intfc = s->interface;
-	POINT     *p[3];
+	FT_POINT     *p[3];
 	TRI       *nbtri;
 	TRI       **tris;
 	int       nt, i, j, nbside;
@@ -5270,8 +5270,8 @@ EXPORT	ORIENTATION orientation_of_bond_at_tri(
 	int side = side_of_tri_with_bond(b,tri);
 	if (side < 3)
 	{
-	    POINT *p = Point_of_tri(tri)[side];
-	    POINT *np = Point_of_tri(tri)[Next_m3(side)];
+	    FT_POINT *p = Point_of_tri(tri)[side];
+	    FT_POINT *np = Point_of_tri(tri)[Next_m3(side)];
 	    if ((b->start == p) && (b->end == np))
 	        return POSITIVE_ORIENTATION;
 	    if ((b->end == p) && (b->start == np))
@@ -5340,7 +5340,7 @@ EXPORT	int side_of_tri_with_bond(
 /*ARGSUSED*/
 LIB_LOCAL boolean next_point1d(
 	INTERFACE 	*intfc,
-	POINT 		**p,
+	FT_POINT 		**p,
         HYPER_SURF_ELEMENT **hse,
 	HYPER_SURF 	**hs)
 {
@@ -5386,7 +5386,7 @@ EXPORT  boolean next_hypersurface1d(
 	INTERFACE	*intfc,
 	HYPER_SURF	**HS)
 {
-	POINT	*P;
+	FT_POINT	*P;
 	if (HS == NULL)		/* Reinitialize to start */
 	    return next_point(intfc,NULL,NULL,NULL);
 
@@ -5398,7 +5398,7 @@ EXPORT  boolean next_hypersurface1d(
 
 LIB_LOCAL boolean next_point2d(
 	INTERFACE	*intfc,
-	POINT		**P,
+	FT_POINT		**P,
 	HYPER_SURF_ELEMENT **HSE,
 	HYPER_SURF	**HS)
 {
@@ -6022,13 +6022,13 @@ EXPORT	uint64_t table_number(
 }		/*end table_number*/
 
 EXPORT	uint64_t point_number(
-	POINT		*point)
+	FT_POINT		*point)
 {
 	if (debugging("addresses"))
 	    return ptr2ull(point);
 	if (current_interface()->dim == 1)
 	{
-	    POINT    **p;
+	    FT_POINT    **p;
 	    uint64_t i;
 
 	    if ((point == NULL) || (point->interface == NULL))

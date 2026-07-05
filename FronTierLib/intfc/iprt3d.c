@@ -120,7 +120,7 @@ EXPORT	void	print_c_curve(
 	(void) printf("\nPoint list\n");
 	for (cb = c_curve->first; cb != NULL; cb = cb->next)
 	{
-	    POINT *ps = cb->start, *pe = cb->end;
+	    FT_POINT *ps = cb->start, *pe = cb->end;
 	    double *cs = Coords(ps), *ce = Coords(pe);
 	    (void) printf("prev 0x%p next 0x%p, (%llu) %g %g %g -> "
 	                  "(%llu) %g %g %g\n",cb->prev,cb->next,

@@ -58,7 +58,7 @@ typedef struct _OVERLAP {
 	BOND		*b1, *b2;
 	CURVE		*c1, *c2;
 	NODE		*n1, *n2;
-	POINT		*cr1, *cr2; /* points where b1 and b2 cross cut line */
+	FT_POINT		*cr1, *cr2; /* points where b1 and b2 cross cut line */
 	ORIENTATION	or1, or2;
 	double		dist;
 	int		index;	    /* for debugging */
@@ -116,7 +116,7 @@ LOCAL	OVERLAP	*find_double_adj_bond_match(OVERLAP*,OVERLAP*,int,Front*);
 LOCAL	OVERLAP	*find_remnant_match(OVERLAP*,OVERLAP*,int);
 LOCAL	OVERLAP	*find_single_adj_bond_match(OVERLAP*,OVERLAP*,int,Front*);
 LOCAL	OVERLAP	*new_overlap(OVERLAP*,CURVE*,ORIENTATION,int);
-LOCAL	POINT	*bond_crosses_cut_line(BOND*,int,double,int);
+LOCAL	FT_POINT	*bond_crosses_cut_line(BOND*,int,double,int);
 LOCAL	boolean	check_for_cut_nodes(INTERFACE*);
 LOCAL	boolean	delete_redundant_overlaps(OVERLAP*,INTERFACE*,int);
 LOCAL	boolean	is_half_remnant_degeneracy(OVERLAP*);
@@ -125,13 +125,13 @@ LOCAL	boolean	merge_double_physical_cut_nodes(INTERFACE*,int);
 LOCAL	boolean	overlap_list(Front*,OVERLAP**,int);
 LOCAL	boolean	perform_interface_communication(Front*,int*,int*,int);
 LOCAL	boolean	set_subdomain_boundary(Front*,COMPONENT);
-LOCAL	double	sqr_separation(POINT*,POINT*,int);
+LOCAL	double	sqr_separation(FT_POINT*,FT_POINT*,int);
 LOCAL	int	curve_on_wrong_side_of_cut_line(CURVE*,int,int,double);
 LOCAL	int	local_num_curves_at_node(NODE*);
 LOCAL	void	delete_curves_outside_of_cut_line(INTERFACE*,double,int,int);
 LOCAL	void	merge_components(COMPONENT,COMPONENT,INTERFACE*);
 LOCAL	boolean	merge_overlapping_bonds(OVERLAP*,Front*);
-LOCAL	void	point_on_cut_line(INTERFACE*,POINT*,BOND*,double,int);
+LOCAL	void	point_on_cut_line(INTERFACE*,FT_POINT*,BOND*,double,int);
 LOCAL	void	print_node_flags(NODE*);
 LOCAL	void	print_overlap(OVERLAP*);
 LOCAL	void	remove_from_overlap_list(OVERLAP*,OVERLAP*);
@@ -171,7 +171,7 @@ LOCAL   int     use_delete_short_bonds = YES;
 
 LOCAL   void    interface_intersection_segment(INTERFACE*,int,
                      int,double,double,double,boolean);
-LOCAL   POINT   *bond_crosses_cut_segment(BOND*,int,int,double,double,double);
+LOCAL   FT_POINT   *bond_crosses_cut_segment(BOND*,int,int,double,double,double);
 LOCAL   boolean    cross_segments(double,double,double,double,double,double,
                      double,double,double*);
 LOCAL   void    delete_curves_inside_rect(INTERFACE*,double*,double*);
@@ -938,8 +938,8 @@ EXPORT	void	cut_interface(
 	CURVE		*c, **cc;
 	CURVE		**curves;
 	NODE		**n;
-	POINT		*newp;
-	POINT		*p;
+	FT_POINT		*newp;
+	FT_POINT		*p;
 	boolean		clip;
 	double		*h = computational_grid(intfc)->h;
 	double		min_sc_sep = MIN_SC_SEP(intfc);/*TOLERANCE*/
@@ -949,7 +949,7 @@ EXPORT	void	cut_interface(
 	int		num_deletes = 0;
 	int		num_cr = 0;
 	boolean		sav_intrp;
-	static POINT	*cut_p = NULL;
+	static FT_POINT	*cut_p = NULL;
 	static boolean	*adj_bond_cross = NULL;
 	static int	cr_alloc_len = 0;
 	boolean		is_reflect_side;
@@ -1452,7 +1452,7 @@ LOCAL	void	delete_curves_outside_of_cut_line(
 *	end lies on the side to be saved.
 */
 
-LOCAL	POINT	*bond_crosses_cut_line(
+LOCAL	FT_POINT	*bond_crosses_cut_line(
 	BOND	*b,
 	int	dir,
 	double	cut,
@@ -1486,7 +1486,7 @@ LOCAL	POINT	*bond_crosses_cut_line(
 
 LOCAL	void	point_on_cut_line(
 	INTERFACE	*intfc,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,	/* bond being clipped */
 	double           cut,    /* coordinate of cut line */
 	int             dir)    /* direction of cut line normal */
@@ -1708,7 +1708,7 @@ LOCAL	boolean	overlap_list(
 	INTERFACE	*intfc = fr->interf;
 	NODE		**n;
 	OVERLAP		Olhead, *ol, *ol1, *ol2;
-	static POINT	*ptmp = NULL;
+	static FT_POINT	*ptmp = NULL;
 
 	DEBUG_ENTER(overlap_list)
 
@@ -3201,7 +3201,7 @@ LOCAL	boolean	merge_overlapping_bonds(
 
 	    if (!delete_node(ol->n1))
 	    {
-	        POINT    *newp;
+	        FT_POINT    *newp;
 	        CURVE    **c;
 
 	        /*
@@ -3627,8 +3627,8 @@ LOCAL int local_num_curves_at_node(
 
 
 LOCAL	double	sqr_separation(
-	POINT		*p1,
-	POINT		*p2,
+	FT_POINT		*p1,
+	FT_POINT		*p2,
 	int		dim)
 {
 	int		i;
@@ -3896,8 +3896,8 @@ LOCAL  void    interface_intersection_segment(
         CURVE           *c, **cc;
         CURVE           **curves;
         NODE            **n;
-        POINT           *newp;
-        POINT           *p;
+        FT_POINT           *newp;
+        FT_POINT           *p;
         boolean            clip;
         double           *h = computational_grid(intfc)->h;
         double           min_sc_sep = MIN_SC_SEP(intfc);/*TOLERANCE*/
@@ -3907,7 +3907,7 @@ LOCAL  void    interface_intersection_segment(
         int             num_deletes = 0;
         int             num_cr = 0;
         boolean            sav_intrp;
-        static POINT    *cut_p = NULL;
+        static FT_POINT    *cut_p = NULL;
         static boolean     *adj_bond_cross = NULL;
         static int      cr_alloc_len = 0;
         boolean            save_interior = YES; /* Since this cross test
@@ -4365,7 +4365,7 @@ LOCAL  void    interface_intersection_segment(
 *       end lies on the side to be saved. This function is implimented
 *       by using same logic as used in bond_crosses_cut_line().
 */
-LOCAL   POINT   *bond_crosses_cut_segment(
+LOCAL   FT_POINT   *bond_crosses_cut_segment(
         BOND    *b,
         int     dir,
         int     side,

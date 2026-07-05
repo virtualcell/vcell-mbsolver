@@ -43,7 +43,7 @@ extern "C" {
 
 
 struct _F_POINT {
-	POINT		point;
+	FT_POINT		point;
 	Locstate	_left_state;
 	Locstate	_right_state;
 };
@@ -73,13 +73,13 @@ typedef struct _F_BOND_TRI F_BOND_TRI;
 #define	right_end_btri_state(btri)	(f_bond_tri(btri)->_right_end_btri_state)
 
 struct _TANGENT_FUNCTION {
-	void       (*_tangent)(POINT*,BOND*,CURVE*,double*,Front*);
+	void       (*_tangent)(FT_POINT*,BOND*,CURVE*,double*,Front*);
 	const char *_tangent_name;
 };
 typedef struct _TANGENT_FUNCTION TANGENT_FUNCTION;
 
 struct _NORMAL_FUNCTION {
-	void       (*_normal)(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+	void       (*_normal)(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 	                      double*,Front*);
 	const char *_normal_name;
 };
@@ -192,7 +192,7 @@ struct _F_USER_INTERFACE {
 	                                   Locstate,INTERFACE*);
 	boolean	(*_nearest_intfc_state)(double*,COMPONENT,INTERFACE*,Locstate,
 					double*,HYPER_SURF**);
-	void	(*_slsr)(POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
+	void	(*_slsr)(FT_POINT*,HYPER_SURF_ELEMENT*,HYPER_SURF*,
 			 Locstate*,Locstate*);
 	boolean	(*_tri_interpolate_intfc_states)(double,double,double,double*,
 						 Locstate,double*,Locstate,
@@ -217,7 +217,7 @@ struct _F_USER_INTERFACE {
 	void	(*_fshow_intfc_states)(FILE*,INTERFACE*);
 	void	(*_read_print_boundary_state_data)(INIT_DATA*,const IO_TYPE*,
 	                                           INTERFACE*,int);
-	double	(*_mean_curvature_at_point)(POINT*,HYPER_SURF_ELEMENT*,
+	double	(*_mean_curvature_at_point)(FT_POINT*,HYPER_SURF_ELEMENT*,
 					    HYPER_SURF*,Front*);
 	void	(*_alloc_state)(Locstate*,size_t);
 	Locstate	(*_alloc_intfc_state)(size_t);

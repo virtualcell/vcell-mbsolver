@@ -122,7 +122,7 @@ EXPORT	boolean correct_for_exterior_curves(
 	CURVE	    **cc, *c;
 	NODE	    *ns, *ne;
 	BOND	    *b;
-	POINT	    *p1;
+	FT_POINT	    *p1;
 	boolean	    exterior_points, interior_points;
 	int	    i, dim = rgr->dim;
 	double	    lo[MAXD], hi[MAXD], tol;
@@ -338,7 +338,7 @@ EXPORT	void replace_cphys_by_cbdry(
 	Front		*fr)
 {
 	BOND	  	*b;
-	POINT		*pnew;
+	FT_POINT		*pnew;
 	RECT_GRID 	*rgr = fr->rect_grid;
 	double		*cbs, t[MAXD], v[MAXD], magt;
 	double		l, llast;
@@ -504,7 +504,7 @@ EXPORT int curve_exits_parallel_to_bdry(
 	ORIENTATION	null_bc_or[2];
 	int		dim = front->rect_grid->dim;
 	int		i;
-	static	POINT	*pnew = NULL;
+	static	FT_POINT	*pnew = NULL;
 
 	if (pnew == NULL)
 	{

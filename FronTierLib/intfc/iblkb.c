@@ -110,11 +110,11 @@ LOCAL	void stitch_inside_bdry_blk(
 	const int *num_tris = bm->num_tris;
 	int       is, ic, i, j, side1, side2;
 	TRI       *tri1, *tri2;
-	POINT     **p1, **p2;
+	FT_POINT     **p1, **p2;
 	BOND      *b;
 	SURFACE   *s;
 	CURVE     *c;
-	POINT 	  *ptmp;
+	FT_POINT 	  *ptmp;
 	ORIENTATION orient;
 	BOND_TRI  *btri;
 
@@ -279,7 +279,7 @@ LOCAL 	void blk_case_b1(
         BLK_CRX *bc,
         BLK_TRI *bm)
 {
-        POINT   *p1, *p2, *p3;
+        FT_POINT   *p1, *p2, *p3;
 	SURFACE *s;
 	CURVE   *c;
 	int     ic, is;
@@ -391,7 +391,7 @@ LOCAL	void blk_case_b2(
         BLK_CRX *bc,
         BLK_TRI *bm)
 {
-        POINT   *p1, *p2, *p3;
+        FT_POINT   *p1, *p2, *p3;
 	SURFACE *s;
 	CURVE   *c;
 	int     ic, is;
@@ -502,7 +502,7 @@ LOCAL 	void blk_case_b3(
         BLK_CRX *bc,
         BLK_TRI *bm)
 {
-	POINT   *p1, *p2, *p3;
+	FT_POINT   *p1, *p2, *p3;
 	SURFACE *s;
 	CURVE   *c1, *c2;
 	int     ic, is;
@@ -551,7 +551,7 @@ LOCAL 	void blk_case_b4(
         BLK_CRX *bc,
         BLK_TRI *bm)
 {
-	POINT   *p1, *p2, *p3;
+	FT_POINT   *p1, *p2, *p3;
 	SURFACE *s;
 	CURVE   *c;
 	int     ic, is;

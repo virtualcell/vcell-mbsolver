@@ -47,7 +47,7 @@ EXPORT	boolean	f_consistent_interface(
 	CURVE              **c;
 	HYPER_SURF         *hs;
 	HYPER_SURF_ELEMENT *hse;
-	POINT	           *p;
+	FT_POINT	           *p;
 	SURFACE            *s;
 	TRI		   *tri;
 	boolean            status;

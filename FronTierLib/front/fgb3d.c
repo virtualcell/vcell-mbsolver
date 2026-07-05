@@ -53,22 +53,22 @@ LOCAL	boolean    track_comp_and_repair3d(int*,int*,int*,INTERFACE*,Front*);
 LOCAL	boolean	repair_intfc3d_in_box(INTERFACE*,int*,int*,Front*);
 LOCAL	boolean 	set_reconstruction_boxes(int*,int*,int**,int,RECT_BOX**,
                                         INTERFACE*);
-LOCAL	boolean 	seal_strip_with_tris(RECT_BOX*,TRI**,int*,int,POINT**,
+LOCAL	boolean 	seal_strip_with_tris(RECT_BOX*,TRI**,int*,int,FT_POINT**,
 				double*,char*,boolean,INTERFACE*);
-LOCAL   boolean    seal_strip_with_tris_once(RECT_BOX*,TRI**,int*,int,POINT**,
+LOCAL   boolean    seal_strip_with_tris_once(RECT_BOX*,TRI**,int*,int,FT_POINT**,
                            double*,char*,boolean,INTERFACE*,TRI**,int,TRI**,int);
 
 LOCAL   boolean    null_sides_sharing_same_vertex(TRI*,int,TRI**,int);
-	boolean    null_side_loop(TRI*,int,ORIENTATION,TRI***,int**,POINT***,
+	boolean    null_side_loop(TRI*,int,ORIENTATION,TRI***,int**,FT_POINT***,
                                 int*,double**);
 LOCAL	boolean 	null_side_tri_in_list(TRI**,int,TRI**,int*);
 LOCAL	boolean 	grid_based_box_untangle(INTERFACE*,RECT_BOX*);
 LOCAL   boolean    tri_in_box(TRI*,INTERFACE*,RECT_BOX*);
 LOCAL	boolean 	check_extension_of_surface(TRI**, int, SURFACE*);
 LOCAL	void 	gview_show_box_tri(RECT_BOX*,TRI**,int,FILE*);
-LOCAL   int     find_nearest_pts(POINT**,int,POINT**,int,int,TRI**,TRI**,
+LOCAL   int     find_nearest_pts(FT_POINT**,int,FT_POINT**,int,int,TRI**,TRI**,
 				RECT_GRID,RECT_GRID);
-LOCAL   int     find_nearest_pts_pair(POINT**,int,POINT**,int,int,RECT_GRID,
+LOCAL   int     find_nearest_pts_pair(FT_POINT**,int,FT_POINT**,int,int,RECT_GRID,
 				RECT_GRID);
 LOCAL	void 	find_nearest_tri_pair(TRI**,int,TRI**,int,TRI**,
 			int*,TRI**,int*,RECT_BOX*);
@@ -91,7 +91,7 @@ LOCAL   boolean    compare_comm_box(INTERFACE*,RECT_BOX*,
 LOCAL   boolean    boxes_sharing_tris(RECT_BOX*,RECT_BOX*, int*, INTERFACE*);
 LOCAL   boolean    boxes_crxing_same_boundary(RECT_BOX*,RECT_BOX*,INTERFACE*);
 LOCAL   void    extend_boundary_side(INTERFACE*,int*,int*,RECT_GRID*);
-LOCAL   void    check_and_extend_point(POINT*,TRI*,SURFACE*,double*,
+LOCAL   void    check_and_extend_point(FT_POINT*,TRI*,SURFACE*,double*,
                                 double*,double*);
 LOCAL   void    check_and_extend_side(TRI*,int,SURFACE*,double*,
                                 double*,double*);
@@ -100,14 +100,14 @@ LOCAL   boolean    crx_out_tris_twice(TRI**,int,TRI**,int,TRI*,INTERFACE*,RECT_B
 LOCAL	boolean    ip_connected(int **, int, int*);
 LOCAL	boolean 	overlapping_boxes(RECT_BOX*, RECT_BOX*);
 LOCAL	void 	tecplot_show_box(char*,RECT_BOX*,FILE*);
-LOCAL	void	tecplot_show_null_tris(TRI**, POINT**, int, FILE*);
+LOCAL	void	tecplot_show_null_tris(TRI**, FT_POINT**, int, FILE*);
 LOCAL	void 	remove_crx_tri_on_edge(TRI*,TRI*,int,TRI**,int*);
-LOCAL	boolean	check_adjecant_constrain0(POINT*,POINT*,POINT*,POINT*,
+LOCAL	boolean	check_adjecant_constrain0(FT_POINT*,FT_POINT*,FT_POINT*,FT_POINT*,
 					TRI**,int);
-LOCAL	void	seal_null_loop(TRI**,int*,POINT**,int);
+LOCAL	void	seal_null_loop(TRI**,int*,FT_POINT**,int);
 LOCAL	boolean 	rm_bad_crxs_in_box(int*,int*,int**,int,RECT_BOX*,INTERFACE*);
 LOCAL	void 	smooth_tris(TRI **,int);
-LOCAL	void  	smooth_null_loop(TRI**,int*,POINT**,int);
+LOCAL	void  	smooth_null_loop(TRI**,int*,FT_POINT**,int);
 LOCAL	boolean  	set_tst_recon_boxes(int*,int*,RECT_BOX**,INTERFACE*);
 
 /*
@@ -686,12 +686,12 @@ LOCAL	boolean grid_based_box_untangle(
 LOCAL	void  smooth_null_loop(
 	TRI	**null_tris,
 	int	*null_sides,
-	POINT	**pts,
+	FT_POINT	**pts,
 	int	num_null_sides)
 {
 	int		i, j, num;
 	TRI		*tri;
-	POINT		*p;
+	FT_POINT		*p;
 	SURFACE		*s;
 	SMOOTH_PARA	smooth_que[LOOP_SMOOTH_PARA];
 	SMOOTH_TOL	stol;
@@ -725,7 +725,7 @@ LOCAL	void  smooth_null_loop(
 }
 
 #define MAX_SMOOTH_POINT    5000
-boolean	compute_average_point(SMOOTH_PARA*,POINT*,TRI*,SURFACE*,SMOOTH_TOL*);
+boolean	compute_average_point(SMOOTH_PARA*,FT_POINT*,TRI*,SURFACE*,SMOOTH_TOL*);
 
 LOCAL	void smooth_tris(
 	TRI	**tris,
@@ -733,7 +733,7 @@ LOCAL	void smooth_tris(
 {
 	int		i, j, k, num;
 	TRI		*tri;
-	POINT		*p;
+	FT_POINT		*p;
 	SURFACE		*s;
 	SMOOTH_PARA	smooth_que[MAX_SMOOTH_POINT];
 	SMOOTH_TOL	stol;
@@ -789,12 +789,12 @@ LOCAL	void smooth_tris(
 	void  seal_null_loop(
 	TRI	**null_tris,
 	int	*null_sides,
-	POINT	**pts,
+	FT_POINT	**pts,
 	int	num_null_sides)
 {
 	int	i, j, side;
 	double	avep[3];
-	POINT	*midp, *pt, *ptn;
+	FT_POINT	*midp, *pt, *ptn;
 	TRI	*tri, *new_tri, *new_tri1, *prev_tri;
 	SURFACE	*surf = null_tris[0]->surf;
 	
@@ -891,7 +891,7 @@ LOCAL   boolean seal_strip_with_tris_once(
 	TRI **null_tris,
 	int *null_sides,
 	int num_null_sides,
-	POINT **pts,
+	FT_POINT **pts,
 	double *tnor,
 	char *base_name,
 	boolean zero_base,
@@ -903,7 +903,7 @@ LOCAL   boolean seal_strip_with_tris_once(
 {
 	RECT_GRID gr = topological_grid(intfc);
 	RECT_GRID comp_grid = Computational_grid(intfc);
-        POINT *p0,*p1,*p2,*p3;
+        FT_POINT *p0,*p1,*p2,*p3;
 	TRI *new_tri,**newtris,**debug_tris,*new_tri1,*new_tri2;
 	TRI *in_tri,*out_tri,*base_tri,*test_tri1=NULL,*test_tri2=NULL,
 	    *test_tri;
@@ -1147,13 +1147,13 @@ LOCAL	boolean seal_strip_with_tris(
 	TRI **null_tris,
 	int *null_sides,
 	int num_null_sides,
-	POINT **pts,
+	FT_POINT **pts,
 	double *tnor,
 	char *base_name,
 	boolean zero_base,
 	INTERFACE *intfc)
 {
-	POINT *p0,*p1,*p2,*vi,*vo,*p3,*p4;
+	FT_POINT *p0,*p1,*p2,*vi,*vo,*p3,*p4;
 	TRI *new_tri,**newtris,**debug_tris;
 	TRI *in_tri,*out_tri,*base_tri;
 	int in_side,out_side;
@@ -1704,16 +1704,16 @@ LOCAL	void remove_crx_tri_on_edge(
 }
 
 LOCAL  boolean  check_adjecant_constrain0(
-	POINT	*p0,
-	POINT	*p1,
-	POINT	*p2,
-	POINT	*p3, 
+	FT_POINT	*p0,
+	FT_POINT	*p1,
+	FT_POINT	*p2,
+	FT_POINT	*p3,
 	TRI	**new_tris, 
 	int	num_new_tris)
 {
 	int	i, j;
 	TRI	*tri;
-	POINT	*pt, *ptn;
+	FT_POINT	*pt, *ptn;
 	boolean	status_in, status_out;
 
 	if(NO && debugging("box_intfc"))
@@ -1915,7 +1915,7 @@ LOCAL	void gview_show_box_tri(
 	FILE *file)
 {
 	static const char *indent = "    ";
-	POINT *p;
+	FT_POINT *p;
 	int i,j,k;
 	int nls;	/* number of grid lines */
 	double *L = box->grid->L;
@@ -2046,7 +2046,7 @@ LOCAL	void tecplot_show_box(
 
 LOCAL	void tecplot_show_null_tris(
 	TRI	**tris,
-	POINT	**pts,
+	FT_POINT	**pts,
 	int	num_tris,
 	FILE 	*file)
 {
@@ -2774,9 +2774,9 @@ LOCAL	boolean ip_connected(
 }	/* end ip_connected */
 
 LOCAL   int  find_nearest_pts(
-        POINT **sub_in_pts,
+        FT_POINT **sub_in_pts,
         int   end_in_pts,
-        POINT **sub_out_pts,
+        FT_POINT **sub_out_pts,
         int start_out_pts,
         int end_out_pts,
         TRI **sub_in_tris,
@@ -2786,7 +2786,7 @@ LOCAL   int  find_nearest_pts(
 {
         int i,j,m,n;
         int start_pts = 1000;
-        POINT *p0,*p1,*p2,*p3;
+        FT_POINT *p0,*p1,*p2,*p3;
         double dist,min_dist = HUGE;
         double *L,*h,crx_coord[2];
         boolean pts_in_match = YES;
@@ -2864,9 +2864,9 @@ LOCAL   int  find_nearest_pts(
 }  /*end find_nearest_pts*/
 
 LOCAL   int  find_nearest_pts_pair(
-        POINT **sub_in_pts,
+        FT_POINT **sub_in_pts,
 	int   end_in_pts,
-	POINT **sub_out_pts,
+	FT_POINT **sub_out_pts,
 	int num_sub_out_pts,
 	int start_out_pts,
 	RECT_GRID rgr,
@@ -2874,7 +2874,7 @@ LOCAL   int  find_nearest_pts_pair(
 {
         int i,j,m,n;
 	int end_out_pts,start_pts = start_out_pts;
-	POINT *p0,*p1;
+	FT_POINT *p0,*p1;
 	double dist,min_dist = HUGE;
 	double *L,*h,crx_coord[2];
 	boolean pts_in_match = YES;
@@ -2947,7 +2947,7 @@ LOCAL   int  find_nearest_pts_pair(
 EXPORT	boolean	check_degenerated_loop(
 	TRI	**tris,
 	int	*sides,
-	POINT	**pts,
+	FT_POINT	**pts,
 	int	num_tris)
 {
 	TRI	*new_tri;
@@ -2994,16 +2994,16 @@ EXPORT	boolean	check_degenerated_loop(
 	ORIENTATION orient,
 	TRI ***tris,
 	int **sides,
-	POINT ***side_points,
+	FT_POINT ***side_points,
 	int *num_sides,
 	double **tnor)
 {
-	POINT *p;
+	FT_POINT *p;
 	int i, j, k, i_diff, side = start_side;
 	TRI *next_tri = start;
 	static TRI **null_tris = NULL;
 	static int *null_sides =  NULL;
-	static POINT **pts;
+	static FT_POINT **pts;
 	static double normal[MAXD];
 	double v1[MAXD],v2[MAXD],cprod[MAXD];
 
@@ -3014,7 +3014,7 @@ EXPORT	boolean	check_degenerated_loop(
 	    
 	    uni_array(&null_tris,MAX_NULL_SIDE_LOOP,sizeof(TRI*));
 	    uni_array(&null_sides,MAX_NULL_SIDE_LOOP,INT);
-	    uni_array(&pts,MAX_NULL_SIDE_LOOP,sizeof(POINT*));
+	    uni_array(&pts,MAX_NULL_SIDE_LOOP,sizeof(FT_POINT*));
 	}
 	for (i = 0; i < 3; ++i) normal[i] = 0.0;
 	*num_sides = 0;
@@ -3123,7 +3123,7 @@ LOCAL	boolean null_side_tri_in_list(
 	int *side)
 {
 	int i,j;
-	POINT **test;
+	FT_POINT **test;
 
 	
 	for (i = 0; i < num_tris; ++i)
@@ -3148,7 +3148,7 @@ LOCAL	boolean check_extension_of_surface(
 	SURFACE *s)
 {
 	TRI *tri1,*tri2,*t[2];
-	POINT *p1,*p2;
+	FT_POINT *p1,*p2;
 	int i,j,k,count;
 	
 	printf("Entering check_extension_of_surface!\n");
@@ -3199,7 +3199,7 @@ EXPORT  boolean check_extension_of_surface_global(
         SURFACE *s)
 {
         TRI *tri1,*tri2,*t[2];
-        POINT *p1,*p2;
+        FT_POINT *p1,*p2;
         int i,j,count;
 
         printf("Entering check_extension_of_surface_global!\n");
@@ -3333,7 +3333,7 @@ LOCAL   boolean bifurcation_detected(
 	    num_sub_list2, *null_sides=0,  count=0, min_num = 1000,
 	    max_num = -1000,num_tmp_tris=0;
 	int num_sub_tris[10],j,num_recorded_tris;
-	POINT **side_pts;
+	FT_POINT **side_pts;
 	double *tnor;
 	boolean bifurcation_found = NO;
 
@@ -4130,7 +4130,7 @@ LOCAL   void extend_boundary_side(
 {
         SURFACE **s;
         TRI *t;
-        POINT *p;
+        FT_POINT *p;
         int i;
         double L[MAXD],U[MAXD];
 
@@ -4162,7 +4162,7 @@ LOCAL   void extend_boundary_side(
 }       /* end extend_boundary_side */
 
 LOCAL void check_and_extend_point(
-        POINT *p,
+        FT_POINT *p,
         TRI *t,
         SURFACE *s,
         double *L,
@@ -4211,7 +4211,7 @@ LOCAL   void check_and_extend_side(
         double *h)
 {
         int i,j,k;
-        POINT *p1,*p2,*p;
+        FT_POINT *p1,*p2,*p;
         double d1,d2,coords[MAXD];
         const double *nor;
         int l,num_tris;

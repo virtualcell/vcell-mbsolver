@@ -37,7 +37,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <front/fdecs.h>
 
 	/* LOCAL Function Declarations */
-LOCAL	boolean duplicate_point(POINT*,INTERFACE*);
+LOCAL	boolean duplicate_point(FT_POINT*,INTERFACE*);
 
 /*
 *		f_intfc_communication1d():
@@ -60,7 +60,7 @@ EXPORT boolean f_intfc_communication1d(
 	INTERFACE	*tmp_intfc;
 	PP_GRID      	*pp_grid = fr->pp_grid;
 	int          	*G = pp_grid->gmax;
-	POINT		*pt, **p;
+	FT_POINT		*pt, **p;
 	RECT_GRID	*gr = fr->rect_grid;
 	int		myid=0, nb_id[2], src, nn;
 	int          	me[MAXD], him[MAXD];
@@ -255,8 +255,8 @@ EXPORT boolean f_intfc_communication1d(
 	{
 	    for (i = 1; i < intfc->num_points; ++i)
 	    {
-	    	POINT *pt0 = intfc->points[i-1];
-	    	POINT *pt1 = intfc->points[i];
+	    	FT_POINT *pt0 = intfc->points[i-1];
+	    	FT_POINT *pt1 = intfc->points[i];
 	    	if (negative_component(pt1) != positive_component(pt0))
 	    	{
 	    	    set_equivalent_comps(positive_component(pt1),
@@ -314,11 +314,11 @@ EXPORT boolean f_intfc_communication1d(
 }		/*end f_intfc_communication1d*/
 
 LOCAL	boolean duplicate_point(
-	POINT *p,
+	FT_POINT *p,
 	INTERFACE *intfc)
 {
 	RECT_GRID *gr = computational_grid(intfc);
-	POINT **pp;
+	FT_POINT **pp;
 	for (pp = intfc->points; pp && *pp; ++pp)
 	{
 	    if (fabs(Coords(p)[0] - Coords(*pp)[0]) > grid_tolerance(gr))

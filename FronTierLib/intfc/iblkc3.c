@@ -1437,7 +1437,7 @@ LOCAL	void blk_case01_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -1514,7 +1514,7 @@ LOCAL	void blk_case02_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3;
+        FT_POINT	*p1,*p2,*p3;
 	SURFACE	*s;
 	int	is;
 
@@ -1552,7 +1552,7 @@ LOCAL	void blk_case03_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3;
+        FT_POINT	*p1,*p2,*p3;
 	SURFACE	*s;
 	int	is;
 
@@ -1590,7 +1590,7 @@ LOCAL	void blk_case04_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -1671,7 +1671,7 @@ LOCAL	void blk_case05_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -1758,7 +1758,7 @@ LOCAL	void blk_case06_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -1838,7 +1838,7 @@ LOCAL	void blk_case07_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -1924,7 +1924,7 @@ LOCAL	void blk_case08_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2008,7 +2008,7 @@ LOCAL	void blk_case09_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3;
+        FT_POINT	*p1,*p2,*p3;
 	SURFACE	*s;
 	int	is;
 
@@ -2056,7 +2056,7 @@ LOCAL	void blk_case10_comp3(
         BLK_TRI *blk_mem)
 {
        
-        POINT	*p1,*p2,*p3,*p4;
+        FT_POINT	*p1,*p2,*p3,*p4;
 	SURFACE	*s;
 	int	is;
 
@@ -2102,7 +2102,7 @@ LOCAL	void blk_case11_comp3(
         BLK_TRI *blk_mem)
 {
 
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2186,7 +2186,7 @@ LOCAL	void blk_case12_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2278,7 +2278,7 @@ LOCAL	void blk_case13_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2361,7 +2361,7 @@ LOCAL	void blk_case14_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2444,7 +2444,7 @@ LOCAL	void blk_case15_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2532,7 +2532,7 @@ LOCAL	void blk_case16_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5,*p6;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5,*p6;
 	SURFACE	*s;
 	CURVE	*c;
 	int	is;
@@ -2584,7 +2584,7 @@ LOCAL	void blk_case17_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2680,7 +2680,7 @@ LOCAL	void blk_case18_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2770,7 +2770,7 @@ LOCAL	void blk_case19_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2853,7 +2853,7 @@ LOCAL	void blk_case20_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -2941,7 +2941,7 @@ LOCAL	void blk_case21_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -3037,7 +3037,7 @@ LOCAL	void blk_case22_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5;
 	SURFACE	*s;
 	int	is;
 
@@ -3085,7 +3085,7 @@ LOCAL	void blk_case23_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5,*p6;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5,*p6;
 	SURFACE	*s;
 	int	is;
 
@@ -3144,7 +3144,7 @@ LOCAL	void blk_case24_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is,a;
@@ -3257,7 +3257,7 @@ LOCAL	void blk_case25_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -3394,7 +3394,7 @@ LOCAL	void blk_case26_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -3484,7 +3484,7 @@ LOCAL	void blk_case27_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -3567,7 +3567,7 @@ LOCAL	void blk_case28_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -3655,7 +3655,7 @@ LOCAL	void blk_case29_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -3792,7 +3792,7 @@ LOCAL	void blk_case30_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -3881,7 +3881,7 @@ LOCAL	void blk_case31_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -3964,7 +3964,7 @@ LOCAL	void blk_case32_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4;
+        FT_POINT	*p1,*p2,*p3,*p4;
 	SURFACE	*s;
 	CURVE	*c;
 	int	is;
@@ -4017,7 +4017,7 @@ LOCAL	void blk_case33_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -4162,7 +4162,7 @@ LOCAL	void blk_case34_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -4255,7 +4255,7 @@ LOCAL	void blk_case35_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5;
 	SURFACE	*s;
 	CURVE	*c;
 	int	is;
@@ -4335,7 +4335,7 @@ LOCAL	void blk_case36_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -4426,7 +4426,7 @@ LOCAL	void blk_case37_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -4570,7 +4570,7 @@ LOCAL	void blk_case38_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -4718,7 +4718,7 @@ LOCAL	void blk_case39_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4;
+        FT_POINT	*p1,*p2,*p3,*p4;
 	SURFACE	*s;
 	int	is;
 
@@ -4773,7 +4773,7 @@ LOCAL	void blk_case40_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -4859,7 +4859,7 @@ LOCAL	void blk_case41_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -4945,7 +4945,7 @@ LOCAL	void blk_case42_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5032,7 +5032,7 @@ LOCAL	void blk_case43_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5120,7 +5120,7 @@ LOCAL	void blk_case44_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -5259,7 +5259,7 @@ LOCAL	void blk_case45_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5347,7 +5347,7 @@ LOCAL	void blk_case46_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5446,7 +5446,7 @@ LOCAL	void blk_case47_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5537,7 +5537,7 @@ LOCAL	void blk_case48_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -5680,7 +5680,7 @@ LOCAL	void blk_case49_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5770,7 +5770,7 @@ LOCAL	void blk_case50_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5867,7 +5867,7 @@ LOCAL	void blk_case51_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -5963,7 +5963,7 @@ LOCAL	void blk_case52_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2;
 	SURFACE	*s;
 	CURVE	*c;
 	int	ic,is;
@@ -6053,7 +6053,7 @@ LOCAL	void blk_case53_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*p3,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -6198,7 +6198,7 @@ LOCAL	void blk_case54_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -6343,7 +6343,7 @@ LOCAL	void blk_case55_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;
@@ -6487,7 +6487,7 @@ LOCAL	void blk_case56_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*p5,*p6;
+        FT_POINT	*p1,*p2,*p3,*p4,*p5,*p6;
 	SURFACE	*s;
 	int	ic,is;
 
@@ -6551,7 +6551,7 @@ LOCAL	void blk_case57_comp3(
         BLK_CRX *blk_crx,
         BLK_TRI *blk_mem)
 {
-        POINT	*p1,*p2,*p3,*p4,*pc1,*pc2,*pc3,*pc4;
+        FT_POINT	*p1,*p2,*p3,*p4,*pc1,*pc2,*pc3,*pc4;
 	SURFACE	*s;
 	CURVE	*c1,*c2;
 	int	ic1,ic2,is;

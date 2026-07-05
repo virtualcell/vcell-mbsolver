@@ -44,7 +44,7 @@ LIB_LOCAL	void	i_reflect_interface1d(
 	double*		p,	/* point on reflection plane */
 	double*		nor)	/* plane normal */
 {
-	POINT	  **pt;
+	FT_POINT	  **pt;
 	COMPONENT comp;
 	int       n, np = intfc->num_points;
 
@@ -157,7 +157,7 @@ EXPORT	void	i_reflect_surface(
 {
 	INTERFACE *intfc = s->interface;
         TRI *tri;
-        POINT *p_tmp;
+        FT_POINT *p_tmp;
         POINTER t_tmp;
         int i, bdry12, bdry20;
 
@@ -190,7 +190,7 @@ EXPORT	void	i_reflect_surface(
 #endif /* defined(THREED) */
 
 EXPORT	void	i_reflect_point(
-	POINT		*pt,
+	FT_POINT		*pt,
 	double		*p,
 	double		*nor,
 	INTERFACE	*intfc)

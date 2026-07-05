@@ -145,7 +145,7 @@ EXPORT	boolean	tri_interpolate_intfc_states(
 }		/*end tri_interpolate_intfc_states*/
 
 EXPORT	void	slsr(
-	POINT			*p,
+	FT_POINT			*p,
 	HYPER_SURF_ELEMENT	*hse,
 	HYPER_SURF		*hs,
 	Locstate		*sl,
@@ -338,7 +338,7 @@ EXPORT	void	set_phys_ocurves_to_null(
 }		/*end set_phys_ocurves_to_null*/
 
 EXPORT	void	GetFrontCurvature(
-        POINT                   *p,
+        FT_POINT                   *p,
         HYPER_SURF_ELEMENT      *hse,         
 	HYPER_SURF              *hs,
 	double			*curvature,
@@ -348,7 +348,7 @@ EXPORT	void	GetFrontCurvature(
 }	/* end GetFrontCurvature */
 
 EXPORT	double	mean_curvature_at_point(
-	POINT			*p,
+	FT_POINT			*p,
 	HYPER_SURF_ELEMENT	*hse,
 	HYPER_SURF		*hs,
 	Front			*fr)
@@ -404,7 +404,7 @@ EXPORT	void  set_tangent_function(
 }		/*end set_tangent_function*/
 
 EXPORT	void	normal(
-	POINT              *p,
+	FT_POINT              *p,
 	HYPER_SURF_ELEMENT *hse,
 	HYPER_SURF         *hs,
 	double              *nor,
@@ -430,7 +430,7 @@ EXPORT	void	normal(
 }		/*end normal*/
 
 EXPORT	void	tangent(
-	POINT *p,
+	FT_POINT *p,
 	BOND  *b,
 	CURVE *c,
 	double *tgnt,

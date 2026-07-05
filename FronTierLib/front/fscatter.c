@@ -156,7 +156,7 @@ EXPORT	void	delete_subdomain_boundaries(
 	{
 	case 1:
 	    {
-	        POINT **p;
+	        FT_POINT **p;
 	        for (p = intfc->points; p && *p; ++p)
 	        {
 		    if (is_subdomain_boundary(Hyper_surf(*p)))

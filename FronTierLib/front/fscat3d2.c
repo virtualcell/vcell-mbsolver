@@ -53,7 +53,7 @@ LOCAL	boolean      is_reflected_tri(TRI*,TRI*,int,int,RECT_GRID*,int,int*);
 LOCAL	boolean      match_tris_in_block(SURFACE*,SURFACE*,RECT_GRID*,TRI**,TRI**,
 				      int,int,P_LINK*,int);
 LOCAL	boolean      matching_tris(TRI*,TRI*,int*,double*);
-LOCAL	boolean      point_on_same_edge(POINT*,POINT*,double*);
+LOCAL	boolean      point_on_same_edge(FT_POINT*,FT_POINT*,double*);
 LOCAL	boolean      reconstruct_tris_in_rfl_block(SURFACE*,TRI**,TRI**,int*,
 	 				        RECT_GRID*,int,int);
 LOCAL	boolean      reflect_buffer_interface(INTERFACE*,int,int,boolean);
@@ -67,7 +67,7 @@ LOCAL	void      set_floating_point_tolerance2(RECT_GRID*);
 LOCAL	void      detach_tri_side(TRI*,int);
 LOCAL	void      merge_block_tris(SURFACE*,TRI**,TRI**,int);
 LOCAL	void      stitch_blocks(TRI**,int,TRI**,int);
-LOCAL   boolean      is_reflected_point_pair(POINT*,POINT*,double,int,double);
+LOCAL   boolean      is_reflected_point_pair(FT_POINT*,FT_POINT*,double,int,double);
 /*#bjet2  functions for merge_curve */
 LOCAL   BOND  *find_match_bond(BOND*, CURVE*);
 LOCAL   boolean  seal_closed_curve(CURVE*, int);
@@ -315,7 +315,7 @@ LOCAL boolean buffer_extension3d2(
 	CURVE		**c;
 	HYPER_SURF	*hs;
 	HYPER_SURF_ELEMENT *hse;
-	POINT		*p;
+	FT_POINT		*p;
 	SURFACE		**s;
 	TRI		*t;
 	RECT_GRID	*gr = computational_grid(intfc);
@@ -1253,7 +1253,7 @@ LOCAL boolean append_buffer_surface2(
             {
                 if (nbt_s[i1][i2] != nbt_a[i1][i2])
                 {
-		    POINT *p;
+		    FT_POINT *p;
 		    int j;
                     (void) printf("WARNING in append_buffer_surface2(), "
                                   "local and adjacent sides have "
@@ -1921,7 +1921,7 @@ LOCAL	boolean reconstruct_tris_in_rfl_block(
 	int nb)
 {
 	TRI   *ts, *tr;
-	POINT **ps, **pr;
+	FT_POINT **ps, **pr;
 	double bs;
 	int   side, rside;
 	int   i, j, j1, j2;
@@ -2022,7 +2022,7 @@ LOCAL	boolean tri_side_on_bound(
 	int dir,
 	int *side)
 {
-	POINT *p[3];
+	FT_POINT *p[3];
 	int i;
 
 	p[0] = Point_of_tri(tri)[0];
@@ -2056,8 +2056,8 @@ LOCAL	boolean is_reflected_tri(
 	int *rside)
 {
 	double ml = (nb == 0) ? 2.0*gr->L[dir] : 2.0*gr->U[dir];
-	POINT *sp[3];
-	POINT *rp[3];
+	FT_POINT *sp[3];
+	FT_POINT *rp[3];
 	double h = gr->h[dir];
 	int i;
 
@@ -2080,8 +2080,8 @@ LOCAL	boolean is_reflected_tri(
 }	/* end is_reflected_tri */
 
 LOCAL	boolean is_reflected_point_pair(
-	POINT *ps,
-	POINT *pr,
+	FT_POINT *ps,
+	FT_POINT *pr,
 	double ml,
 	int dir,
 	double h)
@@ -2152,7 +2152,7 @@ LOCAL   boolean match_tris_in_block(
 	int                i, j, jmin, k, i_rot;
 	HYPER_SURF_ELEMENT *hse, *hae;
         HYPER_SURF         *hs, *ha;
-	POINT              *ps, *pa,*pp;
+	FT_POINT              *ps, *pa,*pp;
 	double              min_d2;
 	static double       **dist = NULL;
 	static int         **rot = NULL;
@@ -2230,7 +2230,7 @@ LOCAL   boolean match_tris_in_block(
 		{
 		    ps = Point_of_tri(ts)[k];
                     pa = Point_of_tri(ta)[k];
-		    pp = (POINT*)find_from_hash_table((POINTER)pa,
+		    pp = (FT_POINT*)find_from_hash_table((POINTER)pa,
                                                       p_table,p_size);
 		    if (pp == NULL)
 		    {
@@ -2345,7 +2345,7 @@ LOCAL	boolean matching_tris(
 	int   *i_rot,
 	double *h)
 {
-	POINT *p1[3], *p2[3];
+	FT_POINT *p1[3], *p2[3];
 	int i;
 
 	p1[0] = Point_of_tri(tri1)[0];
@@ -2371,8 +2371,8 @@ LOCAL	boolean matching_tris(
 }	/* end matching_tris */
 
 LOCAL	boolean point_on_same_edge(
-	POINT *p1,
-	POINT *p2,
+	FT_POINT *p1,
+	FT_POINT *p2,
 	double *h)
 {
 	int i, num_same_coords;
@@ -2421,7 +2421,7 @@ LOCAL	boolean is_buffer_curve(
 	INTERFACE *adj_intfc)
 {
 	CURVE **c;
-	POINT *start_posn,*end_posn;
+	FT_POINT *start_posn,*end_posn;
 	int i,dim = adj_intfc->dim;
 
 	for (c = adj_intfc->curves; c && *c; ++c)

@@ -44,13 +44,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 typedef struct {
 	O_CURVE *oldc, *newc;
 	double v[MAXD];
-	POINT *p, *p_opp;
+	FT_POINT *p, *p_opp;
 	BOND *bvirtual, *oppb;
 	NODE *oppn;
 } VIRTUAL_PROPAGATED_CURVE;
 
 typedef struct {
-	POINT	*pc;		/* crossing point */
+	FT_POINT	*pc;		/* crossing point */
 	BOND	**newbacr,	/* the crossing bond on the newca */
 		**newb2cr;	/* the crossing bond on the newc2 */
 	double	*sa,*s2;	/* fract dist on bond to cross */
@@ -76,7 +76,7 @@ LOCAL	BOND	*normal_D_extend(VIRTUAL_PROPAGATED_CURVE*,
 				 double*,double*,NODE_FLAG,Front*);
 LOCAL	int	check_H_extend_cross(BOND*,BOND*,O_CURVE*,O_CURVE*,double*,int,
 				     COMPONENT,COMPONENT,boolean*);
-LOCAL	int	find_circle_through_points(POINT*,POINT*,POINT*,POINT*,
+LOCAL	int	find_circle_through_points(FT_POINT*,FT_POINT*,FT_POINT*,FT_POINT*,
 					   double*,double*,int);
 LOCAL	int	found_D_extend_cross(VIRTUAL_PROPAGATED_CURVE*,
 				     VIRTUAL_PROPAGATED_CURVE*,
@@ -84,13 +84,13 @@ LOCAL	int	found_D_extend_cross(VIRTUAL_PROPAGATED_CURVE*,
 				     D_EXTEND_OUTPUT*,BOND*,Front*,double);
 LOCAL	int	found_H_ext_cr_2_pc(O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,
                                     BOND*,BOND*,BOND**,BOND**,BOND*,
-				    BOND*,BOND*,BOND*,POINT*,POINT*,double,double,
+				    BOND*,BOND*,BOND*,FT_POINT*,FT_POINT*,double,double,
 				    NODE*,NODE*,double,double*,double*,double*,
 				    Front*);
 LOCAL	int	found_c_or_e_2_pc(BOND**,BOND**,BOND*,BOND*,BOND*,BOND*,
                                   O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,
 				  BOND*,BOND*,NODE*,NODE*,NODE_FLAG,
-				  POINT**,POINT*,double,double,double,
+				  FT_POINT**,FT_POINT*,double,double,double,
 				  double*,double*,double*,Front*,boolean*);
 LOCAL	int	leave_D_extend(VIRTUAL_PROPAGATED_CURVE*,
 			       VIRTUAL_PROPAGATED_CURVE*,
@@ -108,14 +108,14 @@ LOCAL	boolean	no_D_extend_cross(VIRTUAL_PROPAGATED_CURVE*,
 				  VIRTUAL_PROPAGATED_CURVE*,D_EXTEND_OUTPUT*,
 				  int*,int,BOND*,BOND*,Front*,POINTER,double);
 LOCAL	int	no_H_ext_cr_2_pc(O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,COMPONENT,
-                                 COMPONENT,POINT*,POINT*,POINT*,POINT*,POINT*,
-			         POINT*,BOND**,BOND**,BOND*,BOND*,BOND*,BOND*,
+                                 COMPONENT,FT_POINT*,FT_POINT*,FT_POINT*,FT_POINT*,FT_POINT*,
+			         FT_POINT*,BOND**,BOND**,BOND*,BOND*,BOND*,BOND*,
 			         BOND*,BOND*,BOND*,NODE*,NODE*,double*,double*,
 			         double*,int,Front*,POINTER,RPROBLEM**,
 			         double,double*,double*,double*,boolean,int,NODE_FLAG);
 LOCAL	int	no_c_or_e_2_pc(int,O_CURVE*,O_CURVE*,O_CURVE*,O_CURVE*,BOND*,
                                BOND*,BOND*,BOND*,BOND*,BOND*,NODE*,NODE*,
-			       POINT*,POINT*,POINT**,Front*,POINTER,
+			       FT_POINT*,FT_POINT*,FT_POINT**,Front*,POINTER,
 			       double,double*,RPROBLEM**);
 LOCAL	void	modify_D_extend_list(boolean,
 				     BOND*(*)(VIRTUAL_PROPAGATED_CURVE*,
@@ -218,7 +218,7 @@ EXPORT int D_extend_crossing_of_two_propagated_curves(
 	O_CURVE		*newc2,
 	COMPONENT	ahead_comp,
 	COMPONENT	propagation_comp,
-	POINT		*pc,		/* crossing point */
+	FT_POINT		*pc,		/* crossing point */
 	BOND		**newbacr,	/* the crossing bond on the newca */
 	BOND		**newb2cr,	/* the crossing bond on the newc2 */
 	double		*sa, double *s2,	/* fract dist on bond to cross */
@@ -238,7 +238,7 @@ EXPORT int D_extend_crossing_of_two_propagated_curves(
 	int		cr_stat = NO_CROSS;
 	int		status;
 	int		i, dim = fr->interf->dim;
-	static	POINT	*pa = NULL, *pb = NULL, *p2 = NULL, *pa_opp = NULL,
+	static	FT_POINT	*pa = NULL, *pb = NULL, *p2 = NULL, *pa_opp = NULL,
 	                *pb_opp = NULL, *p2_opp = NULL;
 	BOND *(**Extend)(VIRTUAL_PROPAGATED_CURVE*,
 			     VIRTUAL_PROPAGATED_CURVE*,
@@ -358,7 +358,7 @@ LOCAL	BOND *linear_D_extend(
 	Front		*fr)
 {
 	BOND		*newba;
-	POINT		*pc = dout->pc;
+	FT_POINT		*pc = dout->pc;
 	RECT_GRID	*rgr = fr->rect_grid;
 	double		*h = rgr->h;
 	double		q[MAXD],u[MAXD],v[MAXD],w[MAXD],vmw[MAXD];
@@ -479,9 +479,9 @@ LOCAL	BOND *circle_D_extend(
 	RECT_GRID	*rgr = fr->rect_grid;
 	BOND		*newba;
 	NODE		*fn;
-	POINT		*p0c, *pac, *p2c;
-	POINT		Pcenter;
-	POINT		*pc = dout->pc;
+	FT_POINT		*p0c, *pac, *p2c;
+	FT_POINT		Pcenter;
+	FT_POINT		*pc = dout->pc;
 	double		Rsq;
 	double		*sa = dout->sa;
 	double		len_extend,hmax,*h = rgr->h;
@@ -601,11 +601,11 @@ LOCAL	BOND *normal_D_extend(
 	Front		*fr)
 {
 	RECT_GRID	*rgr = fr->rect_grid;
-	POINT		Pacr, Pbcr;
-	POINT		*p, *ptmp;
-	POINT		*p2 = Point_of_bond(c2->bvirtual,
+	FT_POINT		Pacr, Pbcr;
+	FT_POINT		*p, *ptmp;
+	FT_POINT		*p2 = Point_of_bond(c2->bvirtual,
 				            Opposite_orient(c2->newc->orient));
-	POINT		*pc = dout->pc;
+	FT_POINT		*pc = dout->pc;
 	HYPER_SURF 	*hs;
 	HYPER_SURF_ELEMENT *hse_acr, *hse_bcr;
 	BOND		*newba;
@@ -799,7 +799,7 @@ LOCAL	int  found_D_extend_cross(
 	NODE		*oldna, *oldn2;
 	int		status = GOOD_NODE;
 	int		i, dim = fr->rect_grid->dim;
-	static POINT	*oldp = NULL;
+	static FT_POINT	*oldp = NULL;
 
 	if (oldp == NULL) 
 	    oldp = Static_point(fr->interf);
@@ -897,7 +897,7 @@ EXPORT int H_extend_crossing_of_two_propagated_curves(
 	O_CURVE		*newc2,
 	COMPONENT	ahead_comp,
 	COMPONENT	propagation_comp,
-	POINT		*pc,		/* crossing point */
+	FT_POINT		*pc,		/* crossing point */
 	BOND		**newb1cr,	/* the crossing bond on the newc1 */
 	BOND		**newb2cr,	/* the crossing bond on the newc2 */
 	double		*s1, double *s2,	/* fract dist on bond to cross */
@@ -909,8 +909,8 @@ EXPORT int H_extend_crossing_of_two_propagated_curves(
 	NODE_FLAG	flag)
 {
 	RECT_GRID *gr = fr->rect_grid;
-	POINT		*q2;
-	POINT		*padj;
+	FT_POINT		*q2;
+	FT_POINT		*padj;
 	BOND		*newb1, *newb2;
 	BOND		*b1virtual,*b2virtual,*b1limit,*b2limit;
 	BOND		B1, B2;
@@ -933,7 +933,7 @@ EXPORT int H_extend_crossing_of_two_propagated_curves(
 	int		cr_stat = NO_CROSS;
 	boolean		cross_found = NO;
 	int		dim = fr->interf->dim;
-	static	POINT	*p1 = NULL, *p2 = NULL, *p1_opp = NULL,
+	static	FT_POINT	*p1 = NULL, *p2 = NULL, *p1_opp = NULL,
 	                *p2_opp = NULL, *oldp = NULL;
 	static	double	**Q = NULL;
 	int             on_b1,on_b2;
@@ -1209,12 +1209,12 @@ LOCAL	int no_H_ext_cr_2_pc(
 	O_CURVE	  *newc2,
 	COMPONENT ahead_comp,
 	COMPONENT propagation_comp,
-	POINT	  *pc,
-	POINT     *p1_opp,
-	POINT     *padj,
-	POINT     *oldp,
-	POINT     *p1,
-	POINT     *p2,
+	FT_POINT	  *pc,
+	FT_POINT     *p1_opp,
+	FT_POINT     *padj,
+	FT_POINT     *oldp,
+	FT_POINT     *p1,
+	FT_POINT     *p2,
 	BOND	  **newb1cr,
 	BOND	  **newb2cr,
 	BOND      *b2limit,
@@ -1362,8 +1362,8 @@ LOCAL	int	found_H_ext_cr_2_pc(
 	BOND    *b2virtual,
 	BOND    *newb1,
 	BOND    *newb2,
-	POINT   *pc,
-	POINT   *oldp,
+	FT_POINT   *pc,
+	FT_POINT   *oldp,
 	double   s1,
 	double   s2,
 	NODE    *oppn1,
@@ -1374,7 +1374,7 @@ LOCAL	int	found_H_ext_cr_2_pc(
 	double   *v2,
 	Front   *fr)
 {
-	POINT *oldp1, *oldp2;
+	FT_POINT *oldp1, *oldp2;
 	int status;
 	int i, dim = fr->rect_grid->dim;
 	*newb1cr = (newb1==b1virtual) ? Bond_at_node_of_o_curve(newc1) : newb1;
@@ -1509,7 +1509,7 @@ EXPORT	int cross_or_extend_to_cross_two_propagated_curves(
 	O_CURVE		*newc1,
 	O_CURVE		*oldc2,
 	O_CURVE		*newc2,
-	POINT		**pc,
+	FT_POINT		**pc,
 	BOND		**newb1cr,
 	BOND		**newb2cr,
 	double		*s1,
@@ -1541,7 +1541,7 @@ EXPORT	int cross_or_extend_to_cross_two_propagated_curves(
 	int		i, dim = rgr->dim;
 	static	BOND	*b1virtual = NULL, *b2virtual = NULL;
 	static	BOND	*newb1dir = NULL, *newb2dir = NULL;
-	static	POINT   *p1 = NULL, *p2 = NULL, *p1_opp = NULL,
+	static	FT_POINT   *p1 = NULL, *p2 = NULL, *p1_opp = NULL,
 	                *p2_opp = NULL, *oldp = NULL;
 	int             on_b1,on_b2;
 
@@ -1963,9 +1963,9 @@ LOCAL	int	no_c_or_e_2_pc(
 	BOND     *newb2dir,
 	NODE     *oppn1,
 	NODE     *oppn2,
-	POINT    *p1_opp,
-	POINT    *p2_opp,
-	POINT    **pc,
+	FT_POINT    *p1_opp,
+	FT_POINT    *p2_opp,
+	FT_POINT    **pc,
 	Front    *fr,
 	POINTER  wave,
 	double    dt,
@@ -2047,8 +2047,8 @@ LOCAL	int	found_c_or_e_2_pc(
 	NODE      *oppn1,
 	NODE      *oppn2,
 	NODE_FLAG flag,
-	POINT     **pc,
-	POINT     *oldp,
+	FT_POINT     **pc,
+	FT_POINT     *oldp,
 	double     s1,
 	double     s2,
 	double     dt,
@@ -2149,10 +2149,10 @@ LOCAL	int leave_cross_or_extend_to_cross_two_propagated_curves(
 
 
 LOCAL int find_circle_through_points(
-	POINT		*p0,
-	POINT		*p1,
-	POINT		*p2,
-	POINT		*pcenter,
+	FT_POINT		*p0,
+	FT_POINT		*p1,
+	FT_POINT		*p2,
+	FT_POINT		*pcenter,
 	double		*rsqr,
 	double		*h,
 	int		dim)

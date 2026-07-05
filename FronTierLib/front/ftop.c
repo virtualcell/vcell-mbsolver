@@ -43,7 +43,7 @@ LOCAL	int	split_bond_at_cross(CROSS*,int,CURVE**,COMPONENT*,COMPONENT*,
 LOCAL	void	resolve_sink_node_fold_backs(NODE*,int*,Front*);
 
 EXPORT	void	f_reflect_point(
-	POINT		*point,/* point being reflected */
+	FT_POINT		*point,/* point being reflected */
 	double		*p,	/* point on reflection plane */
 	double		*n,	/* normal to plane */
 	INTERFACE	*intfc)	/* interface being reflected */
@@ -143,12 +143,12 @@ EXPORT  void f_reverse_curve(
 }		/*end f_reverse_curve*/
 
 EXPORT	boolean	f_untrack_point(
-	POINT		*p,
+	FT_POINT		*p,
 	COMPONENT	newcomp,
 	Front		*fr)
 {
 	INTERFACE	*intfc = fr->interf;
-	POINT		**pp;
+	FT_POINT		**pp;
 	int		i;
 
 	debug_print("untrack","Entered f_untrack_point()\n");
@@ -339,7 +339,7 @@ EXPORT  boolean f_move_closed_loop_node(
 	BOND		*b)
 {
 	NODE		*c_node;
-	POINT		*p, *oldn_p;
+	FT_POINT		*p, *oldn_p;
 	size_t		sizest;
 	boolean		status;
 
@@ -375,7 +375,7 @@ EXPORT  boolean f_move_closed_loop_node(
 
 EXPORT	CURVE *f_attach_curve_to_node(
 	CURVE		*c1,
-	POINT		*p,
+	FT_POINT		*p,
 	BOND		*b,
 	NODE		*n)
 {
@@ -869,7 +869,7 @@ LOCAL	void resolve_sink_node_fold_backs(
 	O_NODE		*on;
 	CURVE		*cin, *cout, *newc;
 	NODE		*tmpn;
-	POINT		*p, *p1, *p2;
+	FT_POINT		*p, *p1, *p2;
 	double		hx = fr->rect_grid->h[0], hy = fr->rect_grid->h[1];
 	double		min_ang;
 	double		mid_coords[MAXD];
@@ -1681,8 +1681,8 @@ EXPORT   boolean  cross_rect_grid_bdry(
         double *L = rgr->L;         
 	double *U = rgr->U;
         int i,dim = rgr->dim;
-        POINT *ps = b->start;
-        POINT *pe = b->end;
+        FT_POINT *ps = b->start;
+        FT_POINT *pe = b->end;
 
         for (i = 0; i < dim; ++i)
         {
