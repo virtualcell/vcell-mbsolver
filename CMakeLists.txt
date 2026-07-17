@@ -114,6 +114,19 @@ find_package(Boost REQUIRED)
 if(NOT Boost_FOUND)
     message(FATAL_ERROR "Boost not found. Please ensure libboost-dev (Linux), boost (macOS), or boost:x64-windows (vcpkg) is installed.")
 endif()
+set(VCELL_BOOST_TARGET)
+foreach(_boost_tgt Boost::headers Boost::boost)
+    if(TARGET ${_boost_tgt})
+        set(VCELL_BOOST_TARGET ${_boost_tgt})
+        if(NOT Boost_INCLUDE_DIRS)
+            get_target_property(_boost_inc ${_boost_tgt} INTERFACE_INCLUDE_DIRECTORIES)
+            if(_boost_inc)
+                set(Boost_INCLUDE_DIRS ${_boost_inc})
+            endif()
+        endif()
+        break()
+    endif()
+endforeach()
 
 # Python bindings (always built).
 # Use Development.Module (not the full Development component): manylinux images
@@ -174,6 +187,7 @@ target_include_directories(MovingBoundaryLib
 
 target_link_libraries(MovingBoundaryLib
     PUBLIC
+        ${VCELL_BOOST_TARGET}
         ${HDF5_LIBRARIES}
         ${HDF5_HL_LIBRARIES}
         frontier
