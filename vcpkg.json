@@ -1,0 +1,12 @@
+{
+  "name": "vcell-mbsolver",
+  "version": "0.0.0",
+  "dependencies": [
+    {
+      "name": "hdf5",
+      "features": ["cpp", "zlib"],
+      "default-features": false
+    },
+    "curl"
+  ]
+}

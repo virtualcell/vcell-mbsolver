@@ -43,11 +43,9 @@ jobs:
         with:
           path: |
             ${{ github.workspace }}/vcpkg_installed
-            ${{ github.workspace }}/vcpkg/buildtrees
-            ${{ github.workspace }}/vcpkg/downloads
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
-            vcpkg-${{ runner.os }}-          
+            vcpkg-${{ runner.os }}-
       
       - name: Configure git for private submodules
         shell: bash
@@ -84,45 +82,9 @@ jobs:
             throw 'vcpkg.exe not found on the runner'
           }
 
-          # Prefetch libaec tarball into the downloads dir vcpkg actually uses
-          $downloads = Join-Path $vcpkgRoot "downloads"
-          New-Item -ItemType Directory -Force -Path $downloads | Out-Null
-          $dst = Join-Path $downloads "dkrz-sw-libaec-v1.1.7.tar.gz"
-          
-          # Prefer GitHub mirror first, then GitLab source
-          $uris = @(
-            "https://github.com/dkrz-sw/libaec/archive/refs/tags/v1.1.7.tar.gz",
-            "https://gitlab.dkrz.de/dkrz-sw/libaec/-/archive/v1.1.7/libaec-v1.1.7.tar.gz"
-          )
-          
-          if (!(Test-Path $dst)) {
-            $maxAttempts = 5
-            $prefetchOk = $false
-          
-            foreach ($uri in $uris) {
-              for ($i = 1; $i -le $maxAttempts; $i++) {
-                try {
-                  Invoke-WebRequest -Uri $uri -OutFile $dst
-                  Write-Host "Prefetched libaec from $uri to $dst"
-                  $prefetchOk = $true
-                  break
-                } catch {
-                  if ($i -eq $maxAttempts) { break }
-                  $sleep = [Math]::Min(60, [Math]::Pow(2, $i))
-                  Write-Warning "libaec prefetch failed from $uri (attempt $i/$maxAttempts). Retrying in $sleep sec..."
-                  Start-Sleep -Seconds $sleep
-                }
-              }
-              if ($prefetchOk) { break }
-            }
-          
-            if (-not $prefetchOk) {
-              Write-Warning "libaec prefetch failed on all mirrors; continuing and allowing vcpkg to fetch dependency."
-            }
-          }
-
-          # Install hdf5 (with C++ bindings) and curl via vcpkg
-          & (Join-Path $vcpkgRoot "vcpkg.exe") install "hdf5[cpp]" curl --triplet x64-windows
+          # Install hdf5 (with C++ bindings, no szip) and curl via vcpkg manifest
+          Set-Location "$env:GITHUB_WORKSPACE"
+          & (Join-Path $vcpkgRoot "vcpkg.exe") install --triplet x64-windows
 
       - name: Verify Windows deps
         if: runner.os == 'Windows'
@@ -130,15 +92,7 @@ jobs:
         run: |
           Write-Host "Checking expected headers/libs from vcpkg..."
       
-          $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT) {
-            $env:VCPKG_INSTALLATION_ROOT
-          } elseif (Test-Path 'C:\vcpkg\vcpkg.exe') {
-            'C:\vcpkg'
-          } else {
-            throw 'vcpkg.exe not found on the runner'
-          }
-      
-          $tripletRoot = Join-Path $vcpkgRoot 'installed\x64-windows'
+          $tripletRoot = Join-Path "$env:GITHUB_WORKSPACE" "vcpkg_installed\x64-windows"
           $includeDir  = Join-Path $tripletRoot 'include'
           $libDir      = Join-Path $tripletRoot 'lib'
       
@@ -151,7 +105,7 @@ jobs:
           if (!(Test-Path (Join-Path $libDir 'libcurl.lib'))) {
             throw "Missing libcurl.lib at $libDir\libcurl.lib"
           }
-          
+
       - name: Configure CMake (Unix)
         if: runner.os != 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
@@ -165,15 +119,17 @@ jobs:
           -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE"
           -DVCPKG_TARGET_TRIPLET=x64-windows
           -DVCPKG_HOST_TRIPLET=x64-windows
-          -DCMAKE_PREFIX_PATH="$env:VCPKG_ROOT\installed\x64-windows"
-          -DHDF5_ROOT="$env:VCPKG_ROOT\installed\x64-windows"
-          -DHDF5_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include"
-          -DHDF5_CXX_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include"
-          -DHDF5_hdf5_cpp_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\hdf5_cpp.lib"
-          -DHDF5_hdf5_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\hdf5.lib"
-          -DCURL_ROOT="$env:VCPKG_ROOT\installed\x64-windows"
-          -DCURL_INCLUDE_DIR="$env:VCPKG_ROOT\installed\x64-windows\include"
-          -DCURL_LIBRARY="$env:VCPKG_ROOT\installed\x64-windows\lib\libcurl.lib"
+          -DVCPKG_INSTALLED_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed"
+          -DVCPKG_MANIFEST_INSTALL=OFF
+          -DCMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
+          -DHDF5_ROOT="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
+          -DHDF5_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
+          -DHDF5_CXX_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
+          -DHDF5_hdf5_cpp_LIBRARY="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5_cpp.lib"
+          -DHDF5_hdf5_LIBRARY="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5.lib"
+          -DCURL_ROOT="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
+          -DCURL_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
+          -DCURL_LIBRARY="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/libcurl.lib"
           -DOPTION_TARGET_MESSAGING=OFF
 
       - name: Build (Unix)
