@@ -49,15 +49,6 @@ jobs:
           restore-keys: |
             vcpkg-${{ runner.os }}-          
       
-      - name: Pre-fetch libaec source
-        shell: pwsh
-        run: |
-          $dst = "vcpkg/downloads/dkrz-sw-libaec-v1.1.7.tar.gz"
-          if (!(Test-Path $dst)) {
-            New-Item -ItemType Directory -Force -Path "vcpkg/downloads" | Out-Null
-            Invoke-WebRequest -Uri "https://gitlab.dkrz.de/dkrz-sw/libaec/-/archive/v1.1.7/libaec-v1.1.7.tar.gz" -OutFile $dst
-          }
-    
       - name: Configure git for private submodules
         shell: bash
         run: |
