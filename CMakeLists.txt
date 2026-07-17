@@ -110,23 +110,53 @@ if(NOT HDF5_HL_LIBRARIES)
 endif()
 
 # Boost: header-only libraries needed for multi_array, iterator, etc.
-find_package(Boost REQUIRED)
-if(NOT Boost_FOUND)
-    message(FATAL_ERROR "Boost not found. Please ensure libboost-dev (Linux), boost (macOS), or boost:x64-windows (vcpkg) is installed.")
+# Try CONFIG mode first (vcpkg exports Boost via a config package); fall back
+# to MODULE mode (system installs on Linux/macOS).
+if(VCPKG_TOOLCHAIN)
+    find_package(Boost CONFIG QUIET)
 endif()
+if(NOT Boost_FOUND)
+    find_package(Boost REQUIRED)
+endif()
+if(NOT Boost_FOUND)
+    message(FATAL_ERROR "Boost not found. Please ensure libboost-dev (Linux), boost (macOS), or boost-headers (vcpkg) is installed.")
+endif()
+# When vcpkg config-mode Boost is found, Boost_INCLUDE_DIRS may be empty.
+# Try to populate it from the imported target's INTERFACE_INCLUDE_DIRECTORIES.
 set(VCELL_BOOST_TARGET)
 foreach(_boost_tgt Boost::headers Boost::boost)
     if(TARGET ${_boost_tgt})
         set(VCELL_BOOST_TARGET ${_boost_tgt})
         if(NOT Boost_INCLUDE_DIRS)
             get_target_property(_boost_inc ${_boost_tgt} INTERFACE_INCLUDE_DIRECTORIES)
-            if(_boost_inc)
+            if(_boost_inc AND NOT _boost_inc MATCHES "-NOTFOUND$")
                 set(Boost_INCLUDE_DIRS ${_boost_inc})
             endif()
         endif()
         break()
     endif()
 endforeach()
+# Last-resort fallback: if Boost_INCLUDE_DIRS is still empty (common with vcpkg
+# config mode), search BOOST_ROOT, BOOST_INCLUDEDIR, or CMAKE_PREFIX_PATH
+# entries directly for boost/version.hpp.
+if(NOT Boost_INCLUDE_DIRS)
+    if(DEFINED BOOST_INCLUDEDIR AND EXISTS "${BOOST_INCLUDEDIR}/boost/version.hpp")
+        set(Boost_INCLUDE_DIRS "${BOOST_INCLUDEDIR}")
+    elseif(DEFINED BOOST_ROOT AND EXISTS "${BOOST_ROOT}/include/boost/version.hpp")
+        set(Boost_INCLUDE_DIRS "${BOOST_ROOT}/include")
+    else()
+        foreach(_pfx IN LISTS CMAKE_PREFIX_PATH)
+            if(EXISTS "${_pfx}/include/boost/version.hpp")
+                set(Boost_INCLUDE_DIRS "${_pfx}/include")
+                break()
+            endif()
+        endforeach()
+    endif()
+endif()
+if(NOT Boost_INCLUDE_DIRS)
+    message(FATAL_ERROR "Boost include directory not found. "
+        "Set BOOST_ROOT or BOOST_INCLUDEDIR, or add the Boost prefix to CMAKE_PREFIX_PATH.")
+endif()
 
 # Python bindings (always built).
 # Use Development.Module (not the full Development component): manylinux images

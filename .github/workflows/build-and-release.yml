@@ -122,6 +122,8 @@ jobs:
           -DVCPKG_INSTALLED_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed"
           -DVCPKG_MANIFEST_INSTALL=OFF
           -DCMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
+          -DBOOST_ROOT="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
+          -DBOOST_INCLUDEDIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
           -DHDF5_ROOT="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
           -DHDF5_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
           -DHDF5_CXX_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
