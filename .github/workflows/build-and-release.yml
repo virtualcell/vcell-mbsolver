@@ -121,6 +121,9 @@ jobs:
             }
           }
 
+          # Install hdf5 (with C++ bindings) and curl via vcpkg
+          & (Join-Path $vcpkgRoot "vcpkg.exe") install "hdf5[cpp]" curl --triplet x64-windows
+
       - name: Verify Windows deps
         if: runner.os == 'Windows'
         shell: pwsh
