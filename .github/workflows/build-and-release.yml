@@ -84,6 +84,28 @@ jobs:
             throw 'vcpkg.exe not found on the runner'
           }
 
+          # Prefetch libaec tarball into the downloads dir vcpkg actually uses
+          $downloads = Join-Path $vcpkgRoot "downloads"
+          New-Item -ItemType Directory -Force -Path $downloads | Out-Null
+          $dst = Join-Path $downloads "dkrz-sw-libaec-v1.1.7.tar.gz"
+          $uri = "https://gitlab.dkrz.de/dkrz-sw/libaec/-/archive/v1.1.7/libaec-v1.1.7.tar.gz"
+
+          if (!(Test-Path $dst)) {
+            $maxAttempts = 8
+            for ($i = 1; $i -le $maxAttempts; $i++) {
+              try {
+                Invoke-WebRequest -Uri $uri -OutFile $dst
+                Write-Host "Prefetched libaec to $dst"
+                break
+              } catch {
+                if ($i -eq $maxAttempts) { throw }
+                $sleep = [Math]::Min(90, [Math]::Pow(2, $i))
+                Write-Warning "libaec prefetch failed (attempt $i/$maxAttempts). Retrying in $sleep sec..."
+                Start-Sleep -Seconds $sleep
+              }
+            }
+          }
+
           & "$vcpkgRoot\vcpkg.exe" install `
             --triplet x64-windows `
             curl `
@@ -95,7 +117,7 @@ jobs:
           "VCPKG_DEFAULT_TRIPLET=x64-windows" >> $env:GITHUB_ENV
           "CMAKE_TOOLCHAIN_FILE=$vcpkgRoot\scripts\buildsystems\vcpkg.cmake" >> $env:GITHUB_ENV
           "CMAKE_PREFIX_PATH=$vcpkgRoot\installed\x64-windows" >> $env:GITHUB_ENV
-
+      
       - name: Verify Windows deps
         if: runner.os == 'Windows'
         shell: pwsh
