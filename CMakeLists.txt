@@ -123,23 +123,31 @@ if(NOT Boost_FOUND)
 endif()
 # When vcpkg config-mode Boost is found, Boost_INCLUDE_DIRS may be empty.
 # Try to populate it from the imported target's INTERFACE_INCLUDE_DIRECTORIES.
+# Skip generator expressions (e.g. $<BUILD_INTERFACE:...>) — they are not
+# usable as plain filesystem paths at configure time.
 set(VCELL_BOOST_TARGET)
 foreach(_boost_tgt Boost::headers Boost::boost)
     if(TARGET ${_boost_tgt})
         set(VCELL_BOOST_TARGET ${_boost_tgt})
         if(NOT Boost_INCLUDE_DIRS)
             get_target_property(_boost_inc ${_boost_tgt} INTERFACE_INCLUDE_DIRECTORIES)
-            if(_boost_inc AND NOT _boost_inc MATCHES "-NOTFOUND$")
+            if(_boost_inc AND NOT _boost_inc MATCHES "-NOTFOUND$"
+                          AND NOT _boost_inc MATCHES "\\$<")
                 set(Boost_INCLUDE_DIRS ${_boost_inc})
             endif()
         endif()
         break()
     endif()
 endforeach()
-# Last-resort fallback: if Boost_INCLUDE_DIRS is still empty (common with vcpkg
-# config mode), search BOOST_ROOT, BOOST_INCLUDEDIR, or CMAKE_PREFIX_PATH
-# entries directly for boost/version.hpp.
+# Last-resort fallback: if Boost_INCLUDE_DIRS is still empty or invalid (common
+# with vcpkg config mode), search BOOST_ROOT, BOOST_INCLUDEDIR, or
+# CMAKE_PREFIX_PATH entries directly for boost/version.hpp.
+# Use a fresh local variable (_boost_found_inc) so that any previously set but
+# invalid value of Boost_INCLUDE_DIRS (e.g. a generator expression) does not
+# cause the search loop to exit early via the old `if(Boost_INCLUDE_DIRS) break()`
+# pattern.
 if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp")
+    set(_boost_found_inc "")
     set(_boost_include_hints)
     if(DEFINED BOOST_INCLUDEDIR)
         list(APPEND _boost_include_hints "${BOOST_INCLUDEDIR}")
@@ -153,20 +161,23 @@ if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp
 
     foreach(_boost_hint IN LISTS _boost_include_hints)
         if(EXISTS "${_boost_hint}/boost/version.hpp")
-            set(Boost_INCLUDE_DIRS "${_boost_hint}")
+            set(_boost_found_inc "${_boost_hint}")
             break()
         endif()
         file(GLOB _boost_versioned_dirs "${_boost_hint}/boost-*")
         foreach(_boost_versioned_dir IN LISTS _boost_versioned_dirs)
             if(EXISTS "${_boost_versioned_dir}/boost/version.hpp")
-                set(Boost_INCLUDE_DIRS "${_boost_versioned_dir}")
+                set(_boost_found_inc "${_boost_versioned_dir}")
                 break()
             endif()
         endforeach()
-        if(Boost_INCLUDE_DIRS)
+        if(_boost_found_inc)
             break()
         endif()
     endforeach()
+    if(_boost_found_inc)
+        set(Boost_INCLUDE_DIRS "${_boost_found_inc}")
+    endif()
 endif()
 if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp")
     message(FATAL_ERROR "Boost include directory not found. "
