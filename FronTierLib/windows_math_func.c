@@ -396,13 +396,14 @@ TWO52[2]={
  -4.50359962737049600000e+15, /* 0xC3300000, 0x00000000 */
 };
 
+/*
 double
 rint(double x)
 {
 	int32_t i0,jj0,sx;
 	u_int32_t i,i1;
 	double t;
-	volatile double w;	/* clip extra precision */
+	volatile double w;	/* clip extra precision #1#
 	EXTRACT_WORDS(i0,i1,x);
 	sx = (i0>>31)&1;
 	jj0 = ((i0>>20)&0x7ff)-0x3ff;
@@ -420,7 +421,7 @@ rint(double x)
 	        return t;
 	    } else {
 		i = (0x000fffff)>>jj0;
-		if(((i0&i)|i1)==0) return x; /* x is integral */
+		if(((i0&i)|i1)==0) return x; /* x is integral #1#
 		i>>=1;
 		if(((i0&i)|i1)!=0) {
 		    if(jj0==19) i1 = 0x40000000; else
@@ -428,11 +429,11 @@ rint(double x)
 		}
 	    }
 	} else if (jj0>51) {
-	    if(jj0==0x400) return x+x;	/* inf or NaN */
-	    else return x;		/* x is integral */
+	    if(jj0==0x400) return x+x;	/* inf or NaN #1#
+	    else return x;		/* x is integral #1#
 	} else {
 	    i = ((u_int32_t)(0xffffffff))>>(jj0-20);
-	    if((i1&i)==0) return x;	/* x is integral */
+	    if((i1&i)==0) return x;	/* x is integral #1#
 	    i>>=1;
 	    if((i1&i)!=0) i1 = (i1&(~i))|((0x40000000)>>(jj0-20));
 	}
@@ -440,6 +441,7 @@ rint(double x)
 	w = TWO52[sx]+x;
 	return w-TWO52[sx];
 }
+*/
 
 /*
  * Copyright (c) 1993 Martin Birgmeier

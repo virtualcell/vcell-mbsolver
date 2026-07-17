@@ -11,7 +11,7 @@
 double erand48(unsigned short xsubi[3]);
 double erf(double x);
 double erfc(double x);
-double rint(double x);
+#double rint(double x);
 
 #endif // WINDOWS_MATH_FUNC
 
