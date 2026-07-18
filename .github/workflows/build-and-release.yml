@@ -106,6 +106,27 @@ jobs:
             throw "Missing libcurl.lib at $libDir\libcurl.lib"
           }
 
+          # Check for Boost headers (may be flat or in a versioned subdirectory)
+          $boostVersionHpp = Join-Path $includeDir 'boost' 'version.hpp'
+          if (!(Test-Path $boostVersionHpp)) {
+            $versionedDirs = Get-ChildItem -Path $includeDir -Directory -Filter 'boost-*' -ErrorAction SilentlyContinue
+            $found = $false
+            foreach ($d in $versionedDirs) {
+              if (Test-Path (Join-Path $d.FullName 'boost' 'version.hpp')) {
+                Write-Host "Boost headers found in versioned directory: $($d.FullName)"
+                $found = $true
+                break
+              }
+            }
+            if (!$found) {
+              Write-Host "Contents of include dir:"
+              Get-ChildItem -Path $includeDir | Select-Object Name
+              throw "Missing Boost headers: boost/version.hpp not found under $includeDir"
+            }
+          } else {
+            Write-Host "Boost headers found at: $boostVersionHpp"
+          }
+
       - name: Configure CMake (Unix)
         if: runner.os != 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
