@@ -139,14 +139,41 @@ foreach(_boost_tgt Boost::headers Boost::boost)
         break()
     endif()
 endforeach()
-# Last-resort fallback: if Boost_INCLUDE_DIRS is still empty or invalid (common
-# with vcpkg config mode), search BOOST_ROOT, BOOST_INCLUDEDIR, or
-# CMAKE_PREFIX_PATH entries directly for boost/version.hpp.
-# Use a fresh local variable (_boost_found_inc) so that any previously set but
-# invalid value of Boost_INCLUDE_DIRS (e.g. a generator expression) does not
-# cause the search loop to exit early via the old `if(Boost_INCLUDE_DIRS) break()`
-# pattern.
-if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp")
+# Normalize Boost include dirs: strip generator expressions and keep only entries
+# that actually contain boost/version.hpp (including versioned include roots).
+set(_boost_valid_includes)
+foreach(_boost_inc_dir IN LISTS Boost_INCLUDE_DIRS)
+    if(NOT _boost_inc_dir OR _boost_inc_dir MATCHES "\\$<")
+        continue()
+    endif()
+    if(EXISTS "${_boost_inc_dir}/boost/version.hpp")
+        list(APPEND _boost_valid_includes "${_boost_inc_dir}")
+        continue()
+    endif()
+    file(GLOB _boost_versioned_dirs "${_boost_inc_dir}/boost-*")
+    foreach(_boost_versioned_dir IN LISTS _boost_versioned_dirs)
+        if(EXISTS "${_boost_versioned_dir}/boost/version.hpp")
+            list(APPEND _boost_valid_includes "${_boost_versioned_dir}")
+        endif()
+    endforeach()
+endforeach()
+if(_boost_valid_includes)
+    list(REMOVE_DUPLICATES _boost_valid_includes)
+    set(Boost_INCLUDE_DIRS "${_boost_valid_includes}")
+endif()
+
+set(_boost_headers_resolved FALSE)
+foreach(_boost_inc_dir IN LISTS Boost_INCLUDE_DIRS)
+    if(EXISTS "${_boost_inc_dir}/boost/version.hpp")
+        set(_boost_headers_resolved TRUE)
+        break()
+    endif()
+endforeach()
+
+# Last-resort fallback: if Boost include dirs are still unresolved (common with
+# vcpkg config mode), search BOOST_ROOT, BOOST_INCLUDEDIR, or CMAKE_PREFIX_PATH
+# entries directly for boost/version.hpp.
+if(NOT _boost_headers_resolved)
     set(_boost_found_inc "")
     set(_boost_include_hints)
     if(DEFINED BOOST_INCLUDEDIR)
@@ -177,9 +204,10 @@ if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp
     endforeach()
     if(_boost_found_inc)
         set(Boost_INCLUDE_DIRS "${_boost_found_inc}")
+        set(_boost_headers_resolved TRUE)
     endif()
 endif()
-if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp")
+if(NOT _boost_headers_resolved)
     if(VCELL_BOOST_TARGET)
         message(STATUS "Boost include directory not resolved at configure time; using ${VCELL_BOOST_TARGET} imported target includes.")
     else()
