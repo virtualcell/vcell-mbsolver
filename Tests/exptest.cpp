@@ -15,6 +15,10 @@
 #include <MapTable.h>
 #include <MTExpression.h>
 #include <Exception.h>
+#ifndef __WIN32__
+	#include <cmath>
+#endif
+
 namespace {
 
 	void expTest(const char * const exp, bool expectedToBeConstant) {
@@ -94,12 +98,12 @@ TEST(sexpression,badsize) {
 	ASSERT_THROW(double r= exp.evaluate(vec),std::domain_error);
 }
 TEST(sexpression,xvel) {
-	const char * const xString = "x / sqrt(x*x + y*y)";
+	const char * const xString = "x / std::sqrt(x*x + y*y)";
 	std::string syms[] = {"x","y"};
 	SimpleSymbolTable symTb(syms,sizeof(syms)/sizeof(syms[0]));
 	moving_boundary::SExpression exp(xString,&symTb);
-	const double up  = sqrt(2) / 2.0;
-	const double direct = up / sqrt(up*up + up*up);
+	const double up  = std::sqrt(2) / 2.0;
+	const double direct = up / std::sqrt(up*up + up*up);
 	std::array<double,2> values = {up,up};
 	double out = exp.evaluate(values);
 	double delta = out - direct;
