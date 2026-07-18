@@ -110,13 +110,16 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 # "ImportError: DLL load failed while importing _core". Explicitly repair
 # with delvewheel, pointing --add-path at the vcpkg bin directory so it can
 # find and vendor those DLLs into the wheel.
-# $GITHUB_WORKSPACE_FWD is set by the "Install Windows vcpkg dependencies"
+# %GITHUB_WORKSPACE_FWD% is set by the "Install Windows vcpkg dependencies"
 # step in wheels.yml (see note above); this repair command is GitHub
 # Actions-specific and assumes that step has already populated
-# vcpkg_installed/x64-windows/bin.
+# vcpkg_installed/x64-windows/bin. Unlike the CMAKE_ARGS below (expanded by
+# cibuildwheel's own bash-syntax environment evaluator), repair-wheel-command
+# is run via `shell=True`, which on Windows invokes cmd.exe: it only expands
+# %VAR% references, not $VAR, so the cmd.exe syntax is required here.
 [tool.cibuildwheel.windows]
 before-build = "pip install delvewheel"
-repair-wheel-command = "delvewheel repair --add-path $GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/bin -w {dest_dir} {wheel}"
+repair-wheel-command = "delvewheel repair --add-path %GITHUB_WORKSPACE_FWD%/vcpkg_installed/x64-windows/bin -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.windows.environment]
 CMAKE_ARGS = """\
