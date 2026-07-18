@@ -24,12 +24,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # macOS : macos-15-intel (x86_64) + macos-15 (arm64)
-        # Linux : ubuntu-latest (x86_64) + ubuntu-24.04-arm (arm64)
-        # Windows wheels are intentionally absent for now. Native Windows source
-        # builds are covered by build-and-release.yml; this workflow still only
-        # publishes macOS and Linux wheels.
-        os: [macos-15-intel, macos-15, ubuntu-latest, ubuntu-24.04-arm]
+        # macOS   : macos-15-intel (x86_64) + macos-15 (arm64)
+        # Linux   : ubuntu-latest (x86_64) + ubuntu-24.04-arm (arm64)
+        # Windows : windows-latest (x64) — vcpkg provides HDF5/Boost/CURL
+        os: [macos-15-intel, macos-15, ubuntu-latest, ubuntu-24.04-arm, windows-latest]
 
     steps:
       # vcell-messaging / vcell-expressionparser are PRIVATE submodules, so the
@@ -47,6 +45,41 @@ jobs:
       - name: Initialize submodules
         shell: bash
         run: git submodule update --init --recursive
+
+      # -----------------------------------------------------------------------
+      # Windows: install Strawberry Perl (needed by some vcpkg ports) and run
+      # vcpkg in manifest mode to populate vcpkg_installed/.  The CMake/vcpkg
+      # flags are wired into the scikit-build-core configure step via
+      # CMAKE_ARGS in [tool.cibuildwheel.windows.environment] (pyproject.toml).
+      # -----------------------------------------------------------------------
+      - name: Cache vcpkg artifacts
+        if: runner.os == 'Windows'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/vcpkg_installed
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-
+
+      - name: Install Windows system prerequisites
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: choco install strawberryperl -y
+
+      - name: Install Windows vcpkg dependencies
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT -and (Test-Path (Join-Path $env:VCPKG_INSTALLATION_ROOT 'vcpkg.exe'))) {
+            $env:VCPKG_INSTALLATION_ROOT
+          } elseif (Test-Path 'C:\vcpkg\vcpkg.exe') {
+            'C:\vcpkg'
+          } else {
+            throw 'vcpkg.exe not found on the runner'
+          }
+          Set-Location "$env:GITHUB_WORKSPACE"
+          & (Join-Path $vcpkgRoot 'vcpkg.exe') install --triplet x64-windows
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.0

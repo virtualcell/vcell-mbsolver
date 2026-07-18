@@ -86,5 +86,26 @@ before-all = "brew install hdf5 boost"
 # means the macOS wheels require macOS 15+, as with vcell-fvsolver.)
 environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 
-# No [tool.cibuildwheel.windows]: Windows wheels are not built yet; native
-# Windows source builds are handled separately in build-and-release.yml.
+# Windows wheels: vcpkg provides HDF5/Boost/CURL via the x64-windows triplet.
+# The "Install Windows vcpkg dependencies" step in wheels.yml runs
+# `vcpkg install --triplet x64-windows` before cibuildwheel, and the
+# CMAKE_ARGS below wire the toolchain file and explicit library hints into the
+# scikit-build-core configure step. OPTION_TARGET_MESSAGING stays OFF via
+# [tool.scikit-build.cmake.define] above.
+[tool.cibuildwheel.windows.environment]
+CMAKE_ARGS = """\
+    -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
+    -DVCPKG_TARGET_TRIPLET=x64-windows \
+    -DVCPKG_INSTALLED_DIR=$GITHUB_WORKSPACE/vcpkg_installed \
+    -DVCPKG_MANIFEST_INSTALL=OFF \
+    -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
+    -DBOOST_ROOT=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
+    -DBOOST_INCLUDEDIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
+    -DHDF5_ROOT=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
+    -DHDF5_INCLUDE_DIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
+    -DHDF5_CXX_INCLUDE_DIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
+    -DHDF5_hdf5_cpp_LIBRARY=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5_cpp.lib \
+    -DHDF5_hdf5_LIBRARY=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5.lib \
+    -DCURL_ROOT=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
+    -DCURL_INCLUDE_DIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
+    -DCURL_LIBRARY=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/libcurl.lib"""

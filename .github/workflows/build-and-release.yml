@@ -4,8 +4,8 @@ name: Build and Release
 # and attaches them to a GitHub Release on each v* tag.
 #
 # Native source builds are exercised on Linux, macOS, and Windows here.
-# Python wheels are built/published separately by wheels.yml; Windows wheels
-# remain disabled there even though the source build is covered here.
+# Python wheels are also built for Windows by wheels.yml (via cibuildwheel +
+# vcpkg), which publishes redistributable wheels across all three platforms.
 #
 # Windows: all configure/build/test logic is delegated to build-windows.ps1 so
 # that the CMake flags stay in one authoritative place and don't drift between
