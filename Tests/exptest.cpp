@@ -98,7 +98,7 @@ TEST(sexpression,badsize) {
 	ASSERT_THROW(double r= exp.evaluate(vec),std::domain_error);
 }
 TEST(sexpression,xvel) {
-	const char * const xString = "x / std::sqrt(x*x + y*y)";
+	const char * const xString = "x / sqrt(x*x + y*y)";
 	std::string syms[] = {"x","y"};
 	SimpleSymbolTable symTb(syms,sizeof(syms)/sizeof(syms[0]));
 	moving_boundary::SExpression exp(xString,&symTb);
