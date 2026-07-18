@@ -37,10 +37,12 @@ namespace spatial {
 		static void check(int64_t) {}
 		template <typename U>
 		static DistanceType convert(U u) {
-			if (u > std::numeric_limits<long>::max( )) {
-				VCELL_EXCEPTION(domain_error, u << " too big to be long" );
+			// Use int64_t, not long: `long` is 32-bit on Windows (LLP64),
+			// which would spuriously reject valid 64-bit values.
+			if (u > std::numeric_limits<int64_t>::max( )) {
+				VCELL_EXCEPTION(domain_error, u << " too big to be int64_t" );
 			}
-			return static_cast<long>(u);
+			return static_cast<int64_t>(u);
 		}
 	};
 	/**

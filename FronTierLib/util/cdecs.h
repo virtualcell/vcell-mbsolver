@@ -59,6 +59,35 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #if !defined(_CDECS_H)
 #define _CDECS_H
 
+/* On Windows, when this header is pulled into a C++ translation unit (e.g. the
+ * moving-boundary solver sources, which also include Boost/HDF5 and thus the
+ * Windows SDK), include <windows.h> up front so the SDK's own FLOAT/CHAR/INT/
+ * DOUBLE/FALSE/TRUE definitions are established BEFORE FronTier redefines those
+ * identifiers below.  The SDK header's include guard turns any later inclusion
+ * (via Boost, HDF5, ...) into a no-op, so FronTier's macros can no longer
+ * corrupt the SDK headers.  FronTier's own C sources compile as LANGUAGE C and
+ * are unaffected by this block.  NOGDI/NOMINMAX/WIN32_LEAN_AND_MEAN keep the
+ * SDK surface minimal (NOGDI drops <wingdi.h>, whose `typedef ... FIXED`
+ * clashes with FronTier's FIXED enum). */
+#if defined(WIN32) && defined(__cplusplus)
+#  ifndef WIN32_LEAN_AND_MEAN
+#    define WIN32_LEAN_AND_MEAN
+#  endif
+#  ifndef NOMINMAX
+#    define NOMINMAX
+#  endif
+#  ifndef NOGDI
+#    define NOGDI
+#  endif
+#  include <windows.h>
+   /* FronTier defines FALSE/TRUE/NO/YES as an enum (_boolean) further down;
+    * drop the SDK's object-like macros so that enum is well-formed. */
+#  undef FALSE
+#  undef TRUE
+#  undef NO
+#  undef YES
+#endif /* defined(WIN32) && defined(__cplusplus) */
+
 #if defined(USE_OVERTURE)
 #else
 #if defined(linux)

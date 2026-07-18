@@ -25,6 +25,18 @@ set(MB_PY_BUILD_DIR ${CMAKE_BINARY_DIR}/bin/${MB_PY_PACKAGE})
 set_target_properties(_core PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${MB_PY_BUILD_DIR}
 )
+# Multi-config generators (Visual Studio) append a per-config subdirectory
+# (e.g. Release/) to LIBRARY_OUTPUT_DIRECTORY, which would place _core.pyd in
+# bin/pyvcell_mbsolver/Release/ while __init__.py is copied to
+# bin/pyvcell_mbsolver/ — breaking `import pyvcell_mbsolver._core`. Pin the
+# per-config output dirs so the extension always sits next to __init__.py.
+foreach(_cfg ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${_cfg} _cfg_upper)
+    set_target_properties(_core PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY_${_cfg_upper} ${MB_PY_BUILD_DIR}
+        RUNTIME_OUTPUT_DIRECTORY_${_cfg_upper} ${MB_PY_BUILD_DIR}
+    )
+endforeach()
 add_custom_command(TARGET _core POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${CMAKE_CURRENT_SOURCE_DIR}/${MB_PY_PACKAGE}/__init__.py

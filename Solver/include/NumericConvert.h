@@ -5,6 +5,16 @@
 #include <cstdint>
 #include <type_traits>
 #include <VCellException.h>
+/* The Windows SDK (<minwindef.h>, reached transitively via Boost/HDF5/FronTier)
+ * defines IN and OUT as empty SAL annotation macros, which collide with the
+ * template parameter names below.  They expand to nothing, so dropping them is
+ * harmless. */
+#ifdef IN
+#  undef IN
+#endif
+#ifdef OUT
+#  undef OUT
+#endif
 namespace vcell_util {
 	/**
 	* @tparam IN input type

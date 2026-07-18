@@ -15,7 +15,6 @@
 #include <MBridge/Scatter.h>
 #include <MBridge/FronTierAdapt.h>
 #include <Modulo.h>
-#include <boost/math/common_factor.hpp>
 using std::cout;
 using std::endl;
 using namespace spatial;

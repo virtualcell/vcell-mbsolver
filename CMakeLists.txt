@@ -33,6 +33,10 @@ if(MSVC)
         NOMINMAX
         _CRT_SECURE_NO_WARNINGS
         WIN32_LEAN_AND_MEAN
+        # Drop <wingdi.h> so its `typedef ... FIXED` cannot clash with FronTier's
+        # `FIXED` enum (front/fuserint.h) no matter which header pulls in
+        # <windows.h> first.
+        NOGDI
     )
 elseif(APPLE)
     execute_process(COMMAND uname -m OUTPUT_VARIABLE PROCESSOR_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)

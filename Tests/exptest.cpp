@@ -2,6 +2,7 @@
 #include <cassert>
 
 #include <vector>
+#include <array>
 #include <fstream>
 #include <algorithm>
 #include <stdexcept>
@@ -10,7 +11,6 @@
 #include "SimpleSymbolTable.h"
 #include "gtest/gtest.h"
 #include "vcellxml.h"
-#include <boost/lexical_cast.hpp>
 #include <SExpression.h>
 #include <MapTable.h>
 #include <MTExpression.h>
