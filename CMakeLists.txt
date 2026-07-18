@@ -180,8 +180,12 @@ if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp
     endif()
 endif()
 if(NOT Boost_INCLUDE_DIRS OR NOT EXISTS "${Boost_INCLUDE_DIRS}/boost/version.hpp")
-    message(FATAL_ERROR "Boost include directory not found. "
-        "Set BOOST_ROOT or BOOST_INCLUDEDIR, or add the Boost prefix to CMAKE_PREFIX_PATH.")
+    if(VCELL_BOOST_TARGET)
+        message(STATUS "Boost include directory not resolved at configure time; using ${VCELL_BOOST_TARGET} imported target includes.")
+    else()
+        message(FATAL_ERROR "Boost include directory not found. "
+            "Set BOOST_ROOT or BOOST_INCLUDEDIR, or add the Boost prefix to CMAKE_PREFIX_PATH.")
+    endif()
 endif()
 
 # Python bindings (always built).
