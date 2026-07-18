@@ -6,6 +6,10 @@ name: Build and Release
 # Native source builds are exercised on Linux, macOS, and Windows here.
 # Python wheels are built/published separately by wheels.yml; Windows wheels
 # remain disabled there even though the source build is covered here.
+#
+# Windows: all configure/build/test logic is delegated to build-windows.ps1 so
+# that the CMake flags stay in one authoritative place and don't drift between
+# the developer script and CI.
 
 on:
   push:
@@ -39,6 +43,7 @@ jobs:
           node-version: '24'
 
       - name: Cache vcpkg artifacts
+        if: runner.os == 'Windows'
         uses: actions/cache@v4
         with:
           path: |
@@ -46,7 +51,7 @@ jobs:
           key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
           restore-keys: |
             vcpkg-${{ runner.os }}-
-      
+
       - name: Configure git for private submodules
         shell: bash
         run: |
@@ -56,6 +61,9 @@ jobs:
         shell: bash
         run: git submodule update --init --recursive
 
+      # -----------------------------------------------------------------------
+      # Unix dependency installation
+      # -----------------------------------------------------------------------
       - name: Install Ubuntu dependencies
         if: runner.os == 'Linux'
         run: |
@@ -68,112 +76,64 @@ jobs:
         run: |
           brew install cmake hdf5 python pybind11 boost curl
 
-      - name: Install Windows dependencies
+      # -----------------------------------------------------------------------
+      # Windows: install Strawberry Perl (needed by some vcpkg ports) and run
+      # vcpkg in manifest mode to populate vcpkg_installed/.  The configure,
+      # build, and test steps are all handled by build-windows.ps1 below.
+      # -----------------------------------------------------------------------
+      - name: Install Windows system prerequisites
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: choco install strawberryperl -y
+
+      - name: Install Windows vcpkg dependencies
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          choco install strawberryperl -y
-
-          $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT) {
+          $vcpkgRoot = if ($env:VCPKG_INSTALLATION_ROOT -and (Test-Path (Join-Path $env:VCPKG_INSTALLATION_ROOT 'vcpkg.exe'))) {
             $env:VCPKG_INSTALLATION_ROOT
           } elseif (Test-Path 'C:\vcpkg\vcpkg.exe') {
             'C:\vcpkg'
           } else {
             throw 'vcpkg.exe not found on the runner'
           }
-
-          # Install hdf5 (with C++ bindings, no szip) and curl via vcpkg manifest
           Set-Location "$env:GITHUB_WORKSPACE"
-          & (Join-Path $vcpkgRoot "vcpkg.exe") install --triplet x64-windows
+          & (Join-Path $vcpkgRoot 'vcpkg.exe') install --triplet x64-windows
 
-      - name: Verify Windows deps
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          Write-Host "Checking expected headers/libs from vcpkg..."
-      
-          $tripletRoot = Join-Path "$env:GITHUB_WORKSPACE" "vcpkg_installed\x64-windows"
-          $includeDir  = Join-Path $tripletRoot 'include'
-          $libDir      = Join-Path $tripletRoot 'lib'
-      
-          if (!(Test-Path (Join-Path $includeDir 'H5Cpp.h'))) {
-            throw "Missing H5Cpp.h at $includeDir\H5Cpp.h"
-          }
-          if (!(Test-Path (Join-Path $libDir 'hdf5_cpp.lib'))) {
-            throw "Missing hdf5_cpp.lib at $libDir\hdf5_cpp.lib"
-          }
-          if (!(Test-Path (Join-Path $libDir 'libcurl.lib'))) {
-            throw "Missing libcurl.lib at $libDir\libcurl.lib"
-          }
-
-          # Check for Boost headers (may be flat or in a versioned subdirectory)
-          $boostVersionHpp = Join-Path $includeDir 'boost' 'version.hpp'
-          if (!(Test-Path $boostVersionHpp)) {
-            $versionedDirs = Get-ChildItem -Path $includeDir -Directory -Filter 'boost-*' -ErrorAction SilentlyContinue
-            $found = $false
-            foreach ($d in $versionedDirs) {
-              if (Test-Path (Join-Path $d.FullName 'boost' 'version.hpp')) {
-                Write-Host "Boost headers found in versioned directory: $($d.FullName)"
-                $found = $true
-                break
-              }
-            }
-            if (!$found) {
-              Write-Host "Contents of include dir:"
-              Get-ChildItem -Path $includeDir | Select-Object Name
-              throw "Missing Boost headers: boost/version.hpp not found under $includeDir"
-            }
-          } else {
-            Write-Host "Boost headers found at: $boostVersionHpp"
-          }
-
+      # -----------------------------------------------------------------------
+      # Unix configure + build
+      # -----------------------------------------------------------------------
       - name: Configure CMake (Unix)
         if: runner.os != 'Windows'
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DOPTION_TARGET_MESSAGING=ON
-
-      - name: Configure CMake (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: >
-          cmake -S . -B build -A x64
-          -DCMAKE_BUILD_TYPE=Release
-          -DCMAKE_TOOLCHAIN_FILE="$env:CMAKE_TOOLCHAIN_FILE"
-          -DVCPKG_TARGET_TRIPLET=x64-windows
-          -DVCPKG_HOST_TRIPLET=x64-windows
-          -DVCPKG_INSTALLED_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed"
-          -DVCPKG_MANIFEST_INSTALL=OFF
-          -DCMAKE_PREFIX_PATH="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
-          -DBOOST_ROOT="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
-          -DBOOST_INCLUDEDIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
-          -DHDF5_ROOT="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
-          -DHDF5_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
-          -DHDF5_CXX_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
-          -DHDF5_hdf5_cpp_LIBRARY="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5_cpp.lib"
-          -DHDF5_hdf5_LIBRARY="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5.lib"
-          -DCURL_ROOT="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows"
-          -DCURL_INCLUDE_DIR="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include"
-          -DCURL_LIBRARY="$env:GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/libcurl.lib"
-          -DOPTION_TARGET_MESSAGING=OFF
 
       - name: Build (Unix)
         if: runner.os != 'Windows'
         run: cmake --build build --parallel
 
-      - name: Build (Windows)
+      # -----------------------------------------------------------------------
+      # Windows configure + build via build-windows.ps1
+      # (-SkipVcpkg: vcpkg install was already done above for caching purposes)
+      # -----------------------------------------------------------------------
+      - name: Configure, build, and test (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: cmake --build build --config Release --parallel
+        run: |
+          .\build-windows.ps1 -SkipVcpkg -Test -Config Release
 
-      - name: Run tests
+      # -----------------------------------------------------------------------
+      # Unix tests
+      # -----------------------------------------------------------------------
+      - name: Run tests (Unix)
+        if: runner.os != 'Windows'
         shell: bash
         run: |
           cd build
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            ctest -C Release --output-on-failure -j2
-          else
-            ctest --output-on-failure -j"$(getconf _NPROCESSORS_ONLN)"
-          fi
+          ctest --output-on-failure -j"$(getconf _NPROCESSORS_ONLN)"
 
+      # -----------------------------------------------------------------------
+      # Gather artifacts
+      # -----------------------------------------------------------------------
       - name: Prepare artifacts
         shell: bash
         run: |
