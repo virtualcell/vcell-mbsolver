@@ -27,8 +27,9 @@
     Out-of-source build directory. Default: build.
 
 .PARAMETER Generator
-    CMake generator. Default: "Visual Studio 17 2022". Override if you have a
-    different Visual Studio version installed.
+    CMake generator. Defaults to auto-detecting the newest installed Visual
+    Studio version (via vswhere) and falls back to "Visual Studio 17 2022" if
+    detection fails. Pass this explicitly to override.
 
 .PARAMETER Messaging
     Enable OPTION_TARGET_MESSAGING (CURL job-status messaging). Off by default,
@@ -52,7 +53,7 @@ param(
     [ValidateSet('Release', 'Debug', 'RelWithDebInfo', 'MinSizeRel')]
     [string]$Config = 'Release',
     [string]$BuildDir = 'build',
-    [string]$Generator = 'Visual Studio 17 2022',
+    [string]$Generator,
     [switch]$Messaging,
     [switch]$SkipVcpkg,
     [switch]$Test
@@ -61,6 +62,30 @@ param(
 $ErrorActionPreference = 'Stop'
 $repoRoot = $PSScriptRoot
 Set-Location $repoRoot
+
+# --- Pick a CMake generator matching the installed Visual Studio -----------
+# windows-latest (and other Windows images) periodically ship a newer Visual
+# Studio release, and CMake generator names are version-specific (e.g.
+# "Visual Studio 17 2022" vs "Visual Studio 18 2026"). Auto-detect via vswhere
+# instead of hard-coding a version so this keeps working as images update.
+if (-not $Generator) {
+    $Generator = 'Visual Studio 17 2022'
+    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+    if (Test-Path $vswhere) {
+        $vsVersion = & $vswhere -latest -products * -property installationVersion
+        if ($vsVersion) {
+            $vsMajor = [int]($vsVersion -split '\.')[0]
+            $Generator = switch ($vsMajor) {
+                18 { 'Visual Studio 18 2026' }
+                17 { 'Visual Studio 17 2022' }
+                16 { 'Visual Studio 16 2019' }
+                15 { 'Visual Studio 15 2017' }
+                default { 'Visual Studio 17 2022' }
+            }
+        }
+    }
+}
+Write-Host "generator:  $Generator"
 
 # --- Locate vcpkg -----------------------------------------------------------
 if (-not $VcpkgRoot) {
