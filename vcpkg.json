@@ -8,7 +8,10 @@
       "default-features": false
     },
     "curl",
-    "boost-headers",
+    "boost-iterator",
+    "boost-logic",
+    "boost-multi-array",
+    "boost-polygon",
     "pybind11"
   ]
 }

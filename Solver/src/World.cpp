@@ -5,7 +5,20 @@
 #include <limits>
 #include <list>
 #include <iomanip>
-#include <boost/math/common_factor.hpp>
+
+namespace {
+// Local gcd/lcm to avoid dependency on boost/math/common_factor.hpp (removed
+// in Boost 1.72) or boost/integer/common_factor.hpp (removed in newer Boost).
+template <typename T>
+T local_gcd(T a, T b) {
+    while (b != 0) { T t = b; b = a % b; a = t; }
+    return a;
+}
+template <typename T>
+T local_lcm(T a, T b) {
+    return (a / local_gcd(a, b)) * b;
+}
+} // anonymous namespace
 using moving_boundary::Universe;
 using spatial::GeoLimit;
 using moving_boundary::WorldMax;
@@ -93,7 +106,7 @@ namespace {
 				for (int i = 0; i < N; i++) {
 					const CountType spaces = 2*numNodes[i];
 					if (spaces > 0) {
-						divider = boost::math::lcm<WORLD_COORD>(divider,2*numNodes[i]);
+						divider = local_lcm<WORLD_COORD>(divider,2*numNodes[i]);
 					}
 				}
 				long double  multiplier = std::floor(iScale / divider);  

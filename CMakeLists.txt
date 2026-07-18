@@ -208,6 +208,23 @@ if(NOT _boost_headers_resolved)
     endif()
 endif()
 if(NOT _boost_headers_resolved)
+    # Use CMake's find_path to search broadly for boost/version.hpp.  This
+    # handles cases where the Boost imported target only carries generator
+    # expressions and none of the earlier hint-based lookups succeeded.
+    find_path(_boost_find_path_result boost/version.hpp
+        HINTS
+            ${BOOST_INCLUDEDIR}
+            ${BOOST_ROOT}/include
+        PATH_SUFFIXES
+            boost-1_87 boost-1_86 boost-1_85 boost-1_84 boost-1_83 boost-1_82
+    )
+    if(_boost_find_path_result)
+        set(Boost_INCLUDE_DIRS "${_boost_find_path_result}")
+        set(_boost_headers_resolved TRUE)
+        message(STATUS "Boost include directory found via find_path: ${_boost_find_path_result}")
+    endif()
+endif()
+if(NOT _boost_headers_resolved)
     if(VCELL_BOOST_TARGET)
         message(STATUS "Boost include directory not resolved at configure time; using ${VCELL_BOOST_TARGET} imported target includes.")
     else()

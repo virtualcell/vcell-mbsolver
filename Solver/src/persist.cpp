@@ -10,7 +10,6 @@
 #include <ManagedArrayPtr.h>
 #include <vcellstring.h>
 #include <Logger.h>
-#include <boost/integer_traits.hpp>
 using std::type_info;
 using namespace vcell_persist;
 using namespace vcell_util;
@@ -239,7 +238,7 @@ StdString<S>::restore(std::istream &is, std::string &out) {
 template <typename S>
 typename std::enable_if< std::is_same<S, unsigned char>::value || std::is_same<S,unsigned short>::value, std::string>::type
 StdString<S>::restore(std::istream &is) {
-	char buffer[boost::integer_traits<S>::const_max];
+	char buffer[std::numeric_limits<S>::max()];
 	S slen;
 	binaryRead(is,slen);
 	is.read(buffer,slen);
