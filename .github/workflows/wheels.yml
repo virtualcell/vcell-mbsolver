@@ -81,6 +81,19 @@ jobs:
           Set-Location "$env:GITHUB_WORKSPACE"
           & (Join-Path $vcpkgRoot 'vcpkg.exe') install --triplet x64-windows
 
+          # cibuildwheel expands $VAR references in [tool.cibuildwheel.windows.environment]
+          # (pyproject.toml) using its own bash-syntax evaluator, then scikit-build-core
+          # parses the resulting CMAKE_ARGS with Python's POSIX-mode shlex.split(), which
+          # silently strips backslashes. $VCPKG_INSTALLATION_ROOT / $GITHUB_WORKSPACE are
+          # backslash Windows paths (e.g. D:\a\vcell-mbsolver\vcell-mbsolver), so embedding
+          # them directly corrupts paths like HDF5_ROOT (e.g. into "D:avcell-mbsolver...")
+          # and vcpkg/HDF5/Boost/CURL become undiscoverable. Publish forward-slash versions
+          # via GITHUB_ENV so CMAKE_ARGS never contains a backslash.
+          $vcpkgRootFwd = $vcpkgRoot -replace '\\', '/'
+          $workspaceFwd = $env:GITHUB_WORKSPACE -replace '\\', '/'
+          "VCPKG_ROOT_FWD=$vcpkgRootFwd" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "GITHUB_WORKSPACE_FWD=$workspaceFwd" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.4.0
         env:
