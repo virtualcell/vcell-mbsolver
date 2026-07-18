@@ -92,20 +92,29 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 # CMAKE_ARGS below wire the toolchain file and explicit library hints into the
 # scikit-build-core configure step. OPTION_TARGET_MESSAGING stays OFF via
 # [tool.scikit-build.cmake.define] above.
+#
+# VCPKG_ROOT_FWD / GITHUB_WORKSPACE_FWD (set via GITHUB_ENV in the "Install
+# Windows vcpkg dependencies" step) are forward-slash copies of
+# VCPKG_INSTALLATION_ROOT / GITHUB_WORKSPACE. Using the backslash originals
+# here would break the build: cibuildwheel expands $VAR references with a
+# bash-syntax evaluator, and scikit-build-core then parses CMAKE_ARGS with
+# Python's POSIX-mode shlex.split(), which silently strips backslashes out of
+# Windows paths (e.g. "D:\a\repo" becomes "D:arepo"), corrupting HDF5_ROOT and
+# friends so vcpkg/HDF5/Boost/CURL can no longer be found.
 [tool.cibuildwheel.windows.environment]
 CMAKE_ARGS = """\
-    -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake \
+    -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT_FWD/scripts/buildsystems/vcpkg.cmake \
     -DVCPKG_TARGET_TRIPLET=x64-windows \
-    -DVCPKG_INSTALLED_DIR=$GITHUB_WORKSPACE/vcpkg_installed \
+    -DVCPKG_INSTALLED_DIR=$GITHUB_WORKSPACE_FWD/vcpkg_installed \
     -DVCPKG_MANIFEST_INSTALL=OFF \
-    -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
-    -DBOOST_ROOT=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
-    -DBOOST_INCLUDEDIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
-    -DHDF5_ROOT=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
-    -DHDF5_INCLUDE_DIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
-    -DHDF5_CXX_INCLUDE_DIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
-    -DHDF5_hdf5_cpp_LIBRARY=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5_cpp.lib \
-    -DHDF5_hdf5_LIBRARY=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/hdf5.lib \
-    -DCURL_ROOT=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows \
-    -DCURL_INCLUDE_DIR=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/include \
-    -DCURL_LIBRARY=$GITHUB_WORKSPACE/vcpkg_installed/x64-windows/lib/libcurl.lib"""
+    -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows \
+    -DBOOST_ROOT=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows \
+    -DBOOST_INCLUDEDIR=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/include \
+    -DHDF5_ROOT=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows \
+    -DHDF5_INCLUDE_DIR=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/include \
+    -DHDF5_CXX_INCLUDE_DIR=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/include \
+    -DHDF5_hdf5_cpp_LIBRARY=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/lib/hdf5_cpp.lib \
+    -DHDF5_hdf5_LIBRARY=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/lib/hdf5.lib \
+    -DCURL_ROOT=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows \
+    -DCURL_INCLUDE_DIR=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/include \
+    -DCURL_LIBRARY=$GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/lib/libcurl.lib"""
