@@ -101,6 +101,23 @@ environment = { MACOSX_DEPLOYMENT_TARGET = "15.0" }
 # Python's POSIX-mode shlex.split(), which silently strips backslashes out of
 # Windows paths (e.g. "D:\a\repo" becomes "D:arepo"), corrupting HDF5_ROOT and
 # friends so vcpkg/HDF5/Boost/CURL can no longer be found.
+#
+# Unlike Linux (auditwheel) and macOS (delocate), cibuildwheel's default
+# repair-wheel-command on Windows is empty, so the wheel is left unrepaired
+# by default: the built _core extension dynamically loads hdf5.dll /
+# hdf5_cpp.dll / z.dll from vcpkg_installed/x64-windows/bin, which is not
+# on PATH in the clean venv cibuildwheel uses to test the wheel, causing
+# "ImportError: DLL load failed while importing _core". Explicitly repair
+# with delvewheel, pointing --add-path at the vcpkg bin directory so it can
+# find and vendor those DLLs into the wheel.
+# $GITHUB_WORKSPACE_FWD is set by the "Install Windows vcpkg dependencies"
+# step in wheels.yml (see note above); this repair command is GitHub
+# Actions-specific and assumes that step has already populated
+# vcpkg_installed/x64-windows/bin.
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel repair --add-path $GITHUB_WORKSPACE_FWD/vcpkg_installed/x64-windows/bin -w {dest_dir} {wheel}"
+
 [tool.cibuildwheel.windows.environment]
 CMAKE_ARGS = """\
     -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT_FWD/scripts/buildsystems/vcpkg.cmake \
