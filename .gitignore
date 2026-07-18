@@ -80,3 +80,6 @@ wheelhouse/
 *.whl
 *.egg-info/
 _skbuild/
+
+# IDE files
+.idea/
