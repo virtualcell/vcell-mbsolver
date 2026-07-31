@@ -63,18 +63,18 @@ namespace vcellVoronoiImpl {
         typedef bp::voronoi_cell<coordinate_type> cell_type;
         typedef bp::voronoi_vertex<coordinate_type> vertex_type;
         typedef bp::voronoi_edge<coordinate_type> edge_type;
-        typedef struct {
-        public:
+
+        struct vertex_equality_predicate_type {
             enum { ULPS = 128 };
+
             bool operator()(const vertex_type &v1, const vertex_type &v2) const {
                 return (ulp_cmp(v1.x(), v2.x(), ULPS) == compareFloatingType::EQUAL &&
                     ulp_cmp(v1.y(), v2.y(), ULPS) == compareFloatingType::EQUAL);
             }
+
         private:
             compareFloatingType ulp_cmp;
-        } vertex_equality_predicate_type;
-
-
+        };
     };
 }
 

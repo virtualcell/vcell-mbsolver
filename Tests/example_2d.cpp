@@ -264,6 +264,14 @@ int localMain(int argc, char **argv)
 
 #include <gtest/gtest.h>
 TEST(frontier,example2D) {
-	char *args[]={"demo",nullptr};
-	localMain(1,args);
+	std::vector<std::string> argv_storage = {"demo"};
+	std::vector<char*> args;
+	args.reserve(argv_storage.size() + 1);
+
+	for (std::string& arg : argv_storage) {
+		args.push_back(arg.data());
+	}
+	args.push_back(nullptr);
+
+	localMain(static_cast<int>(argv_storage.size()), args.data());
 }
