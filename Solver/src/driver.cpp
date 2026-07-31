@@ -35,7 +35,7 @@ namespace {
 	/**
 	* shared variables 
 	*/
-	std::auto_ptr<vcell_util::FileDest> traceFileDestination; 
+	std::unique_ptr<vcell_util::FileDest> traceFileDestination;
 
 	struct ExecuteStatus
 	{
