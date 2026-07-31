@@ -18,6 +18,7 @@
 #ifndef __WIN32__
 	#include <cmath>
 #endif
+#include <iomanip>
 
 namespace {
 

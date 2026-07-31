@@ -17,7 +17,8 @@
 #include <VCDictionary.h>
 #include "mockpoint.inc"
 #include <OstreamSpy.h>
-using namespace vcell_util; 
+#include <iomanip>
+using namespace vcell_util;
 namespace {
 	double dx = 2.0 / 3 - 0.0001;
 	double dy = 2.0 / 7 + 0.0001;
