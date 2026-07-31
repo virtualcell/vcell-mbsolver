@@ -239,7 +239,7 @@ void MeshElementNode::setPos(SurfacePosition m)  {
 	VCELL_EXCEPTION(domain_error,this->ident( ) << " position " << m << " from " << state( ));
 }
 
-struct MeshElementNode::SetupBoundaryNeighbor : public std::unary_function<OurType *,NeighborType> {
+struct MeshElementNode::SetupBoundaryNeighbor {
 	OurType &clientElement;
 	SetupBoundaryNeighbor(OurType &client)
 		:clientElement(client) {}
