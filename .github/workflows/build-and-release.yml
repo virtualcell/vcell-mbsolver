@@ -28,7 +28,7 @@ jobs:
         include:
           - os: ubuntu-latest
             artifact_prefix: linux
-          - os: macos-latest
+          - os: macos-14
             artifact_prefix: macos
           - os: windows-latest
             artifact_prefix: windows
