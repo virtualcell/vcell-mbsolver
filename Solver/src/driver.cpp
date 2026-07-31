@@ -8,7 +8,7 @@
 #include <MBridge/MatlabDebug.h>
 #include <tclap/CmdLine.h>
 #include <ReportClient.h>
-#include <VCELL/SimulationMessaging.h>
+#include <JobMessaging.h>
 #include <VCELL/GitDescribe.h>
 
 /**
@@ -54,24 +54,19 @@ namespace {
 
 	void notifyExecuteStatus(const ExecuteStatus& executeStatus)
 	{
-		if (SimulationMessaging::getInstVar() == 0)
+		if (!SimulationMessaging::getInstVar()->isStopRequested())
 		{
 			if (!executeStatus.isOK())
 			{
-				std::cerr << executeStatus.message << std::endl;
+				SimulationMessaging::getInstVar()->setWorkerEvent(JobEvent::JOB_FAILURE, executeStatus.message.c_str());
 			}
 		}
-		else if (!SimulationMessaging::getInstVar()->isStopRequested())
+		else if (!executeStatus.isOK())
 		{
-			if (!executeStatus.isOK())
-			{
-				SimulationMessaging::getInstVar()->setWorkerEvent(new WorkerEvent(JOB_FAILURE, executeStatus.message.c_str()));
-			}
-	#ifdef USE_MESSAGING
-			SimulationMessaging::getInstVar()->waitUntilFinished();
-	#endif
+			std::cerr << executeStatus.message << std::endl;
 		}
-		delete SimulationMessaging::getInstVar();
+		// drains the event queue, joins the worker thread and destroys the singleton
+		SimulationMessaging::cleanupInstanceVar();
 
 	#ifdef CH_MPI
 		if (returnCode != 0)
@@ -95,7 +90,7 @@ int main(int argc, char *argv[])
 	std::string restorename;
 	ExecuteStatus executeStatus;
 
-	SimulationMessaging::create();
+	moving_boundary::enableJobMessaging(); // defaults to stdout-only reporting
 
 	bool parseOnly;
 	bool configPresent;
@@ -241,9 +236,6 @@ int main(int argc, char *argv[])
 		{
 			try
 			{
-#ifdef USE_MESSAGING
-				SimulationMessaging::getInstVar()->start(); // start the thread
-#endif
 				problem.run( );
 				std::cout << "MovingBoundary input " << filename << ", output " << problem.getOutputFiles() << " finished" << std::endl;
 			}

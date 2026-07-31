@@ -52,7 +52,7 @@
 #include <MBridge/FronTierAdapt.h>
 #include <MBridge/Figure.h>
 #include <Hdf5OutputWriter.h>
-#include <VCELL/SimulationMessaging.h>
+#include <JobMessaging.h>
 #include <VCELL/GitDescribe.h>
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
 using moving_boundary::World ;
@@ -819,7 +819,9 @@ namespace {
 					oldStuff = totalStuff;
 				}
 				h5File.flush(H5F_SCOPE_GLOBAL);
-				SimulationMessaging::getInstVar()->setWorkerEvent(new WorkerEvent(JOB_DATA, currentTime/theProblem.endTime(), currentTime));
+				if (SimulationMessaging *messaging = moving_boundary::jobMessaging()) {
+					messaging->setWorkerEvent(JobEvent::JOB_DATA, currentTime/theProblem.endTime(), currentTime);
+				}
 			}
 		}
 

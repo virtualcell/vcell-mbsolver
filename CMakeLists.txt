@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.13)
 project(VCellMovingBoundary VERSION 1.0.3 LANGUAGES CXX C)
 
-# C++ standard
-set(CMAKE_CXX_STANDARD 14)
+# C++ standard.  vcell-messaging (2.0) uses std::format and declares
+# `target_compile_features(vcellmessaging PUBLIC cxx_std_20)`, so everything
+# linking it is compiled as C++20 regardless; set it globally so the bundled
+# libraries are built consistently.
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 

@@ -1,7 +1,7 @@
 //#pragma warning ( disable: 4996 )
 #pragma warning ( disable: 4244 )
 #pragma warning ( disable: 4267 )
-#include <VCELL/SimulationMessaging.h>
+#include <JobMessaging.h>
 #include <MPoint.h>
 #include <boost/logic/tribool.hpp>
 #include <World.h>
@@ -1220,8 +1220,8 @@ namespace moving_boundary {
 		void run( ) {
 			VCELL_LOG(info,"commence simulation");
 
-			if (SimulationMessaging::getInstVar() != nullptr) {
-				SimulationMessaging::getInstVar()->setWorkerEvent(new WorkerEvent(JOB_STARTING, "Simulation started"));
+			if (SimulationMessaging *messaging = moving_boundary::jobMessaging()) {
+				messaging->setWorkerEvent(JobEvent::JOB_STARTING, "Simulation started");
 			}
 
 			const AdvectComplete advectComplete;
@@ -1247,8 +1247,8 @@ namespace moving_boundary {
 				}
 				notifyClients(numIteration,true);
 
-				if (SimulationMessaging::getInstVar() != nullptr) {
-					SimulationMessaging::getInstVar()->setWorkerEvent(new WorkerEvent(JOB_DATA, 0, 0));
+				if (SimulationMessaging *messaging = moving_boundary::jobMessaging()) {
+					messaging->setWorkerEvent(JobEvent::JOB_DATA, 0, 0);
 				}
 
 				if (frontMoveTrace) {
@@ -1405,9 +1405,9 @@ namespace moving_boundary {
 							percentInfo.lastPercentTime = currentTime;
 							percentInfo.calculateNextProgress(numIteration,frontTimeStep);
 
-							if (SimulationMessaging::getInstVar() != nullptr) {
-							SimulationMessaging::getInstVar()->setWorkerEvent(new WorkerEvent(JOB_PROGRESS, percent * 1.0/100, percentInfo.lastPercentTime));
-						}
+							if (SimulationMessaging *messaging = moving_boundary::jobMessaging()) {
+								messaging->setWorkerEvent(JobEvent::JOB_PROGRESS, percent * 1.0/100, percentInfo.lastPercentTime);
+							}
 						}
 					}
 				}
@@ -1428,9 +1428,9 @@ namespace moving_boundary {
 				for (MovingBoundaryTimeClient *client : timeClients) {
 					client->simulationComplete( );
 				}
-				if (SimulationMessaging::getInstVar() != nullptr) {
-					SimulationMessaging::getInstVar()->setWorkerEvent(new WorkerEvent(JOB_PROGRESS, 1.0, currentTime));
-					SimulationMessaging::getInstVar()->setWorkerEvent(new WorkerEvent(JOB_COMPLETED, 1.0, currentTime));
+				if (SimulationMessaging *messaging = moving_boundary::jobMessaging()) {
+					messaging->setWorkerEvent(JobEvent::JOB_PROGRESS, 1.0, currentTime);
+					messaging->setWorkerEvent(JobEvent::JOB_COMPLETED, 1.0, currentTime);
 				}
 			} catch (std::exception &e) {
 				VCELL_LOG(fatal,"run( ) caught " << e.what( )  << " at iteration " << numIteration << ", time " << currentTime);

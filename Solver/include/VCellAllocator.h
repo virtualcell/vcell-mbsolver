@@ -11,8 +11,10 @@ namespace vcell_util {
 
 		typedef VCellAllocator<T,SOURCE> OurType;
 	public:
-		typedef typename std::allocator<T>::pointer pointer;
-		typedef typename std::allocator<T>::size_type size_type;
+		// std::allocator's nested pointer/size_type were removed in C++20; go
+		// through allocator_traits, which still provides them.
+		typedef typename std::allocator_traits<std::allocator<T> >::pointer pointer;
+		typedef typename std::allocator_traits<std::allocator<T> >::size_type size_type;
 
 		// Used by containers when they want to refer to an allocator of type U.
 		template<typename U>

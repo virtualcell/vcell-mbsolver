@@ -6,7 +6,7 @@
 #include <persistcontainer.h>
 #include <vcellxml.h>
 #include <Logger.h>
-#include <VCELL/SimulationMessaging.h>
+#include <JobMessaging.h>
 
 using namespace moving_boundary;
 
@@ -90,36 +90,17 @@ moving_boundary::MovingBoundarySetup MovingBoundarySetup::setupProblem(const XML
 		const XMLElement* jms = root.FirstChildElement("jms");
 		if (jms != nullptr)
 		{
-			char *broker = new char[256];
-			char *smqusername = new char[256];
-			char *password = new char[256];
-			char *qname = new char[256];
-			char *tname = new char[256];
-			char *vcusername = new char[256];
-			int simKey, jobIndex;
+			// The 2.0 messaging client posts over the broker's REST API, so the
+			// queue/topic/credential elements of <jms> are no longer consulted.
+			const std::string broker = vcell_xml::convertChildElement<std::string>(*jms, "broker");
+			const std::string vcusername = vcell_xml::convertChildElement<std::string>(*jms, "vcellUser");
+			const int simKey = vcell_xml::convertChildElement<unsigned int>(*jms, "simKey");
+			const int jobIndex = vcell_xml::convertChildElement<unsigned int>(*jms, "jobIndex");
 
-			std::string str = vcell_xml::convertChildElement<std::string>(*jms, "broker");
-			std::strcpy(broker, str.c_str());
-
-			str = vcell_xml::convertChildElement<std::string>(*jms,"jmsUser");
-			std::strcpy(smqusername, str.c_str());
-
-			str = vcell_xml::convertChildElement<std::string>(*jms,"pw");
-			std::strcpy(password, str.c_str());
-
-			str = vcell_xml::convertChildElement<std::string>(*jms,"queue");
-			std::strcpy(qname, str.c_str());
-
-			str = vcell_xml::convertChildElement<std::string>(*jms,"topic");
-			std::strcpy(tname, str.c_str());
-
-			str = vcell_xml::convertChildElement<std::string>(*jms,"vcellUser");
-			std::strcpy(vcusername, str.c_str());
-
-			simKey = vcell_xml::convertChildElement<unsigned int>(*jms, "simKey");
-			jobIndex = vcell_xml::convertChildElement<unsigned int>(*jms, "jobIndex");
-
-			SimulationMessaging::create(broker, smqusername, password, qname, tname, vcusername, simKey, jobIndex, taskId);
+			// as before 2.0, a <jms> block switches reporting from stdout to the broker
+			moving_boundary::enableJobMessaging();
+			moving_boundary::jobMessaging()->initialize_curl_messaging(
+				false, broker.c_str(), vcusername.c_str(), simKey, jobIndex, taskId);
 		}
 	}
 #endif
