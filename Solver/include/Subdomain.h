@@ -1,8 +1,10 @@
 #ifndef Subdomain_h
 #define Subdomain_h
 #include <string>
+#include <vector>
 #include <Variable.h>
 using std::string;
+using std::vector;
 
 namespace moving_boundary
 {
