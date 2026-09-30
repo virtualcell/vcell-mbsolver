@@ -65,6 +65,7 @@ fetch "${HDF5_URL}" "${HDF5_SHA256}" "${work}/hdf5.tar.gz"
 tar -xzf "${work}/hdf5.tar.gz" -C "${work}"
 cmake -S "${work}/hdf5-${HDF5_VERSION}" -B "${work}/hdf5-build" "${cmake_common[@]}" \
     -DBUILD_STATIC_LIBS=ON \
+    -DHDF_PACKAGE_NAMESPACE=hdf5:: \
     -DHDF5_BUILD_CPP_LIB=ON \
     -DHDF5_BUILD_HL_LIB=ON \
     -DHDF5_BUILD_FORTRAN=OFF \

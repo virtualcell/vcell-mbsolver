@@ -154,7 +154,7 @@ jobs:
             runner: macos-15-intel
     runs-on: ${{ matrix.runner }}
     env:
-      MACOSX_DEPLOYMENT_TARGET: '11.0'
+      MACOSX_DEPLOYMENT_TARGET: '13.3'   # std::format of floating point (vcell-messaging) needs 13.3
       CMAKE_OSX_ARCHITECTURES: ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v4
@@ -490,7 +490,7 @@ jobs:
             |---|---|
             | `linux64.tgz` | `MovingBoundary_x64` for x86_64 Linux (glibc ≥ 2.28; HDF5 and libcurl linked statically; messaging ON) |
             | `linux64arm.tgz` | the same for aarch64 Linux |
-            | `mac64.tgz` | `MovingBoundary_x64`, universal (arm64 + x86_64), macOS ≥ 11, HDF5 static, ad-hoc signed |
+            | `mac64.tgz` | `MovingBoundary_x64`, universal (arm64 + x86_64), macOS ≥ 13.3, HDF5 static, ad-hoc signed |
             | `win64.zip` | `MovingBoundary_x64.exe` with its HDF5 and MSVC runtime DLLs |
             | `SHA256SUMS` | checksums of the four archives |
 

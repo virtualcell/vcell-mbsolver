@@ -244,7 +244,7 @@ name VCell resolves (`MovingBoundary_x64`, `.exe` on Windows), `LICENSE` and a
 |---|---|---|
 | `linux64.tgz` | `manylinux_2_28_x86_64` | runs on glibc ≥ 2.28. HDF5 1.14 and an HTTP-only libcurl are linked **statically**; it needs only glibc, `libstdc++` and `libgcc_s` (checked by `packaging/check-portable.sh`) |
 | `linux64arm.tgz` | `manylinux_2_28_aarch64` | the same for aarch64 |
-| `mac64.tgz` | `macos-15` + `macos-15-intel` | a **universal** (arm64 + x86_64) binary, macOS ≥ 11, HDF5 static, only `/usr/lib` system libraries (libc++, libcurl), ad-hoc signed |
+| `mac64.tgz` | `macos-15` + `macos-15-intel` | a **universal** (arm64 + x86_64) binary, macOS ≥ 13.3, HDF5 static, only `/usr/lib` system libraries (libc++, libcurl), ad-hoc signed |
 | `win64.zip` | `windows-latest` (MSVC, vcpkg) | the exe with its HDF5/zlib DLLs and the MSVC runtime DLLs next to it (`packaging/bundle-windows.py`) |
 | `SHA256SUMS` | | a checksum for each archive |
 
