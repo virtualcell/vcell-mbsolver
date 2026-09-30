@@ -11,6 +11,7 @@ failure) to http://<broker>/api/message/workerEvent?...&WorkerEvent_Status=<code
 from __future__ import annotations
 
 import socket
+import socketserver
 import sys
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -31,7 +32,15 @@ class Handler(BaseHTTPRequestHandler):
         pass
 
 
-def wait(port: int, timeout: float = 30.0) -> None:
+class Server(HTTPServer):
+    # HTTPServer.server_bind looks up the host's FQDN, which can stall for ~30 s on
+    # macOS runners before the socket listens; the plain TCP bind is all this needs.
+    def server_bind(self) -> None:
+        socketserver.TCPServer.server_bind(self)
+        self.server_name, self.server_port = "127.0.0.1", self.server_address[1]
+
+
+def wait(port: int, timeout: float = 60.0) -> None:
     deadline = time.monotonic() + timeout
     while True:
         try:
@@ -47,4 +56,4 @@ if __name__ == "__main__":
     if sys.argv[1] == "--wait":
         wait(int(sys.argv[2]))
         sys.exit(0)
-    HTTPServer(("127.0.0.1", int(sys.argv[1])), Handler).serve_forever()
+    Server(("127.0.0.1", int(sys.argv[1])), Handler).serve_forever()
