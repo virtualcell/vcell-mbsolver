@@ -262,6 +262,11 @@ int localMain(int argc, char **argv)
 	return 0;
 }
 
+// FronTier's cdecs.h defines isnan(x) as isnand(x), which breaks libc++'s <format>
+// (pulled in by gtest) wherever std::format of floating point is available.
+#ifdef isnan
+#undef isnan
+#endif
 #include <gtest/gtest.h>
 TEST(frontier,example2D) {
 	std::vector<std::string> argv_storage = {"demo"};
