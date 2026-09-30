@@ -124,6 +124,7 @@ jobs:
           # HPC form: a <jms> block and -tid, reporting to a stand-in broker
           work="$RUNNER_TEMP/messaging"
           "$PY" smoke/fake_broker.py 18165 "$RUNNER_TEMP/broker.log" & broker=$!
+          "$PY" smoke/fake_broker.py --wait 18165
           "$PY" smoke/prepare.py "$work" --output-dir "$work" --broker 127.0.0.1:18165
           "$pkg/MovingBoundary_x64" --config "$work/$SMOKE_INPUT" -tid 0 > "$work/stdout.txt"
           kill "$broker"
@@ -207,6 +208,7 @@ jobs:
           python smoke/compare.py smoke/reference.h5 "$work/$SMOKE_OUTPUT" --rtol "$SMOKE_RTOL" --atol "$SMOKE_ATOL"
           work="$RUNNER_TEMP/messaging"
           python smoke/fake_broker.py 18165 "$RUNNER_TEMP/broker.log" & broker=$!
+          python smoke/fake_broker.py --wait 18165
           python smoke/prepare.py "$work" --output-dir "$work" --broker 127.0.0.1:18165
           "$exe" --config "$work/$SMOKE_INPUT" -tid 0 > "$work/stdout.txt"
           kill "$broker"
@@ -426,6 +428,7 @@ jobs:
           python3 smoke/compare.py smoke/reference.h5 "$work/$SMOKE_OUTPUT" --rtol "$SMOKE_RTOL" --atol "$SMOKE_ATOL"
           work="$RUNNER_TEMP/sif-messaging"
           python3 smoke/fake_broker.py 18165 "$RUNNER_TEMP/broker.log" & broker=$!
+          python3 smoke/fake_broker.py --wait 18165
           python3 smoke/prepare.py "$work" --broker 127.0.0.1:18165
           apptainer run --containall --bind "$work:/simdata" --env TMPDIR=/tmp "$sif" \
             MovingBoundary_x64 --config "/simdata/$SMOKE_INPUT" -tid 0 > "$work/stdout.txt"
