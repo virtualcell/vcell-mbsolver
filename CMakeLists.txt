@@ -279,6 +279,27 @@ add_subdirectory(vcell-expressionparser)
 add_subdirectory(vcommons)
 
 # vcell-messaging (bundled in VCell-Messaging) /)
+# GIT_DESCRIBE feeds g_GIT_DESCRIBE (vcell-messaging's GitDescribe.cpp.in): the
+# version the solver prints at startup and stores as the output's
+# runTime/gitVersion attribute. An empty one makes that HDF5 attribute
+# zero-length, which HDF5 rejects at the end of every run. Fall back to the
+# project version when git (or the .git directory) is unavailable.
+if(NOT GIT_DESCRIBE)
+    find_package(Git QUIET)
+    if(GIT_FOUND)
+        execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            OUTPUT_VARIABLE GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET RESULT_VARIABLE _git_describe_rc)
+        if(NOT _git_describe_rc EQUAL 0)
+            set(GIT_DESCRIBE "")
+        endif()
+    endif()
+    if(NOT GIT_DESCRIBE)
+        set(GIT_DESCRIBE "v${PROJECT_VERSION}")
+    endif()
+endif()
+message(STATUS "GIT_DESCRIBE:      ${GIT_DESCRIBE}")
 add_subdirectory(vcell-messaging)
 
 # SQLite: prefer system, fall back to bundled copy in sqlite/

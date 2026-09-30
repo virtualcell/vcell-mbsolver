@@ -66,7 +66,8 @@ namespace vcellH5 {
 		if (overwrite) {
 			removeAttribute(parent,attributeName);
 		}
-		H5::StrType st(0,value.length( ));
+		// HDF5 rejects a zero-size string type; store an empty string as one NUL byte.
+		H5::StrType st(0,value.empty( ) ? 1 : value.length( ));
 		H5::DataSpace dataspace(H5S_SCALAR);
 		H5::Attribute attr = parent.createAttribute(attributeName,st,dataspace);
 		attr.write(st,value);
