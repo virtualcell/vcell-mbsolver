@@ -34,7 +34,9 @@ ctest -N                                         # list tests without running
 
 Key CMake options: `BUILD_SHARED_LIBS` (default OFF), `BUILD_TESTING` (default ON), `VARIABLE_SPECIES_STORAGE` (defines `MB_VARY_MASS`), `OPTION_TARGET_MESSAGING` (job-status messaging via CURL, OFF locally / ON in CI).
 
-Run the binary: `./build/bin/MovingBoundarySolver <input.xml> <output.h5>`. Input XML is validated against `Solver/MovingBoundarySetup.xsd`.
+Run the binary: `./build/bin/MovingBoundarySolver --config <input_mb.xml> [-tid <n>]` (output goes to the input's `<report><outputFilePrefix>`). Input XML is validated against `Solver/MovingBoundarySetup.xsd`.
+
+**Releases for VCell** (archives `linux64.tgz`/`linux64arm.tgz`/`mac64.tgz`/`win64.zip` with the executable renamed `MovingBoundary_x64`, the `ghcr.io/virtualcell/vcell-mbsolver` image and `_singularity` SIF, the `smoke/` reference comparison) are built by `.github/workflows/build-and-release.yml` from `packaging/` and `docker/`; see the README's *Releases for VCell (SOLVER-RELEASE)* section. Keep `project(... VERSION ...)` in `CMakeLists.txt` equal to the release tag.
 
 ## Architecture
 

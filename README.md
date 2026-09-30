@@ -141,6 +141,9 @@ package under `build\bin\pyvcell_mbsolver\`.
 | `BUILD_SHARED_LIBS` | `OFF` | Build `libMovingBoundaryLib` as a shared library instead of static |
 | `BUILD_TESTING` | `ON` | Also build the `TestMovingBoundary` test executable |
 | `VARIABLE_SPECIES_STORAGE` | `OFF` | Enable dynamic species storage (`-DMB_VARY_MASS`) |
+| `OPTION_TARGET_MESSAGING` | `OFF` | Job-status messaging to VCell's broker via libcurl (on in the release builds) |
+| `MB_BUILD_PYTHON` | `ON` | Build the pybind11 bindings; the release archives turn it off |
+| `MB_HDF5_CONFIG` | `OFF` | Find HDF5 through its CMake package config (the release builds' static HDF5) |
 
 Example — debug build, shared library, no tests:
 
@@ -224,10 +227,78 @@ cmake -S . -B build -DBUILD_TESTING=OFF
 
 ---
 
+## Releases for VCell (SOLVER-RELEASE)
+
+VCell consumes this repository through its GitHub releases and container
+images, under the contract every VCell solver repository meets
+([VCell `docs/plan-solver-repos.md` §1](https://github.com/virtualcell/vcell/blob/master/docs/plan-solver-repos.md)).
+`.github/workflows/build-and-release.yml` implements it; a `vX.Y.Z` tag on `main`
+(matching the `project()` version in `CMakeLists.txt`, which the workflow checks)
+publishes everything below. Pull requests build and test all of it.
+
+**Release assets** — each archive holds, at its root, the executable under the
+name VCell resolves (`MovingBoundary_x64`, `.exe` on Windows), `LICENSE` and a
+`VERSION` file; no static libraries or test binaries.
+
+| asset | built on | contents |
+|---|---|---|
+| `linux64.tgz` | `manylinux_2_28_x86_64` | runs on glibc ≥ 2.28. HDF5 1.14 and an HTTP-only libcurl are linked **statically**; it needs only glibc, `libstdc++` and `libgcc_s` (checked by `packaging/check-portable.sh`) |
+| `linux64arm.tgz` | `manylinux_2_28_aarch64` | the same for aarch64 |
+| `mac64.tgz` | `macos-15` + `macos-15-intel` | a **universal** (arm64 + x86_64) binary, macOS ≥ 11, HDF5 static, only `/usr/lib` system libraries (libc++, libcurl), ad-hoc signed |
+| `win64.zip` | `windows-latest` (MSVC, vcpkg) | the exe with its HDF5/zlib DLLs and the MSVC runtime DLLs next to it (`packaging/bundle-windows.py`) |
+| `SHA256SUMS` | | a checksum for each archive |
+
+Messaging (`-tid <n>` plus the `<jms>` block VCell writes for HPC runs, reported
+to the broker's REST API) is compiled into the Linux and macOS builds; the
+Windows build leaves it out, since the desktop client never passes `-tid`.
+
+**Container image** `ghcr.io/virtualcell/vcell-mbsolver:<X.Y.Z>` (and `:latest`),
+linux/amd64 + linux/arm64: `debian:bookworm-slim` plus the Linux archive's
+contents in `/opt/vcell/bin` (on `PATH`) — `docker/Dockerfile` compiles nothing.
+**SIF** `oras://ghcr.io/virtualcell/vcell-mbsolver_singularity:<X.Y.Z>` (amd64),
+built from that image and pushed with ORAS.
+
+**Entry point** `/usr/local/bin/vcell-solver-entrypoint` (`docker/entrypoint.sh`):
+no argument or `--help` prints the version and the executables and exits 0; a
+first argument naming a provided executable is `exec`ed (exit codes and SIGTERM
+pass through); anything else prints usage and exits 2. It writes nothing, runs
+as any uid and works from a read-only SIF, with argv as VCell's SlurmProxy writes it:
+
+```bash
+singularity run --containall --bind /share/apps/vcell3/users:/simdata <sif> \
+    MovingBoundary_x64 --config /simdata/<user>/SimID_<key>_0_mb.xml -tid 0
+```
+
+**Smoke test and reference.** `smoke/` holds a VCell-generated input
+(`SimID_254696951_0_mb.xml`: the *MBswept* model — a circular cell translating
+with velocity (sin t, cos t), two diffusing species, 31×31 nodes, t ∈ [0, 1]) and
+`reference.h5`, its output from the legacy `MovingBoundary_x64` (vcell-solvers
+v0.0.44-dev4, macOS x86_64), which is bit-identical to the
+`ghcr.io/virtualcell/vcell-solvers:v0.8.2` image's. CI runs it through every
+archive, the image (as a non-root uid with a read-only root) and the SIF (under
+`apptainer run --containall`), each with `-tid 0`, compares every species at
+every output time with `smoke/compare.py`, and checks that a run with a `<jms>`
+block reports its worker events to a stand-in broker (`smoke/fake_broker.py`).
+
+To run it by hand:
+
+```bash
+python smoke/prepare.py /tmp/mb --output-dir /tmp/mb
+MovingBoundary_x64 --config /tmp/mb/SimID_254696951_0_mb.xml
+python smoke/compare.py smoke/reference.h5 /tmp/mb/SimID_254696951_0_.h5
+```
+
+**Cutting a release.** Bump `project(VCellMovingBoundary VERSION X.Y.Z)` in
+`CMakeLists.txt` (the Python wheel version follows it), merge to `main`, then tag
+`vX.Y.Z` on `main`. The tag also triggers `wheels.yml`, which publishes
+`pyvcell_mbsolver` X.Y.Z to PyPI.
+
+---
+
 ## Using the binary
 
 ```bash
-./build/bin/MovingBoundarySolver <input.xml> <output.h5>
+./build/bin/MovingBoundarySolver --config <input_mb.xml> [-tid <n>]
 ```
 
 The input file format is described in `metadata/MovingBoundarySolverInputFile.docx`
