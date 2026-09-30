@@ -22,7 +22,9 @@ Linux)
     echo "highest GLIBCXX symbol version: $(objdump -T "${exe}" | grep -o 'GLIBCXX_[0-9.]*' | sort -uV | tail -1)"
     ;;
 Darwin)
-    libs="$(otool -L "${exe}" | tail -n +2 | awk '{print $1}')"
+    # a universal binary lists each slice under its own "<file> (architecture ...):" header;
+    # the load commands are the indented lines
+    libs="$(otool -L "${exe}" | grep -E '^[[:space:]]' | awk '{print $1}' | sort -u)"
     echo "load commands:"; echo "${libs}" | sed 's/^/  /'
     bad="$(echo "${libs}" | grep -Ev '^(/usr/lib/|/System/)' || true)"
     if [ -n "${bad}" ]; then
