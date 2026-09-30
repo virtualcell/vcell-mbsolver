@@ -64,6 +64,10 @@ elseif(UNIX)
     add_compile_options(-fpermissive)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
         add_compile_options(-m64)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|ARM64")
+        # plain `char` is unsigned on Linux/aarch64; the code (FronTier and the
+        # tests alike) was written on x86, where it is signed.
+        add_compile_options(-fsigned-char)
     endif()
 endif()
 
