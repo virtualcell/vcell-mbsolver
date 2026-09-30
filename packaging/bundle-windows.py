@@ -29,8 +29,11 @@ SYSTEM32 = Path(r"C:\Windows\System32")
 
 def imports(path: Path) -> list[str]:
     pe = pefile.PE(str(path), fast_load=True)
-    pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_IMPORT"]])
-    return [entry.dll.decode() for entry in getattr(pe, "DIRECTORY_ENTRY_IMPORT", [])]
+    try:
+        pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY["IMAGE_DIRECTORY_ENTRY_IMPORT"]])
+        return [entry.dll.decode() for entry in getattr(pe, "DIRECTORY_ENTRY_IMPORT", [])]
+    finally:
+        pe.close()  # release the file mapping, or Windows cannot delete the staging dir
 
 
 def main(argv: list[str]) -> int:
