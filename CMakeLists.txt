@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(VCellMovingBoundary VERSION 1.0.3 LANGUAGES CXX C)
+project(VCellMovingBoundary VERSION 1.0.5 LANGUAGES CXX C)
 
 # C++ standard.  vcell-messaging (2.0) uses std::format and declares
 # `target_compile_features(vcellmessaging PUBLIC cxx_std_20)`, so everything
@@ -24,6 +24,11 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 option(VARIABLE_SPECIES_STORAGE "Dynamic species storage" OFF)
 option(OPTION_TARGET_MESSAGING "Enable job-status messaging via CURL" OFF)
+# The release archives (SOLVER-RELEASE in README.md) build only the executable,
+# against a static HDF5 found through its CMake package config; they need
+# neither the Python bindings nor FindHDF5's compiler-wrapper lookup.
+option(MB_BUILD_PYTHON "Build the pybind11 Python bindings (pyvcell_mbsolver._core)" ON)
+option(MB_HDF5_CONFIG "Find HDF5 through its CMake package config (e.g. a static HDF5 build)" OFF)
 
 if(VARIABLE_SPECIES_STORAGE)
     add_compile_definitions(MB_VARY_MASS)
@@ -42,19 +47,27 @@ if(MSVC)
         NOGDI
     )
 elseif(APPLE)
-    execute_process(COMMAND uname -m OUTPUT_VARIABLE PROCESSOR_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(PROCESSOR_ARCHITECTURE STREQUAL "arm64")
-        add_compile_definitions(__arm64__)
-        set(CMAKE_OSX_ARCHITECTURES "arm64")
-    else()
-        add_compile_definitions(__x86_64__)
-        set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    # Default to the host architecture; an explicit -DCMAKE_OSX_ARCHITECTURES
+    # (the release build passes one per slice before lipo) is left alone.
+    if(NOT CMAKE_OSX_ARCHITECTURES)
+        execute_process(COMMAND uname -m OUTPUT_VARIABLE PROCESSOR_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
+        if(PROCESSOR_ARCHITECTURE STREQUAL "arm64")
+            add_compile_definitions(__arm64__)
+            set(CMAKE_OSX_ARCHITECTURES "arm64")
+        else()
+            add_compile_definitions(__x86_64__)
+            set(CMAKE_OSX_ARCHITECTURES "x86_64")
+        endif()
     endif()
     add_compile_options(-fpermissive)
 elseif(UNIX)
     add_compile_options(-fpermissive)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
         add_compile_options(-m64)
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|ARM64")
+        # plain `char` is unsigned on Linux/aarch64; the code (FronTier and the
+        # tests alike) was written on x86, where it is signed.
+        add_compile_options(-fsigned-char)
     endif()
 endif()
 
@@ -70,8 +83,11 @@ find_package(Threads REQUIRED)
 # CONFIG only; the MODULE/wrapper path fails there).  On Linux/macOS with
 # system packages, MODULE mode correctly requests the CXX component and
 # populates the legacy variables, so we skip CONFIG mode on those platforms.
-if(VCPKG_TOOLCHAIN)
+if(VCPKG_TOOLCHAIN OR MB_HDF5_CONFIG)
     find_package(HDF5 CONFIG QUIET)
+endif()
+if(MB_HDF5_CONFIG AND NOT HDF5_FOUND)
+    message(FATAL_ERROR "MB_HDF5_CONFIG=ON but no HDF5 package config was found (set HDF5_DIR or CMAKE_PREFIX_PATH)")
 endif()
 if(NOT HDF5_FOUND)
     find_package(HDF5 REQUIRED COMPONENTS C CXX)
@@ -240,14 +256,16 @@ if(NOT _boost_headers_resolved)
     endif()
 endif()
 
-# Python bindings (always built).
+# Python bindings (on by default; MB_BUILD_PYTHON=OFF skips them).
 # Use Development.Module (not the full Development component): manylinux images
 # ship no shared libpython, so requesting Python3_LIBRARIES would fail there.
 # Development.Module provides the headers/SOABI (and the python3_add_library
 # command that pybind11's FindPython "new tools" mode needs) without linking
 # libpython — the correct policy for wheels on all platforms.
-find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
-find_package(pybind11 CONFIG REQUIRED)
+if(MB_BUILD_PYTHON)
+    find_package(Python3 REQUIRED COMPONENTS Interpreter Development.Module)
+    find_package(pybind11 CONFIG REQUIRED)
+endif()
 
 # --- Bundled / external library dependencies ---
 
@@ -261,6 +279,27 @@ add_subdirectory(vcell-expressionparser)
 add_subdirectory(vcommons)
 
 # vcell-messaging (bundled in VCell-Messaging) /)
+# GIT_DESCRIBE feeds g_GIT_DESCRIBE (vcell-messaging's GitDescribe.cpp.in): the
+# version the solver prints at startup and stores as the output's
+# runTime/gitVersion attribute. An empty one makes that HDF5 attribute
+# zero-length, which HDF5 rejects at the end of every run. Fall back to the
+# project version when git (or the .git directory) is unavailable.
+if(NOT GIT_DESCRIBE)
+    find_package(Git QUIET)
+    if(GIT_FOUND)
+        execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            OUTPUT_VARIABLE GIT_DESCRIBE OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET RESULT_VARIABLE _git_describe_rc)
+        if(NOT _git_describe_rc EQUAL 0)
+            set(GIT_DESCRIBE "")
+        endif()
+    endif()
+    if(NOT GIT_DESCRIBE)
+        set(GIT_DESCRIBE "v${PROJECT_VERSION}")
+    endif()
+endif()
+message(STATUS "GIT_DESCRIBE:      ${GIT_DESCRIBE}")
 add_subdirectory(vcell-messaging)
 
 # SQLite: prefer system, fall back to bundled copy in sqlite/
@@ -321,7 +360,9 @@ if(BUILD_TESTING)
 endif()
 
 # --- Python bindings ---
-add_subdirectory(python)
+if(MB_BUILD_PYTHON)
+    add_subdirectory(python)
+endif()
 
 # --- Install ---
 install(TARGETS MovingBoundaryLib MovingBoundarySolver

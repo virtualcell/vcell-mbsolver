@@ -92,8 +92,8 @@ int main(int argc, char *argv[])
 
 	moving_boundary::enableJobMessaging(); // defaults to stdout-only reporting
 
-	bool parseOnly;
-	bool configPresent;
+	bool parseOnly = false;
+	bool configPresent = false;
 	int Nx = -1;
 	int taskId = -1;
 
@@ -139,7 +139,10 @@ int main(int argc, char *argv[])
 		ss << "error " << ae.error( ) << " arg " << ae.argId( ) << std::endl;
 		executeStatus = ExecuteStatus(3, ss.str());
 	} catch (tclap::ExitException &ee) {
-		executeStatus = ExecuteStatus(ee.getExitStatus(), "tclap exit exception");
+		// --help / --version: TCLAP has printed what was asked for; stop here rather
+		// than fall through to a solve with no arguments parsed.
+		notifyExecuteStatus(ExecuteStatus());
+		return ee.getExitStatus();
 	}
 
 	moving_boundary::MovingBoundaryParabolicProblem problem;

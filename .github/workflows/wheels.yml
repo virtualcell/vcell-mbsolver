@@ -1,10 +1,17 @@
 name: Wheels
 
+# Wheels build on every v* tag (and publish it to PyPI — the `publish` job below),
+# on pull requests that touch the Python bindings or the build, and on demand.
 on:
-#  push:
-#    branches: [main]
-#    tags: ['v*']
-#  pull_request:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - python/**
+      - pyproject.toml
+      - CMakeLists.txt
+      - vcpkg.json
+      - .github/workflows/wheels.yml
   workflow_dispatch:
     inputs:
       testpypi:
